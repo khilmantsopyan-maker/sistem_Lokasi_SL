@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem Lokasi & Stok Gudang</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --cell-active: #f59e0b;
+      --cell-filled: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .main-wrapper {
+      max-width: 980px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+      color: var(--accent);
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+    }
+
+    .panel {
+      background: #0f172a;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .input-group label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    select:focus, input:focus {
+      border-color: var(--accent);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 10px;
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+      color: #fff;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #0f172a;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-family: monospace;
+      font-size: 1rem;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+
+    .warehouse-map {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      background: #1e293b;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      max-height: 520px;
+      overflow-y: auto;
+    }
+
+    .row-numbers {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 24px;
+    }
+
+    .row-num {
+      height: 22px;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+    }
+
+    .block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .block-header {
+      font-weight: bold;
+      color: var(--accent);
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .rack-pairs {
+      display: flex;
+      gap: 2px;
+    }
+
+    .rack-column {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .cell {
+      width: 22px;
+      height: 22px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cell:hover {
+      border-color: var(--accent);
+    }
+
+    .cell.filled {
+      background: var(--cell-filled);
+    }
+
+    .cell.active {
+      background: var(--cell-active) !important;
+      border-color: #fff;
+    }
+
+    .arrow-indicator {
+      text-align: center;
+      margin-top: 6px;
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+
+    /* Tab Filter MCS */
+    .tabs-container {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      padding: 6px 12px;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+
+    /* CSS Tabel Inventory Summary */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: #1e293b;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background: rgba(56, 189, 248, 0.05);
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 16px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-wrapper">
+    <div class="container">
+      <!-- Panel Kiri: Form Detail & Input Barang -->
+      <div>
+        <h1>Sistem Lokasi & Stok Gudang</h1>
+        <p class="subtitle">Manajemen Informasi Barang Per Lokasi</p>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>Detail Lokasi: <span class="badge" id="codeBadge">A-L-01</span></span>
+          </div>
+
+          <!-- Pemilih Lokasi Manual -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <div class="input-group">
+              <label>Blok</label>
+              <select id="blockSelect" onchange="updateLocation()">
+                <option value="A">Blok A</option>
+                <option value="B">Blok B</option>
+                <option value="C">Blok C</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label>Sisi</label>
+              <select id="sideSelect" onchange="updateLocation()">
+                <option value="L">Kiri (L)</option>
+                <option value="R">Kanan (R)</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label>Baris (1-15)</label>
+              <input type="number" id="rowInput" min="1" max="15" value="1" onchange="updateLocation()" />
+            </div>
+          </div>
+
+          <hr style="border-color: var(--border); margin: 4px 0;" />
+
+          <!-- Form Keterangan Barang -->
+          <div class="panel-title">Keterangan Barang</div>
+
+          <!-- MCS List Box -->
+          <div class="input-group">
+            <label for="mcsInput">MCS</label>
+            <select id="mcsInput">
+              <option value="">-- Pilih MCS --</option>
+              <option value="LCIP-001">LCIP-001</option>
+              <option value="LCIP-003">LCIP-003</option>
+              <option value="LCIP-024">LCIP-024</option>
+              <option value="IU-007">IU-007</option>
+              <option value="IU-009">IU-009</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label for="colorInput">Warna</label>
+            <input type="text" id="colorInput" placeholder="Contoh: Merah / Hitam" />
+          </div>
+
+          <div class="form-grid-2">
+            <!-- Size List Box -->
+            <div class="input-group">
+              <label for="sizeInput">Size</label>
+              <select id="sizeInput">
+                <option value="">-- Pilih Size --</option>
+                <option value="Small">Small</option>
+                <option value="Large">Large</option>
+              </select>
+            </div>
+
+            <div class="input-group">
+              <label for="qtyInput">QTY</label>
+              <input type="number" id="qtyInput" placeholder="Contoh: 100" min="0" />
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button class="btn" onclick="saveItemData()">Simpan / Update Data</button>
+            <button class="btn btn-danger" onclick="deleteItemData()">Kosongkan Lokasi</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel Kanan: Map Visual -->
+      <div>
+        <div class="panel">
+          <div class="panel-title">
+            <span>Denah Gudang</span>
+            <div class="legend">
+              <div class="legend-item"><div class="legend-box" style="background:#0f172a; border:1px solid #334155;"></div> Kosong</div>
+              <div class="legend-item"><div class="legend-box" style="background:var(--cell-filled);"></div> Terisi</div>
+              <div class="legend-item"><div class="legend-box" style="background:var(--cell-active);"></div> Dipilih</div>
+            </div>
+          </div>
+
+          <div class="warehouse-map">
+            <div class="row-numbers" id="rowNumbers"></div>
+
+            <!-- Blok A -->
+            <div class="block">
+              <div class="block-header">A</div>
+              <div class="rack-pairs">
+                <div class="rack-column" id="col-A-L"></div>
+                <div class="rack-column" id="col-A-R"></div>
+              </div>
+              <div class="arrow-indicator">&darr; 1-way</div>
+            </div>
+
+            <!-- Blok B -->
+            <div class="block">
+              <div class="block-header">B</div>
+              <div class="rack-pairs">
+                <div class="rack-column" id="col-B-L"></div>
+                <div class="rack-column" id="col-B-R"></div>
+              </div>
+              <div class="arrow-indicator">&darr; 1-way</div>
+            </div>
+
+            <!-- Blok C -->
+            <div class="block">
+              <div class="block-header">C</div>
+              <div class="rack-pairs">
+                <div class="rack-column" id="col-C-L"></div>
+                <div class="rack-column" id="col-C-R"></div>
+              </div>
+              <div class="arrow-indicator">&darr; 1-way</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Bawah: Tabel Seluruh Barang Dipisah Per MCS -->
+    <div class="panel" style="background: var(--card-bg);">
+      <div class="panel-title">
+        <span>Daftar Stok Berdasarkan MCS</span>
+        <span id="totalSummaryBadge" style="font-size: 0.8rem; color: var(--text-muted);">Total Stok: 0 Pcs</span>
+      </div>
+
+      <!-- Tab Filter Navigasi MCS -->
+      <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchMcsTab('ALL', this)">Semua MCS</button>
+        <button class="tab-btn" onclick="switchMcsTab('LCIP-001', this)">LCIP-001</button>
+        <button class="tab-btn" onclick="switchMcsTab('LCIP-003', this)">LCIP-003</button>
+        <button class="tab-btn" onclick="switchMcsTab('LCIP-024', this)">LCIP-024</button>
+        <button class="tab-btn" onclick="switchMcsTab('IU-007', this)">IU-007</button>
+        <button class="tab-btn" onclick="switchMcsTab('IU-009', this)">IU-009</button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Lokasi</th>
+              <th>MCS</th>
+              <th>Warna</th>
+              <th>Size</th>
+              <th>QTY</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody">
+            <!-- Data dimasukkan secara dinamis via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const blocks = ['A', 'B', 'C'];
+    const sides = ['L', 'R'];
+    const totalRows = 15;
+
+    let activeMcsTab = 'ALL';
+    let warehouseData = JSON.parse(localStorage.getItem('warehouseStockData')) || {};
+
+    function initMap() {
+      const rowNumContainer = document.getElementById('rowNumbers');
+      for (let r = 1; r <= totalRows; r++) {
+        const div = document.createElement('div');
+        div.className = 'row-num';
+        div.textContent = r;
+        rowNumContainer.appendChild(div);
+      }
+
+      blocks.forEach(block => {
+        sides.forEach(side => {
+          const colContainer = document.getElementById(`col-${block}-${side}`);
+          for (let r = 1; r <= totalRows; r++) {
+            const rowCode = String(r).padStart(2, '0');
+            const locCode = `${block}-${side}-${rowCode}`;
+
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = `cell-${locCode}`;
+            cell.onclick = () => selectCell(block, side, r);
+            colContainer.appendChild(cell);
+          }
+        });
+      });
+
+      renderFilledCells();
+      renderInventoryTable();
+      updateLocation();
+    }
+
+    function renderFilledCells() {
+      blocks.forEach(block => {
+        sides.forEach(side => {
+          for (let r = 1; r <= totalRows; r++) {
+            const rowCode = String(r).padStart(2, '0');
+            const locCode = `${block}-${side}-${rowCode}`;
+            const cell = document.getElementById(`cell-${locCode}`);
+
+            if (cell) {
+              const data = warehouseData[locCode];
+              if (data && (data.mcs || data.qty || data.size || data.color)) {
+                cell.classList.add('filled');
+                cell.title = `${locCode} | MCS: ${data.mcs || '-'} | Warna: ${data.color || '-'} | Size: ${data.size || '-'} | QTY: ${data.qty || '0'}`;
+              } else {
+                cell.classList.remove('filled');
+                cell.title = `${locCode} (Kosong)`;
+              }
+            }
+          }
+        });
+      });
+    }
+
+    // Fungsi Mengganti Tab Filter MCS
+    function switchMcsTab(mcsType, btnElement) {
+      activeMcsTab = mcsType;
+      
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+
+      renderInventoryTable();
+    }
+
+    // Menampilkan stok di tabel sesuai tab MCS yang aktif
+    function renderInventoryTable() {
+      const tbody = document.getElementById('inventoryTableBody');
+      tbody.innerHTML = '';
+
+      const locations = Object.keys(warehouseData).sort();
+      let totalQty = 0;
+      let count = 0;
+
+      locations.forEach(locCode => {
+        const item = warehouseData[locCode];
+        if (item && (item.mcs || item.color || item.size || item.qty)) {
+          // Filter berdasarkan Tab MCS yang aktif
+          if (activeMcsTab === 'ALL' || item.mcs === activeMcsTab) {
+            count++;
+            const qtyNum = parseInt(item.qty) || 0;
+            totalQty += qtyNum;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><strong>${locCode}</strong></td>
+              <td>${item.mcs || '-'}</td>
+              <td>${item.color || '-'}</td>
+              <td>${item.size || '-'}</td>
+              <td><strong>${item.qty || '0'}</strong></td>
+              <td>
+                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          }
+        }
+      });
+
+      if (count === 0) {
+        const tabName = activeMcsTab === 'ALL' ? 'gudang' : `MCS ${activeMcsTab}`;
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Belum ada barang untuk ${tabName}.</td></tr>`;
+      }
+
+      const labelFilter = activeMcsTab === 'ALL' ? 'Keseluruhan' : activeMcsTab;
+      document.getElementById('totalSummaryBadge').textContent = `[Filter: ${labelFilter}] Total: ${count} Lokasi | Total QTY: ${totalQty} Pcs`;
+    }
+
+    function goToLocation(locCode) {
+      const parts = locCode.split('-');
+      if (parts.length === 3) {
+        document.getElementById('blockSelect').value = parts[0];
+        document.getElementById('sideSelect').value = parts[1];
+        document.getElementById('rowInput').value = parseInt(parts[2]);
+        updateLocation();
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function selectCell(block, side, row) {
+      document.getElementById('blockSelect').value = block;
+      document.getElementById('sideSelect').value = side;
+      document.getElementById('rowInput').value = row;
+      updateLocation();
+    }
+
+    function getCurrentLocationCode() {
+      const block = document.getElementById('blockSelect').value;
+      const side = document.getElementById('sideSelect').value;
+      let row = parseInt(document.getElementById('rowInput').value);
+
+      if (isNaN(row) || row < 1) row = 1;
+      if (row > 15) row = 15;
+      document.getElementById('rowInput').value = row;
+
+      const formattedRow = String(row).padStart(2, '0');
+      return `${block}-${side}-${formattedRow}`;
+    }
+
+    function updateLocation() {
+      const locCode = getCurrentLocationCode();
+
+      document.querySelectorAll('.cell.active').forEach(c => c.classList.remove('active'));
+      const activeCell = document.getElementById(`cell-${locCode}`);
+      if (activeCell) activeCell.classList.add('active');
+
+      document.getElementById('codeBadge').textContent = locCode;
+
+      if (warehouseData[locCode]) {
+        document.getElementById('mcsInput').value = warehouseData[locCode].mcs || '';
+        document.getElementById('colorInput').value = warehouseData[locCode].color || '';
+        document.getElementById('sizeInput').value = warehouseData[locCode].size || '';
+        document.getElementById('qtyInput').value = warehouseData[locCode].qty || '';
+      } else {
+        document.getElementById('mcsInput').value = '';
+        document.getElementById('colorInput').value = '';
+        document.getElementById('sizeInput').value = '';
+        document.getElementById('qtyInput').value = '';
+      }
+    }
+
+    function saveItemData() {
+      const locCode = getCurrentLocationCode();
+      const mcs = document.getElementById('mcsInput').value;
+      const color = document.getElementById('colorInput').value.trim();
+      const size = document.getElementById('sizeInput').value;
+      const qty = document.getElementById('qtyInput').value.trim();
+
+      if (!mcs && !color && !size && !qty) {
+        alert('Harap isi setidaknya salah satu data (MCS, Warna, Size, atau QTY)!');
+        return;
+      }
+
+      warehouseData[locCode] = { mcs, color, size, qty };
+      localStorage.setItem('warehouseStockData', JSON.stringify(warehouseData));
+
+      renderFilledCells();
+      renderInventoryTable();
+      updateLocation();
+      alert(`Data barang di lokasi ${locCode} berhasil disimpan!`);
+    }
+
+    function deleteItemData() {
+      const locCode = getCurrentLocationCode();
+      if (warehouseData[locCode]) {
+        if (confirm(`Yakin ingin mengosongkan lokasi ${locCode}?`)) {
+          delete warehouseData[locCode];
+          localStorage.setItem('warehouseStockData', JSON.stringify(warehouseData));
+          renderFilledCells();
+          renderInventoryTable();
+          updateLocation();
+        }
+      }
+    }
+
+    window.onload = initMap;
+  </script>
+</body>
+</html>
