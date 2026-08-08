@@ -403,19 +403,16 @@
             <input type="text" id="colorInput" placeholder="Contoh: Merah / Hitam" />
           </div>
 
+          <!-- Inputan Size S & Size L Terpisah (Satuan Kg) -->
           <div class="form-grid-2">
             <div class="input-group">
-              <label for="sizeInput">Size</label>
-              <select id="sizeInput">
-                <option value="">-- Pilih Size --</option>
-                <option value="Small">Small</option>
-                <option value="Large">Large</option>
-              </select>
+              <label for="qtySInput">QTY Size S (Kg)</label>
+              <input type="number" id="qtySInput" placeholder="0" min="0" step="any" />
             </div>
 
             <div class="input-group">
-              <label for="qtyInput">QTY</label>
-              <input type="number" id="qtyInput" placeholder="Contoh: 100" min="0" />
+              <label for="qtyLInput">QTY Size L (Kg)</label>
+              <input type="number" id="qtyLInput" placeholder="0" min="0" step="any" />
             </div>
           </div>
 
@@ -496,8 +493,9 @@
               <th>Lokasi</th>
               <th>MCS</th>
               <th>Warna</th>
-              <th>Size</th>
-              <th>QTY</th>
+              <th>QTY S</th>
+              <th>QTY L</th>
+              <th>Total QTY</th>
               <th>Aksi</th>
             </tr>
           </thead>
@@ -580,9 +578,13 @@
 
             if (cell) {
               const data = warehouseData[locCode];
-              if (data && (data.mcs || data.qty || data.size || data.color)) {
+              const qtyS = parseFloat(data?.qtyS) || 0;
+              const qtyL = parseFloat(data?.qtyL) || 0;
+              const totalQty = qtyS + qtyL;
+
+              if (data && (data.mcs || totalQty > 0 || data.color)) {
                 cell.classList.add('filled');
-                cell.title = `${locCode} | MCS: ${data.mcs || '-'} | Warna: ${data.color || '-'} | Size: ${data.size || '-'} | QTY: ${data.qty || '0'}`;
+                cell.title = `${locCode} | MCS: ${data.mcs || '-'} | Warna: ${data.color || '-'} | S: ${qtyS} Kg | L: ${qtyL} Kg | Total: ${totalQty} Kg`;
               } else {
                 cell.classList.remove('filled');
                 cell.title = `${locCode} (Kosong)`;
@@ -605,24 +607,28 @@
       tbody.innerHTML = '';
 
       const locations = Object.keys(warehouseData).sort();
-      let totalQty = 0;
+      let totalQtyGudang = 0;
       let count = 0;
 
       locations.forEach(locCode => {
         const item = warehouseData[locCode];
-        if (item && (item.mcs || item.color || item.size || item.qty)) {
+        const qtyS = parseFloat(item?.qtyS) || 0;
+        const qtyL = parseFloat(item?.qtyL) || 0;
+        const totalLocQty = qtyS + qtyL;
+
+        if (item && (item.mcs || item.color || totalLocQty > 0)) {
           if (activeMcsTab === 'ALL' || item.mcs === activeMcsTab) {
             count++;
-            const qtyNum = parseInt(item.qty) || 0;
-            totalQty += qtyNum;
+            totalQtyGudang += totalLocQty;
 
             const row = document.createElement('tr');
             row.innerHTML = `
               <td><strong>${locCode}</strong></td>
               <td>${item.mcs || '-'}</td>
               <td>${item.color || '-'}</td>
-              <td>${item.size || '-'}</td>
-              <td><strong>${item.qty || '0'}</strong></td>
+              <td>${qtyS} Kg</td>
+              <td>${qtyL} Kg</td>
+              <td><strong>${totalLocQty} Kg</strong></td>
               <td>
                 <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
               </td>
@@ -634,11 +640,11 @@
 
       if (count === 0) {
         const tabName = activeMcsTab === 'ALL' ? 'gudang' : `MCS ${activeMcsTab}`;
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Belum ada barang untuk ${tabName}.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-msg">Belum ada barang untuk ${tabName}.</td></tr>`;
       }
 
       const labelFilter = activeMcsTab === 'ALL' ? 'Keseluruhan' : activeMcsTab;
-      document.getElementById('totalSummaryBadge').textContent = `[Filter: ${labelFilter}] Total: ${count} Lokasi | Total QTY: ${totalQty} Pcs`;
+      document.getElementById('totalSummaryBadge').textContent = `[Filter: ${labelFilter}] Total: ${count} Lokasi | Total QTY: ${totalQtyGudang} Kg`;
     }
 
     window.goToLocation = function(locCode) {
@@ -684,13 +690,13 @@
       if (warehouseData[locCode]) {
         document.getElementById('mcsInput').value = warehouseData[locCode].mcs || '';
         document.getElementById('colorInput').value = warehouseData[locCode].color || '';
-        document.getElementById('sizeInput').value = warehouseData[locCode].size || '';
-        document.getElementById('qtyInput').value = warehouseData[locCode].qty || '';
+        document.getElementById('qtySInput').value = warehouseData[locCode].qtyS || '';
+        document.getElementById('qtyLInput').value = warehouseData[locCode].qtyL || '';
       } else {
         document.getElementById('mcsInput').value = '';
         document.getElementById('colorInput').value = '';
-        document.getElementById('sizeInput').value = '';
-        document.getElementById('qtyInput').value = '';
+        document.getElementById('qtySInput').value = '';
+        document.getElementById('qtyLInput').value = '';
       }
     };
 
@@ -698,18 +704,18 @@
       const locCode = getCurrentLocationCode();
       const mcs = document.getElementById('mcsInput').value;
       const color = document.getElementById('colorInput').value.trim();
-      const size = document.getElementById('sizeInput').value;
-      const qty = document.getElementById('qtyInput').value.trim();
+      const qtyS = document.getElementById('qtySInput').value.trim();
+      const qtyL = document.getElementById('qtyLInput').value.trim();
 
-      if (!mcs && !color && !size && !qty) {
-        alert('Harap isi setidaknya salah satu data (MCS, Warna, Size, atau QTY)!');
+      if (!mcs && !color && !qtyS && !qtyL) {
+        alert('Harap isi setidaknya salah satu data (MCS, Warna, QTY S, atau QTY L)!');
         return;
       }
 
       set(ref(database, 'warehouseStock/' + locCode), {
-        mcs, color, size, qty
+        mcs, color, qtyS, qtyL
       }).then(() => {
-        alert(`Data lokasi ${locCode} tersimpan ke Database Cloud!`);
+        alert(`Data lokasi ${locCode} tersimpan ke Database!`);
       }).catch((err) => {
         alert('Gagal menyimpan data: ' + err.message);
       });
