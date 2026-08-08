@@ -275,7 +275,6 @@
       font-size: 0.8rem;
     }
 
-    /* Tab Filter MCS */
     .tabs-container {
       display: flex;
       gap: 6px;
@@ -307,7 +306,6 @@
       border-color: var(--accent);
     }
 
-    /* CSS Tabel Inventory Summary */
     .table-container {
       width: 100%;
       overflow-x: auto;
@@ -348,17 +346,15 @@
 
   <div class="main-wrapper">
     <div class="container">
-      <!-- Panel Kiri: Form Detail & Input Barang -->
       <div>
         <h1>Sistem Lokasi & Stok Gudang</h1>
-        <p class="subtitle">Manajemen Informasi Barang Per Lokasi</p>
+        <p class="subtitle">Manajemen Informasi Barang Per Lokasi (Online Database)</p>
 
         <div class="panel">
           <div class="panel-title">
             <span>Detail Lokasi: <span class="badge" id="codeBadge">A-L-01</span></span>
           </div>
 
-          <!-- Pemilih Lokasi Manual -->
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
             <div class="input-group">
               <label>Blok</label>
@@ -385,10 +381,8 @@
 
           <hr style="border-color: var(--border); margin: 4px 0;" />
 
-          <!-- Form Keterangan Barang -->
           <div class="panel-title">Keterangan Barang</div>
 
-          <!-- MCS List Box -->
           <div class="input-group">
             <label for="mcsInput">MCS</label>
             <select id="mcsInput">
@@ -410,7 +404,6 @@
           </div>
 
           <div class="form-grid-2">
-            <!-- Size List Box -->
             <div class="input-group">
               <label for="sizeInput">Size</label>
               <select id="sizeInput">
@@ -433,7 +426,6 @@
         </div>
       </div>
 
-      <!-- Panel Kanan: Map Visual -->
       <div>
         <div class="panel">
           <div class="panel-title">
@@ -448,7 +440,6 @@
           <div class="warehouse-map">
             <div class="row-numbers" id="rowNumbers"></div>
 
-            <!-- Blok A -->
             <div class="block">
               <div class="block-header">A</div>
               <div class="rack-pairs">
@@ -458,7 +449,6 @@
               <div class="arrow-indicator">&darr; 1-way</div>
             </div>
 
-            <!-- Blok B -->
             <div class="block">
               <div class="block-header">B</div>
               <div class="rack-pairs">
@@ -468,7 +458,6 @@
               <div class="arrow-indicator">&darr; 1-way</div>
             </div>
 
-            <!-- Blok C -->
             <div class="block">
               <div class="block-header">C</div>
               <div class="rack-pairs">
@@ -482,14 +471,12 @@
       </div>
     </div>
 
-    <!-- Panel Bawah: Tabel Seluruh Barang Dipisah Per MCS -->
     <div class="panel" style="background: var(--card-bg);">
       <div class="panel-title">
         <span>Daftar Stok Berdasarkan MCS</span>
-        <span id="totalSummaryBadge" style="font-size: 0.8rem; color: var(--text-muted);">Total Stok: 0 Pcs</span>
+        <span id="totalSummaryBadge" style="font-size: 0.8rem; color: var(--text-muted);">Menghubungkan ke Database...</span>
       </div>
 
-      <!-- Tab Filter Navigasi MCS -->
       <div class="tabs-container">
         <button class="tab-btn active" onclick="switchMcsTab('ALL', this)">Semua MCS</button>
         <button class="tab-btn" onclick="switchMcsTab('RIP-024', this)">RIP-024</button>
@@ -515,20 +502,38 @@
             </tr>
           </thead>
           <tbody id="inventoryTableBody">
-            <!-- Data dimasukkan secara dinamis via JavaScript -->
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // Konfigurasi Firebase Milikmu
+    const firebaseConfig = {
+      apiKey: "AIzaSyAC6hkXMsuB2wpYKbKBoYfuifdQVFykdHY",
+      authDomain: "lokasi-system.firebaseapp.com",
+      databaseURL: "https://lokasi-system-default-rtdb.firebaseio.com",
+      projectId: "lokasi-system",
+      storageBucket: "lokasi-system.firebasestorage.app",
+      messagingSenderId: "106677338807",
+      appId: "1:106677338807:web:dcbeb6f34a387d4dba0332",
+      measurementId: "G-9QERTR8VYZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const stockRef = ref(database, 'warehouseStock');
+
     const blocks = ['A', 'B', 'C'];
     const sides = ['L', 'R'];
     const totalRows = 15;
 
     let activeMcsTab = 'ALL';
-    let warehouseData = JSON.parse(localStorage.getItem('warehouseStockData')) || {};
+    let warehouseData = {};
 
     function initMap() {
       const rowNumContainer = document.getElementById('rowNumbers');
@@ -555,9 +560,14 @@
         });
       });
 
-      renderFilledCells();
-      renderInventoryTable();
       updateLocation();
+
+      onValue(stockRef, (snapshot) => {
+        warehouseData = snapshot.val() || {};
+        renderFilledCells();
+        renderInventoryTable();
+        updateLocation();
+      });
     }
 
     function renderFilledCells() {
@@ -583,17 +593,13 @@
       });
     }
 
-    // Fungsi Mengganti Tab Filter MCS
-    function switchMcsTab(mcsType, btnElement) {
+    window.switchMcsTab = function(mcsType, btnElement) {
       activeMcsTab = mcsType;
-      
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       if (btnElement) btnElement.classList.add('active');
-
       renderInventoryTable();
-    }
+    };
 
-    // Menampilkan stok di tabel sesuai tab MCS yang aktif
     function renderInventoryTable() {
       const tbody = document.getElementById('inventoryTableBody');
       tbody.innerHTML = '';
@@ -605,7 +611,6 @@
       locations.forEach(locCode => {
         const item = warehouseData[locCode];
         if (item && (item.mcs || item.color || item.size || item.qty)) {
-          // Filter berdasarkan Tab MCS yang aktif
           if (activeMcsTab === 'ALL' || item.mcs === activeMcsTab) {
             count++;
             const qtyNum = parseInt(item.qty) || 0;
@@ -636,17 +641,16 @@
       document.getElementById('totalSummaryBadge').textContent = `[Filter: ${labelFilter}] Total: ${count} Lokasi | Total QTY: ${totalQty} Pcs`;
     }
 
-    function goToLocation(locCode) {
+    window.goToLocation = function(locCode) {
       const parts = locCode.split('-');
       if (parts.length === 3) {
         document.getElementById('blockSelect').value = parts[0];
         document.getElementById('sideSelect').value = parts[1];
         document.getElementById('rowInput').value = parseInt(parts[2]);
         updateLocation();
-
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
-    }
+    };
 
     function selectCell(block, side, row) {
       document.getElementById('blockSelect').value = block;
@@ -668,7 +672,7 @@
       return `${block}-${side}-${formattedRow}`;
     }
 
-    function updateLocation() {
+    window.updateLocation = function() {
       const locCode = getCurrentLocationCode();
 
       document.querySelectorAll('.cell.active').forEach(c => c.classList.remove('active'));
@@ -688,9 +692,9 @@
         document.getElementById('sizeInput').value = '';
         document.getElementById('qtyInput').value = '';
       }
-    }
+    };
 
-    function saveItemData() {
+    window.saveItemData = function() {
       const locCode = getCurrentLocationCode();
       const mcs = document.getElementById('mcsInput').value;
       const color = document.getElementById('colorInput').value.trim();
@@ -702,27 +706,25 @@
         return;
       }
 
-      warehouseData[locCode] = { mcs, color, size, qty };
-      localStorage.setItem('warehouseStockData', JSON.stringify(warehouseData));
+      set(ref(database, 'warehouseStock/' + locCode), {
+        mcs, color, size, qty
+      }).then(() => {
+        alert(`Data lokasi ${locCode} tersimpan ke Database Cloud!`);
+      }).catch((err) => {
+        alert('Gagal menyimpan data: ' + err.message);
+      });
+    };
 
-      renderFilledCells();
-      renderInventoryTable();
-      updateLocation();
-      alert(`Data barang di lokasi ${locCode} berhasil disimpan!`);
-    }
-
-    function deleteItemData() {
+    window.deleteItemData = function() {
       const locCode = getCurrentLocationCode();
       if (warehouseData[locCode]) {
         if (confirm(`Yakin ingin mengosongkan lokasi ${locCode}?`)) {
-          delete warehouseData[locCode];
-          localStorage.setItem('warehouseStockData', JSON.stringify(warehouseData));
-          renderFilledCells();
-          renderInventoryTable();
-          updateLocation();
+          remove(ref(database, 'warehouseStock/' + locCode)).then(() => {
+            alert(`Lokasi ${locCode} berhasil dikosongkan!`);
+          });
         }
       }
-    }
+    };
 
     window.onload = initMap;
   </script>
