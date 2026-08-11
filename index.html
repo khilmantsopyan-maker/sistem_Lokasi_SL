@@ -35,11 +35,40 @@
     }
 
     .main-wrapper {
-      max-width: 1080px;
+      max-width: 1100px;
       width: 100%;
       display: flex;
       flex-direction: column;
       gap: 20px;
+    }
+
+    .denah-switcher {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .switch-btn {
+      padding: 10px 24px;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .switch-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .switch-btn.active {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
     }
 
     .container {
@@ -54,7 +83,7 @@
       gap: 24px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 850px) {
       .container {
         grid-template-columns: 1fr;
       }
@@ -201,7 +230,19 @@
       border-radius: 8px;
       border: 1px solid var(--border);
       max-height: 580px;
-      overflow-y: auto;
+      overflow: auto;
+    }
+
+    .medium-map-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .medium-row-group {
+      display: flex;
+      gap: 12px;
     }
 
     .row-numbers {
@@ -211,7 +252,6 @@
       margin-top: 26px;
     }
 
-    /* Ukuran nomor baris disesuaikan dengan tinggi sel baru */
     .row-num {
       height: 32px;
       font-size: 0.8rem;
@@ -246,7 +286,6 @@
       gap: 4px;
     }
 
-    /* KOTAK DIPERLEBAR & DIPERTINGGI KE 32px */
     .cell {
       width: 32px;
       height: 32px;
@@ -347,9 +386,15 @@
 <body>
 
   <div class="main-wrapper">
+    <!-- Tombol Pemilih Denah Utama -->
+    <div class="denah-switcher">
+      <button class="switch-btn active" id="btnSwitchSmall" onclick="switchWarehouseView('SMALL')">Denah Small & Large</button>
+      <button class="switch-btn" id="btnSwitchMedium" onclick="switchWarehouseView('MEDIUM')">Denah Medium</button>
+    </div>
+
     <div class="container">
       <div>
-        <h1>Sistem Lokasi & Stok Gudang</h1>
+        <h1 id="viewTitle">Sistem Lokasi & Stok (Small & Large)</h1>
         <p class="subtitle">Manajemen Informasi Barang Per Lokasi (Online Database)</p>
 
         <div class="panel">
@@ -360,24 +405,20 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
             <div class="input-group">
               <label>Blok</label>
-              <select id="blockSelect" onchange="updateLocation()">
-                <option value="A">Blok A</option>
-                <option value="B">Blok B</option>
-                <option value="C">Blok C</option>
-              </select>
+              <select id="blockSelect" onchange="updateLocationUI()"></select>
             </div>
 
             <div class="input-group">
               <label>Sisi</label>
-              <select id="sideSelect" onchange="updateLocation()">
+              <select id="sideSelect" onchange="updateLocationUI()">
                 <option value="L">Kiri (L)</option>
                 <option value="R">Kanan (R)</option>
               </select>
             </div>
 
             <div class="input-group">
-              <label>Baris (1-15)</label>
-              <input type="number" id="rowInput" min="1" max="15" value="1" onchange="updateLocation()" />
+              <label>Baris</label>
+              <input type="number" id="rowInput" min="1" max="15" value="1" onchange="updateLocationUI()" />
             </div>
           </div>
 
@@ -385,39 +426,60 @@
 
           <div class="panel-title">Keterangan Barang</div>
 
-          <div class="input-group">
-            <label for="mcsInput">MCS</label>
-            <select id="mcsInput">
-              <option value="">-- Pilih MCS --</option>
-              <option value="RIP-024">RIP-024</option>
-              <option value="LCIP-001">LCIP-001</option>
-              <option value="LCIP-003">LCIP-003</option>
-              <option value="LCIP-024">LCIP-024</option>
-              <option value="IU-007">IU-007</option>
-              <option value="IU-009">IU-009</option>
-              <option value="CMP-014">CMP-014</option>
-              <option value="CMP-001">CMP-001</option>
-            </select>
-          </div>
-
-          <div class="input-group">
-            <label for="colorInput">Warna</label>
-            <input type="text" id="colorInput" placeholder="Contoh: Merah / Hitam" />
-          </div>
-
-          <div class="form-grid-2">
+          <!-- Form Khusus Small -->
+          <div id="formSmallContainer">
             <div class="input-group">
-              <label for="qtySInput">QTY Size S (Kg)</label>
-              <input type="number" id="qtySInput" placeholder="0" min="0" step="any" />
+              <label for="mcsInput">MCS</label>
+              <select id="mcsInput">
+                <option value="">-- Pilih MCS --</option>
+                <option value="RIP-024">RIP-024</option>
+                <option value="LCIP-001">LCIP-001</option>
+                <option value="LCIP-003">LCIP-003</option>
+                <option value="LCIP-024">LCIP-024</option>
+                <option value="IU-007">IU-007</option>
+                <option value="IU-009">IU-009</option>
+                <option value="CMP-014">CMP-014</option>
+                <option value="CMP-001">CMP-001</option>
+              </select>
             </div>
 
-            <div class="input-group">
-              <label for="qtyLInput">QTY Size L (Kg)</label>
-              <input type="number" id="qtyLInput" placeholder="0" min="0" step="any" />
+            <div class="input-group" style="margin-top: 8px;">
+              <label for="colorInputSmall">Warna</label>
+              <input type="text" id="colorInputSmall" placeholder="Contoh: Merah / Hitam" />
+            </div>
+
+            <div class="form-grid-2" style="margin-top: 8px;">
+              <div class="input-group">
+                <label for="qtySInput">QTY Size S (Kg)</label>
+                <input type="number" id="qtySInput" placeholder="0" min="0" step="any" />
+              </div>
+
+              <div class="input-group">
+                <label for="qtyLInput">QTY Size L (Kg)</label>
+                <input type="number" id="qtyLInput" placeholder="0" min="0" step="any" />
+              </div>
             </div>
           </div>
 
-          <div class="btn-group">
+          <!-- Form Khusus Medium -->
+          <div id="formMediumContainer" style="display: none;">
+            <div class="input-group">
+              <label for="modelInputMedium">Model</label>
+              <input type="text" id="modelInputMedium" placeholder="Masukkan Jenis Model" />
+            </div>
+
+            <div class="input-group" style="margin-top: 8px;">
+              <label for="colorInputMedium">Warna</label>
+              <input type="text" id="colorInputMedium" placeholder="Contoh: Merah / Putih" />
+            </div>
+
+            <div class="input-group" style="margin-top: 8px;">
+              <label for="qtyMediumInput">QTY Medium (Kg)</label>
+              <input type="number" id="qtyMediumInput" placeholder="0" min="0" step="any" />
+            </div>
+          </div>
+
+          <div class="btn-group" style="margin-top: 12px;">
             <button class="btn" onclick="saveItemData()">Simpan / Update Data</button>
             <button class="btn btn-danger" onclick="deleteItemData()">Kosongkan Lokasi</button>
           </div>
@@ -436,46 +498,57 @@
           </div>
 
           <div class="warehouse-map">
-            <div class="row-numbers" id="rowNumbers"></div>
-
-            <div class="block">
-              <div class="block-header">A</div>
-              <div class="rack-pairs">
-                <div class="rack-column" id="col-A-L"></div>
-                <div class="rack-column" id="col-A-R"></div>
+            <!-- Container Map Small -->
+            <div id="mapSmall" style="display: flex; gap: 16px;">
+              <div class="row-numbers" id="rowNumbersSmall"></div>
+              <div class="block">
+                <div class="block-header">A</div>
+                <div class="rack-pairs">
+                  <div class="rack-column" id="col-A-L"></div>
+                  <div class="rack-column" id="col-A-R"></div>
+                </div>
+                <div class="arrow-indicator">&darr; 1-way</div>
               </div>
-              <div class="arrow-indicator">&darr; 1-way</div>
+              <div class="block">
+                <div class="block-header">B</div>
+                <div class="rack-pairs">
+                  <div class="rack-column" id="col-B-L"></div>
+                  <div class="rack-column" id="col-B-R"></div>
+                </div>
+                <div class="arrow-indicator">&darr; 1-way</div>
+              </div>
+              <div class="block">
+                <div class="block-header">C</div>
+                <div class="rack-pairs">
+                  <div class="rack-column" id="col-C-L"></div>
+                  <div class="rack-column" id="col-C-R"></div>
+                </div>
+                <div class="arrow-indicator">&darr; 1-way</div>
+              </div>
             </div>
 
-            <div class="block">
-              <div class="block-header">B</div>
-              <div class="rack-pairs">
-                <div class="rack-column" id="col-B-L"></div>
-                <div class="rack-column" id="col-B-R"></div>
-              </div>
-              <div class="arrow-indicator">&darr; 1-way</div>
-            </div>
-
-            <div class="block">
-              <div class="block-header">C</div>
-              <div class="rack-pairs">
-                <div class="rack-column" id="col-C-L"></div>
-                <div class="rack-column" id="col-C-R"></div>
-              </div>
-              <div class="arrow-indicator">&darr; 1-way</div>
+            <!-- Container Map Medium -->
+            <div id="mapMedium" class="medium-map-grid" style="display: none;">
+              <!-- Row 1: Blok A - E (4 Baris) -->
+              <div class="medium-row-group" id="mediumGroup1"></div>
+              <!-- Row 2: Blok F - J (4 Baris) -->
+              <div class="medium-row-group" id="mediumGroup2"></div>
+              <!-- Row 3: Blok K - O (7 Baris) -->
+              <div class="medium-row-group" id="mediumGroup3"></div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Panel Tabel Stok -->
     <div class="panel" style="background: var(--card-bg);">
       <div class="panel-title">
-        <span>Daftar Stok Berdasarkan MCS</span>
+        <span id="summaryTitle">Daftar Stok Berdasarkan MCS</span>
         <span id="totalSummaryBadge" style="font-size: 0.8rem; color: var(--text-muted);">Menghubungkan ke Database...</span>
       </div>
 
-      <div class="tabs-container">
+      <div class="tabs-container" id="mcsTabsContainer">
         <button class="tab-btn active" onclick="switchMcsTab('ALL', this)">Semua MCS</button>
         <button class="tab-btn" onclick="switchMcsTab('RIP-024', this)">RIP-024</button>
         <button class="tab-btn" onclick="switchMcsTab('LCIP-001', this)">LCIP-001</button>
@@ -489,18 +562,8 @@
 
       <div class="table-container">
         <table>
-          <thead>
-            <tr>
-              <th>Lokasi</th>
-              <th>MCS</th>
-              <th>Warna</th>
-              <th>QTY S</th>
-              <th>QTY L</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="inventoryTableBody">
-          </tbody>
+          <thead id="inventoryTableHead"></thead>
+          <tbody id="inventoryTableBody"></tbody>
         </table>
       </div>
     </div>
@@ -523,128 +586,357 @@
 
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
-    const stockRef = ref(database, 'warehouseStock');
 
-    const blocks = ['A', 'B', 'C'];
-    const sides = ['L', 'R'];
-    const totalRows = 15;
+    const stockRefSmall = ref(database, 'warehouseStock');
+    const stockRefMedium = ref(database, 'warehouseStockMedium');
 
+    let currentWarehouseMode = 'SMALL'; // 'SMALL' atau 'MEDIUM'
     let activeMcsTab = 'ALL';
-    let warehouseData = {};
 
-    function initMap() {
-      const rowNumContainer = document.getElementById('rowNumbers');
-      for (let r = 1; r <= totalRows; r++) {
+    let warehouseDataSmall = {};
+    let warehouseDataMedium = {};
+
+    const smallBlocks = ['A', 'B', 'C'];
+    const mediumBlocksConfig = {
+      group1: { blocks: ['A', 'B', 'C', 'D', 'E'], rows: 4 },
+      group2: { blocks: ['F', 'G', 'H', 'I', 'J'], rows: 4 },
+      group3: { blocks: ['K', 'L', 'M', 'N', 'O'], rows: 7 }
+    };
+
+    function initMaps() {
+      // Build Small Map
+      const rowNumSmall = document.getElementById('rowNumbersSmall');
+      rowNumSmall.innerHTML = '';
+      for (let r = 1; r <= 15; r++) {
         const div = document.createElement('div');
         div.className = 'row-num';
         div.textContent = r;
-        rowNumContainer.appendChild(div);
+        rowNumSmall.appendChild(div);
       }
 
-      blocks.forEach(block => {
-        sides.forEach(side => {
+      smallBlocks.forEach(block => {
+        ['L', 'R'].forEach(side => {
           const colContainer = document.getElementById(`col-${block}-${side}`);
-          for (let r = 1; r <= totalRows; r++) {
-            const rowCode = String(r).padStart(2, '0');
-            const locCode = `${block}-${side}-${rowCode}`;
-
+          colContainer.innerHTML = '';
+          for (let r = 1; r <= 15; r++) {
+            const locCode = `${block}-${side}-${String(r).padStart(2, '0')}`;
             const cell = document.createElement('div');
             cell.className = 'cell';
-            cell.id = `cell-${locCode}`;
+            cell.id = `cell-SMALL-${locCode}`;
             cell.onclick = () => selectCell(block, side, r);
             colContainer.appendChild(cell);
           }
         });
       });
 
-      updateLocation();
+      // Build Medium Map
+      Object.keys(mediumBlocksConfig).forEach((grpKey, idx) => {
+        const groupObj = mediumBlocksConfig[grpKey];
+        const container = document.getElementById(`mediumGroup${idx + 1}`);
+        container.innerHTML = '';
 
-      onValue(stockRef, (snapshot) => {
-        warehouseData = snapshot.val() || {};
-        renderFilledCells();
-        renderInventoryTable();
-        updateLocation();
-      });
-    }
+        // Add Row Numbers
+        const rowNums = document.createElement('div');
+        rowNums.className = 'row-numbers';
+        for (let r = 1; r <= groupObj.rows; r++) {
+          const div = document.createElement('div');
+          div.className = 'row-num';
+          div.textContent = r;
+          rowNums.appendChild(div);
+        }
+        container.appendChild(rowNums);
 
-    function renderFilledCells() {
-      blocks.forEach(block => {
-        sides.forEach(side => {
-          for (let r = 1; r <= totalRows; r++) {
-            const rowCode = String(r).padStart(2, '0');
-            const locCode = `${block}-${side}-${rowCode}`;
-            const cell = document.getElementById(`cell-${locCode}`);
+        groupObj.blocks.forEach(block => {
+          const blockDiv = document.createElement('div');
+          blockDiv.className = 'block';
 
-            if (cell) {
-              const data = warehouseData[locCode];
-              const qtyS = parseFloat(data?.qtyS) || 0;
-              const qtyL = parseFloat(data?.qtyL) || 0;
-              const totalQty = qtyS + qtyL;
+          const header = document.createElement('div');
+          header.className = 'block-header';
+          header.textContent = block;
+          blockDiv.appendChild(header);
 
-              if (data && (data.mcs || totalQty > 0 || data.color)) {
-                cell.classList.add('filled');
-                cell.title = `${locCode} | MCS: ${data.mcs || '-'} | Warna: ${data.color || '-'} | S: ${qtyS} Kg | L: ${qtyL} Kg`;
-              } else {
-                cell.classList.remove('filled');
-                cell.title = `${locCode} (Kosong)`;
-              }
+          const rackPairs = document.createElement('div');
+          rackPairs.className = 'rack-pairs';
+
+          ['L', 'R'].forEach(side => {
+            const col = document.createElement('div');
+            col.className = 'rack-column';
+            for (let r = 1; r <= groupObj.rows; r++) {
+              const locCode = `${block}-${side}-${String(r).padStart(2, '0')}`;
+              const cell = document.createElement('div');
+              cell.className = 'cell';
+              cell.id = `cell-MEDIUM-${locCode}`;
+              cell.onclick = () => selectCell(block, side, r);
+              col.appendChild(cell);
             }
-          }
+            rackPairs.appendChild(col);
+          });
+
+          blockDiv.appendChild(rackPairs);
+          container.appendChild(blockDiv);
         });
       });
+
+      // Firebase Realtime Observers
+      onValue(stockRefSmall, (snapshot) => {
+        warehouseDataSmall = snapshot.val() || {};
+        renderFilledCells();
+        renderInventoryTable();
+      });
+
+      onValue(stockRefMedium, (snapshot) => {
+        warehouseDataMedium = snapshot.val() || {};
+        renderFilledCells();
+        renderInventoryTable();
+      });
+
+      switchWarehouseView('SMALL');
+    }
+
+    window.switchWarehouseView = function(mode) {
+      currentWarehouseMode = mode;
+
+      document.getElementById('btnSwitchSmall').classList.toggle('active', mode === 'SMALL');
+      document.getElementById('btnSwitchMedium').classList.toggle('active', mode === 'MEDIUM');
+
+      document.getElementById('mapSmall').style.display = mode === 'SMALL' ? 'flex' : 'none';
+      document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'flex' : 'none';
+
+      document.getElementById('formSmallContainer').style.display = mode === 'SMALL' ? 'block' : 'none';
+      document.getElementById('formMediumContainer').style.display = mode === 'MEDIUM' ? 'block' : 'none';
+
+      document.getElementById('mcsTabsContainer').style.display = mode === 'SMALL' ? 'flex' : 'none';
+
+      document.getElementById('viewTitle').textContent = mode === 'SMALL' 
+        ? 'Sistem Lokasi & Stok (Small & Large)' 
+        : 'Sistem Lokasi & Stok (Medium)';
+
+      document.getElementById('summaryTitle').textContent = mode === 'SMALL' 
+        ? 'Daftar Stok Berdasarkan MCS' 
+        : 'Daftar Stok Lokasi Medium (Model & Warna)';
+
+      // Update Select Block Options
+      const blockSelect = document.getElementById('blockSelect');
+      blockSelect.innerHTML = '';
+
+      const blocksToLoad = mode === 'SMALL' 
+        ? smallBlocks 
+        : ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'];
+
+      blocksToLoad.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b;
+        opt.textContent = `Blok ${b}`;
+        blockSelect.appendChild(opt);
+      });
+
+      document.getElementById('rowInput').value = 1;
+      updateLocationUI();
+      renderFilledCells();
+      renderInventoryTable();
+    };
+
+    function renderFilledCells() {
+      if (currentWarehouseMode === 'SMALL') {
+        smallBlocks.forEach(block => {
+          ['L', 'R'].forEach(side => {
+            for (let r = 1; r <= 15; r++) {
+              const locCode = `${block}-${side}-${String(r).padStart(2, '0')}`;
+              const cell = document.getElementById(`cell-SMALL-${locCode}`);
+              if (cell) {
+                const data = warehouseDataSmall[locCode];
+                const qtyS = parseFloat(data?.qtyS) || 0;
+                const qtyL = parseFloat(data?.qtyL) || 0;
+                if (data && (data.mcs || qtyS > 0 || qtyL > 0 || data.color)) {
+                  cell.classList.add('filled');
+                  cell.title = `${locCode} | MCS: ${data.mcs || '-'} | Warna: ${data.color || '-'} | S: ${qtyS} Kg | L: ${qtyL} Kg`;
+                } else {
+                  cell.classList.remove('filled');
+                  cell.title = `${locCode} (Kosong)`;
+                }
+              }
+            }
+          });
+        });
+      } else {
+        Object.keys(mediumBlocksConfig).forEach(grpKey => {
+          const groupObj = mediumBlocksConfig[grpKey];
+          groupObj.blocks.forEach(block => {
+            ['L', 'R'].forEach(side => {
+              for (let r = 1; r <= groupObj.rows; r++) {
+                const locCode = `${block}-${side}-${String(r).padStart(2, '0')}`;
+                const cell = document.getElementById(`cell-MEDIUM-${locCode}`);
+                if (cell) {
+                  const data = warehouseDataMedium[locCode];
+                  const qtyM = parseFloat(data?.qtyM) || 0;
+                  if (data && (data.model || data.color || qtyM > 0)) {
+                    cell.classList.add('filled');
+                    cell.title = `${locCode} | Model: ${data.model || '-'} | Warna: ${data.color || '-'} | QTY: ${qtyM} Kg`;
+                  } else {
+                    cell.classList.remove('filled');
+                    cell.title = `${locCode} (Kosong)`;
+                  }
+                }
+              }
+            });
+          });
+        });
+      }
+    }
+
+    function getMaxRowForBlock(block) {
+      if (currentWarehouseMode === 'SMALL') return 15;
+      if (['A','B','C','D','E','F','G','H','I','J'].includes(block)) return 4;
+      return 7;
+    }
+
+    window.updateLocationUI = function() {
+      const block = document.getElementById('blockSelect').value;
+      const side = document.getElementById('sideSelect').value;
+      let row = parseInt(document.getElementById('rowInput').value);
+
+      const maxRow = getMaxRowForBlock(block);
+      if (isNaN(row) || row < 1) row = 1;
+      if (row > maxRow) row = maxRow;
+      document.getElementById('rowInput').value = row;
+      document.getElementById('rowInput').max = maxRow;
+
+      const formattedRow = String(row).padStart(2, '0');
+      const locCode = `${block}-${side}-${formattedRow}`;
+
+      document.querySelectorAll('.cell.active').forEach(c => c.classList.remove('active'));
+      const activeCell = document.getElementById(`cell-${currentWarehouseMode}-${locCode}`);
+      if (activeCell) activeCell.classList.add('active');
+
+      document.getElementById('codeBadge').textContent = locCode;
+
+      if (currentWarehouseMode === 'SMALL') {
+        const item = warehouseDataSmall[locCode];
+        document.getElementById('mcsInput').value = item?.mcs || '';
+        document.getElementById('colorInputSmall').value = item?.color || '';
+        document.getElementById('qtySInput').value = item?.qtyS || '';
+        document.getElementById('qtyLInput').value = item?.qtyL || '';
+      } else {
+        const item = warehouseDataMedium[locCode];
+        document.getElementById('modelInputMedium').value = item?.model || '';
+        document.getElementById('colorInputMedium').value = item?.color || '';
+        document.getElementById('qtyMediumInput').value = item?.qtyM || '';
+      }
+    };
+
+    function selectCell(block, side, row) {
+      document.getElementById('blockSelect').value = block;
+      document.getElementById('sideSelect').value = side;
+      document.getElementById('rowInput').value = row;
+      updateLocationUI();
     }
 
     window.switchMcsTab = function(mcsType, btnElement) {
       activeMcsTab = mcsType;
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('#mcsTabsContainer .tab-btn').forEach(btn => btn.classList.remove('active'));
       if (btnElement) btnElement.classList.add('active');
       renderInventoryTable();
     };
 
     function renderInventoryTable() {
+      const thead = document.getElementById('inventoryTableHead');
       const tbody = document.getElementById('inventoryTableBody');
       tbody.innerHTML = '';
 
-      const locations = Object.keys(warehouseData).sort();
-      let totalQtySGudang = 0;
-      let totalQtyLGudang = 0;
-      let count = 0;
+      if (currentWarehouseMode === 'SMALL') {
+        thead.innerHTML = `
+          <tr>
+            <th>Lokasi</th>
+            <th>MCS</th>
+            <th>Warna</th>
+            <th>QTY S</th>
+            <th>QTY L</th>
+            <th>Aksi</th>
+          </tr>
+        `;
 
-      locations.forEach(locCode => {
-        const item = warehouseData[locCode];
-        const qtyS = parseFloat(item?.qtyS) || 0;
-        const qtyL = parseFloat(item?.qtyL) || 0;
-        const totalLocQty = qtyS + qtyL;
+        const locations = Object.keys(warehouseDataSmall).sort();
+        let totalQtySGudang = 0;
+        let totalQtyLGudang = 0;
+        let count = 0;
 
-        if (item && (item.mcs || item.color || totalLocQty > 0)) {
-          if (activeMcsTab === 'ALL' || item.mcs === activeMcsTab) {
+        locations.forEach(locCode => {
+          const item = warehouseDataSmall[locCode];
+          const qtyS = parseFloat(item?.qtyS) || 0;
+          const qtyL = parseFloat(item?.qtyL) || 0;
+
+          if (item && (item.mcs || item.color || qtyS > 0 || qtyL > 0)) {
+            if (activeMcsTab === 'ALL' || item.mcs === activeMcsTab) {
+              count++;
+              totalQtySGudang += qtyS;
+              totalQtyLGudang += qtyL;
+
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td><strong>${locCode}</strong></td>
+                <td>${item.mcs || '-'}</td>
+                <td>${item.color || '-'}</td>
+                <td>${qtyS} Kg</td>
+                <td>${qtyL} Kg</td>
+                <td>
+                  <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
+                </td>
+              `;
+              tbody.appendChild(row);
+            }
+          }
+        });
+
+        if (count === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Belum ada barang terdata.</td></tr>`;
+        }
+
+        const labelFilter = activeMcsTab === 'ALL' ? 'Keseluruhan' : activeMcsTab;
+        document.getElementById('totalSummaryBadge').textContent = `[Filter: ${labelFilter}] ${count} Lokasi | S: ${totalQtySGudang} Kg | L: ${totalQtyLGudang} Kg`;
+
+      } else {
+        thead.innerHTML = `
+          <tr>
+            <th>Lokasi</th>
+            <th>Model</th>
+            <th>Warna</th>
+            <th>QTY Medium</th>
+            <th>Aksi</th>
+          </tr>
+        `;
+
+        const locations = Object.keys(warehouseDataMedium).sort();
+        let totalQtyMedium = 0;
+        let count = 0;
+
+        locations.forEach(locCode => {
+          const item = warehouseDataMedium[locCode];
+          const qtyM = parseFloat(item?.qtyM) || 0;
+
+          if (item && (item.model || item.color || qtyM > 0)) {
             count++;
-            totalQtySGudang += qtyS;
-            totalQtyLGudang += qtyL;
+            totalQtyMedium += qtyM;
 
             const row = document.createElement('tr');
             row.innerHTML = `
               <td><strong>${locCode}</strong></td>
-              <td>${item.mcs || '-'}</td>
+              <td>${item.model || '-'}</td>
               <td>${item.color || '-'}</td>
-              <td>${qtyS} Kg</td>
-              <td>${qtyL} Kg</td>
+              <td>${qtyM} Kg</td>
               <td>
                 <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
               </td>
             `;
             tbody.appendChild(row);
           }
+        });
+
+        if (count === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" class="empty-msg">Belum ada barang Medium terdata.</td></tr>`;
         }
-      });
 
-      if (count === 0) {
-        const tabName = activeMcsTab === 'ALL' ? 'gudang' : `MCS ${activeMcsTab}`;
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Belum ada barang untuk ${tabName}.</td></tr>`;
+        document.getElementById('totalSummaryBadge').textContent = `Total: ${count} Lokasi | QTY Medium: ${totalQtyMedium} Kg`;
       }
-
-      const labelFilter = activeMcsTab === 'ALL' ? 'Keseluruhan' : activeMcsTab;
-      document.getElementById('totalSummaryBadge').textContent = `[Filter: ${labelFilter}] ${count} Lokasi | S: ${totalQtySGudang} Kg | L: ${totalQtyLGudang} Kg`;
     }
 
     window.goToLocation = function(locCode) {
@@ -653,86 +945,69 @@
         document.getElementById('blockSelect').value = parts[0];
         document.getElementById('sideSelect').value = parts[1];
         document.getElementById('rowInput').value = parseInt(parts[2]);
-        updateLocation();
+        updateLocationUI();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     };
-
-    function selectCell(block, side, row) {
-      document.getElementById('blockSelect').value = block;
-      document.getElementById('sideSelect').value = side;
-      document.getElementById('rowInput').value = row;
-      updateLocation();
-    }
 
     function getCurrentLocationCode() {
       const block = document.getElementById('blockSelect').value;
       const side = document.getElementById('sideSelect').value;
       let row = parseInt(document.getElementById('rowInput').value);
 
+      const maxRow = getMaxRowForBlock(block);
       if (isNaN(row) || row < 1) row = 1;
-      if (row > 15) row = 15;
-      document.getElementById('rowInput').value = row;
+      if (row > maxRow) row = maxRow;
 
-      const formattedRow = String(row).padStart(2, '0');
-      return `${block}-${side}-${formattedRow}`;
+      return `${block}-${side}-${String(row).padStart(2, '0')}`;
     }
-
-    window.updateLocation = function() {
-      const locCode = getCurrentLocationCode();
-
-      document.querySelectorAll('.cell.active').forEach(c => c.classList.remove('active'));
-      const activeCell = document.getElementById(`cell-${locCode}`);
-      if (activeCell) activeCell.classList.add('active');
-
-      document.getElementById('codeBadge').textContent = locCode;
-
-      if (warehouseData[locCode]) {
-        document.getElementById('mcsInput').value = warehouseData[locCode].mcs || '';
-        document.getElementById('colorInput').value = warehouseData[locCode].color || '';
-        document.getElementById('qtySInput').value = warehouseData[locCode].qtyS || '';
-        document.getElementById('qtyLInput').value = warehouseData[locCode].qtyL || '';
-      } else {
-        document.getElementById('mcsInput').value = '';
-        document.getElementById('colorInput').value = '';
-        document.getElementById('qtySInput').value = '';
-        document.getElementById('qtyLInput').value = '';
-      }
-    };
 
     window.saveItemData = function() {
       const locCode = getCurrentLocationCode();
-      const mcs = document.getElementById('mcsInput').value;
-      const color = document.getElementById('colorInput').value.trim();
-      const qtyS = document.getElementById('qtySInput').value.trim();
-      const qtyL = document.getElementById('qtyLInput').value.trim();
 
-      if (!mcs && !color && !qtyS && !qtyL) {
-        alert('Harap isi setidaknya salah satu data (MCS, Warna, QTY S, atau QTY L)!');
-        return;
+      if (currentWarehouseMode === 'SMALL') {
+        const mcs = document.getElementById('mcsInput').value;
+        const color = document.getElementById('colorInputSmall').value.trim();
+        const qtyS = document.getElementById('qtySInput').value.trim();
+        const qtyL = document.getElementById('qtyLInput').value.trim();
+
+        if (!mcs && !color && !qtyS && !qtyL) {
+          alert('Harap isi data barang Small!');
+          return;
+        }
+
+        set(ref(database, 'warehouseStock/' + locCode), {
+          mcs, color, qtyS, qtyL
+        }).then(() => alert(`Data lokasi Small ${locCode} tersimpan!`));
+
+      } else {
+        const model = document.getElementById('modelInputMedium').value.trim();
+        const color = document.getElementById('colorInputMedium').value.trim();
+        const qtyM = document.getElementById('qtyMediumInput').value.trim();
+
+        if (!model && !color && !qtyM) {
+          alert('Harap isi data barang Medium!');
+          return;
+        }
+
+        set(ref(database, 'warehouseStockMedium/' + locCode), {
+          model, color, qtyM
+        }).then(() => alert(`Data lokasi Medium ${locCode} tersimpan!`));
       }
-
-      set(ref(database, 'warehouseStock/' + locCode), {
-        mcs, color, qtyS, qtyL
-      }).then(() => {
-        alert(`Data lokasi ${locCode} tersimpan ke Database!`);
-      }).catch((err) => {
-        alert('Gagal menyimpan data: ' + err.message);
-      });
     };
 
     window.deleteItemData = function() {
       const locCode = getCurrentLocationCode();
-      if (warehouseData[locCode]) {
-        if (confirm(`Yakin ingin mengosongkan lokasi ${locCode}?`)) {
-          remove(ref(database, 'warehouseStock/' + locCode)).then(() => {
-            alert(`Lokasi ${locCode} berhasil dikosongkan!`);
-          });
-        }
+      const dbPath = currentWarehouseMode === 'SMALL' 
+        ? 'warehouseStock/' + locCode 
+        : 'warehouseStockMedium/' + locCode;
+
+      if (confirm(`Kosongkan lokasi ${locCode}?`)) {
+        remove(ref(database, dbPath)).then(() => alert(`Lokasi ${locCode} dikosongkan!`));
       }
     };
 
-    window.onload = initMap;
+    window.onload = initMaps;
   </script>
 </body>
 </html>
