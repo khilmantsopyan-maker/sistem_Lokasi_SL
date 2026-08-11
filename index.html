@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistem Lokasi & Stok Gudang</title>
+  <title>Sistem Lokasi & Stok Gudang Premium</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --accent: #38bdf8;
-      --accent-hover: #0284c7;
+      --bg: #090d16;
+      --card-bg: rgba(30, 41, 59, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-blue: #38bdf8;
+      --accent-green: #22c55e;
+      --accent-yellow: #eab308;
+      --accent-purple: #a855f7;
+      --accent-red: #ef4444;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --border: #334155;
@@ -18,84 +22,193 @@
       --cell-untested: #ef4444;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-    .main-wrapper { max-width: 1200px; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #090d16 70%); }
+    .main-wrapper { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
     
-    .denah-switcher { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .switch-btn { padding: 10px 20px; background: var(--card-bg); border: 2px solid var(--border); color: var(--text-muted); border-radius: 8px; font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
-    .switch-btn:hover { border-color: var(--accent); color: var(--text); }
-    .switch-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+    /* Top Header Bar */
+    .top-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); padding: 14px 20px; border-radius: 16px; border: 1px solid var(--card-border); box-shadow: 0 10px 30px rgba(0,0,0,0.4); flex-wrap: wrap; gap: 10px; }
+    .top-title { display: flex; flex-direction: column; }
+    .top-title h1 { font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .top-title p { font-size: 0.78rem; color: var(--text-muted); }
 
-    .container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; width: 100%; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .nav-btn-main { padding: 8px 16px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 6px; }
+    .nav-btn-main:hover { background: var(--accent-blue); color: #090d16; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+
+    /* LAYOUT TAMPILAN UTAMA (MIMIC SCREENSHOT) */
+    .master-layout-container { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 16px; transition: all 0.4s ease; }
+    
+    /* Top Zone */
+    .zone-top { 
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.85), rgba(21, 128, 61, 0.9)); 
+      border: 1px solid rgba(134, 239, 172, 0.4);
+      border-radius: 14px; 
+      padding: 24px; 
+      text-align: center; 
+      font-weight: 700; 
+      font-size: 1.1rem; 
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(34, 197, 94, 0.25);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .zone-top:hover, .zone-top:active { transform: translateY(-3px) scale(1.005); box-shadow: 0 12px 30px rgba(34, 197, 94, 0.4); }
+
+    /* Main Grid Layout (Left, Middle, Right) */
+    .master-grid-bottom { display: grid; grid-template-columns: 1fr 1.5fr 1.2fr; gap: 16px; }
+    @media (max-width: 820px) {
+      .master-grid-bottom { grid-template-columns: 1fr; }
+    }
+
+    /* Left Zone */
+    .zone-left { 
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.85), rgba(21, 128, 61, 0.9)); 
+      border: 1px solid rgba(134, 239, 172, 0.4);
+      border-radius: 14px; 
+      padding: 24px; 
+      text-align: center; 
+      font-weight: 700; 
+      font-size: 1rem; 
+      color: #ffffff; 
+      cursor: pointer;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      min-height: 220px;
+      box-shadow: 0 8px 25px rgba(34, 197, 94, 0.25);
+      transition: all 0.3s ease;
+    }
+    .zone-left:hover, .zone-left:active { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(34, 197, 94, 0.4); }
+
+    /* Middle Section */
+    .zone-middle { display: flex; flex-direction: column; gap: 12px; }
+    
+    .zone-untested { 
+      background: linear-gradient(135deg, rgba(134, 239, 172, 0.75), rgba(74, 222, 128, 0.85)); 
+      border: 1px solid rgba(220, 252, 231, 0.6);
+      border-radius: 14px; 
+      padding: 18px; 
+      text-align: center; 
+      font-weight: 700; 
+      font-size: 0.95rem; 
+      color: #064e3b; 
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(74, 222, 128, 0.2);
+      transition: all 0.3s ease;
+    }
+    .zone-untested:hover, .zone-untested:active { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(74, 222, 128, 0.35); }
+
+    .machines-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; flex: 1; }
+    .machine-card { 
+      background: linear-gradient(180deg, #3b82f6, #1d4ed8); 
+      border: 1px solid rgba(147, 197, 253, 0.3);
+      border-radius: 12px; 
+      padding: 16px 8px; 
+      text-align: center; 
+      font-weight: 700; 
+      color: #ffffff; 
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+      user-select: none;
+    }
+
+    /* Right Zone */
+    .zone-right { 
+      background: linear-gradient(135deg, #eab308, #ca8a04); 
+      border: 1px solid rgba(254, 240, 138, 0.4);
+      border-radius: 14px; 
+      padding: 24px; 
+      text-align: center; 
+      font-weight: 700; 
+      font-size: 1.05rem; 
+      color: #422006; 
+      cursor: pointer;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      min-height: 220px;
+      box-shadow: 0 8px 25px rgba(234, 179, 8, 0.25);
+      transition: all 0.3s ease;
+    }
+    .zone-right:hover, .zone-right:active { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(234, 179, 8, 0.4); }
+
+    .touch-hint { font-size: 0.75rem; font-weight: normal; opacity: 0.85; margin-top: 4px; display: block; }
+
+    /* DETAIL VIEW (FORM, DENAH & SUMMARY) */
+    .detail-view-container { display: flex; flex-direction: column; gap: 20px; }
+
+    .denah-switcher { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .switch-btn { padding: 8px 16px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border); color: var(--text-muted); border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .switch-btn:hover { border-color: var(--accent-blue); color: var(--text); }
+    .switch-btn.active { background: var(--accent-blue); color: #090d16; border-color: var(--accent-blue); font-weight: 700; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); }
+
+    .container { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     @media (max-width: 850px) { .container { grid-template-columns: 1fr; } }
 
-    h1 { font-size: 1.4rem; margin-bottom: 4px; color: var(--accent); }
-    p.subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px; }
-
-    .panel { background: #0f172a; padding: 16px; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
-    .panel-title { font-size: 0.95rem; font-weight: 600; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .panel { background: rgba(15, 23, 42, 0.6); padding: 16px; border-radius: 14px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+    .panel-title { font-size: 0.95rem; font-weight: 600; color: var(--accent-blue); border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
     .input-group { display: flex; flex-direction: column; gap: 4px; }
     .input-group label { font-size: 0.75rem; color: var(--text-muted); }
-    select, input[type="number"], input[type="text"] { width: 100%; padding: 8px 12px; background: #1e293b; border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; outline: none; }
-    select:focus, input:focus { border-color: var(--accent); }
+    select, input[type="number"], input[type="text"] { width: 100%; padding: 10px 12px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+    select:focus, input:focus { border-color: var(--accent-blue); box-shadow: 0 0 8px rgba(56, 189, 248, 0.2); }
 
     .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .btn-group { display: flex; gap: 8px; }
-    .btn { flex: 1; padding: 10px; background: var(--accent); color: #0f172a; border: none; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; }
-    .btn:hover { background: var(--accent-hover); color: #fff; }
+    .btn { flex: 1; padding: 10px; background: var(--accent-blue); color: #090d16; border: none; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+    .btn:hover { background: #0284c7; color: #fff; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3); }
     .btn-sm { padding: 4px 8px; font-size: 0.75rem; }
     .btn-secondary { background: #334155; color: #f8fafc; }
     .btn-secondary:hover { background: #475569; }
-    .btn-danger { background: #ef4444; color: #fff; }
-    .btn-danger:hover { background: #dc2626; }
+    .btn-danger { background: var(--accent-red); color: #fff; }
+    .btn-danger:hover { background: #dc2626; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
 
-    .badge { display: inline-block; background: var(--accent); color: #0f172a; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-family: monospace; font-size: 1rem; }
-    .legend { display: flex; gap: 12px; font-size: 0.75rem; color: var(--text-muted); }
+    .badge { display: inline-block; background: var(--accent-blue); color: #090d16; padding: 2px 8px; border-radius: 6px; font-weight: bold; font-family: monospace; font-size: 0.95rem; }
+    .legend { display: flex; gap: 10px; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; }
     .legend-item { display: flex; align-items: center; gap: 4px; }
-    .legend-box { width: 12px; height: 12px; border-radius: 2px; }
+    .legend-box { width: 12px; height: 12px; border-radius: 3px; }
 
-    .warehouse-map { display: flex; flex-direction: column; align-items: center; gap: 16px; background: #1e293b; padding: 16px; border-radius: 8px; border: 1px solid var(--border); max-height: 580px; overflow: auto; }
+    .warehouse-map { display: flex; flex-direction: column; align-items: center; gap: 16px; background: rgba(15, 23, 42, 0.8); padding: 16px; border-radius: 12px; border: 1px solid var(--border); max-height: 520px; overflow: auto; }
     .medium-map-grid { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
     .medium-row-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
     .row-numbers { display: flex; flex-direction: column; gap: 4px; margin-top: 26px; }
-    .row-num { height: 32px; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; width: 20px; }
+    .row-num { height: 32px; font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; width: 20px; }
 
     .block { display: flex; flex-direction: column; align-items: center; transition: all 0.3s ease; }
     .block.hidden-block { display: none !important; }
-    .block-header { font-weight: bold; color: var(--accent); margin-bottom: 6px; font-size: 1rem; }
+    .block-header { font-weight: bold; color: var(--accent-blue); margin-bottom: 6px; font-size: 0.95rem; }
     .rack-pairs { display: flex; gap: 4px; }
     .rack-column { display: flex; flex-direction: column; gap: 4px; }
 
-    .cell { width: 32px; height: 32px; background: #0f172a; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: all 0.2s; }
-    .cell:hover { border-color: var(--accent); }
-    .cell.filled { background: var(--cell-filled); }
-    .cell.untested-filled { background: var(--cell-untested); }
-    .cell.active { background: var(--cell-active) !important; border-color: #fff; }
+    .cell { width: 32px; height: 32px; background: #0f172a; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+    .cell:hover { border-color: var(--accent-blue); transform: scale(1.08); z-index: 2; }
+    .cell.filled { background: var(--cell-filled); box-shadow: 0 0 6px rgba(16, 185, 129, 0.4); }
+    .cell.untested-filled { background: var(--cell-untested); box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
+    .cell.active { background: var(--cell-active) !important; border-color: #fff; box-shadow: 0 0 10px rgba(245, 158, 11, 0.8); transform: scale(1.1); z-index: 3; }
 
-    .arrow-indicator { text-align: center; margin-top: 8px; color: var(--accent); font-size: 0.85rem; }
+    .arrow-indicator { text-align: center; margin-top: 8px; color: var(--accent-blue); font-size: 0.8rem; }
 
-    .filter-bar {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 10px;
-      margin-top: 8px;
-    }
-    @media (max-width: 600px) {
-      .filter-bar { grid-template-columns: 1fr; }
-    }
+    .filter-bar { display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-top: 8px; }
+    @media (max-width: 600px) { .filter-bar { grid-template-columns: 1fr; } }
 
     .tabs-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
-    .tab-btn { padding: 6px 12px; background: #1e293b; border: 1px solid var(--border); color: var(--text-muted); border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; white-space: nowrap; transition: all 0.2s; }
-    .tab-btn:hover { border-color: var(--accent); color: var(--text); }
-    .tab-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+    .tab-btn { padding: 6px 12px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; cursor: pointer; font-size: 0.78rem; font-weight: 600; white-space: nowrap; transition: all 0.2s; }
+    .tab-btn:hover { border-color: var(--accent-blue); color: var(--text); }
+    .tab-btn.active { background: var(--accent-blue); color: #090d16; border-color: var(--accent-blue); font-weight: 700; }
 
-    .table-container { width: 100%; max-height: 350px; overflow-y: auto; margin-top: 8px; border: 1px solid var(--border); border-radius: 6px; }
-    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
-    th, td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
-    th { background: #1e293b; color: var(--accent); font-weight: 600; position: sticky; top: 0; z-index: 2; }
-    tr:hover { background: rgba(56, 189, 248, 0.05); }
+    .table-container { width: 100%; max-height: 320px; overflow-y: auto; margin-top: 8px; border: 1px solid var(--border); border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    th { background: rgba(30, 41, 59, 0.95); color: var(--accent-blue); font-weight: 600; position: sticky; top: 0; z-index: 2; backdrop-filter: blur(4px); }
+    tr:hover { background: rgba(56, 189, 248, 0.08); }
     .empty-msg { text-align: center; color: var(--text-muted); padding: 16px; font-style: italic; }
 
     .map-controls { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -104,244 +217,321 @@
 <body>
 
   <div class="main-wrapper">
-    <div class="denah-switcher">
-      <button class="switch-btn active" id="btnSwitchSmall" onclick="switchWarehouseView('SMALL')">Denah Small & Large</button>
-      <button class="switch-btn" id="btnSwitchMedium" onclick="switchWarehouseView('MEDIUM')">Denah Medium (Pass / Tested)</button>
-      <button class="switch-btn" id="btnSwitchUntested" onclick="switchWarehouseView('UNTESTED')">Medium Belum Slab</button>
+    <!-- Top Header Navigation -->
+    <div class="top-bar">
+      <div class="top-title">
+        <h1>Gudang Compound System</h1>
+        <p>Interactive Location & Stock Database</p>
+      </div>
+      <button class="nav-btn-main" id="btnMainLayoutNav" onclick="showMasterLayoutView()">
+        <span>&larr;</span> Layout Utama Gudang
+      </button>
     </div>
 
-    <div class="container">
-      <div>
-        <h1 id="viewTitle">Sistem Lokasi & Stok (Small & Large)</h1>
-        <p class="subtitle">Manajemen Informasi Barang Per Lokasi (Online Database)</p>
+    <!-- TAMPILAN 1: VISUAL DENAH UTAMA INTERAKTIF (MODAL/HOMEPAGE LAYOUT) -->
+    <div id="masterLayoutView" class="master-layout-container">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.9rem; font-weight: 600; color: var(--accent-blue);">Peta Visual Area Gudang</span>
+        <span style="font-size: 0.75rem; color: var(--text-muted);">Sentuh area untuk membuka lokasi</span>
+      </div>
 
-        <div class="panel">
-          <div class="panel-title">
-            <span>Detail Lokasi: <span class="badge" id="codeBadge">A-L-01</span></span>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-            <div class="input-group">
-              <label id="blockLabel">Blok / Line</label>
-              <select id="blockSelect" onchange="updateLocationUI()"></select>
-            </div>
-
-            <div class="input-group">
-              <label>Sisi</label>
-              <select id="sideSelect" onchange="updateLocationUI()">
-                <option value="L">Kiri (L)</option>
-                <option value="R">Kanan (R)</option>
-              </select>
-            </div>
-
-            <div class="input-group">
-              <label>Baris</label>
-              <input type="number" id="rowInput" min="1" max="15" value="1" onchange="updateLocationUI()" />
-            </div>
-          </div>
-
-          <hr style="border-color: var(--border); margin: 4px 0;" />
-
-          <div class="panel-title">Keterangan Barang</div>
-
-          <!-- Form Small -->
-          <div id="formSmallContainer">
-            <div class="input-group">
-              <label for="mcsInput">MCS</label>
-              <select id="mcsInput">
-                <option value="">-- Pilih MCS --</option>
-                <option value="RIP-024">RIP-024</option>
-                <option value="LCIP-001">LCIP-001</option>
-                <option value="LCIP-003">LCIP-003</option>
-                <option value="LCIP-024">LCIP-024</option>
-                <option value="IU-007">IU-007</option>
-                <option value="IU-009">IU-009</option>
-                <option value="CMP-014">CMP-014</option>
-                <option value="CMP-001">CMP-001</option>
-              </select>
-            </div>
-            <div class="input-group" style="margin-top: 8px;">
-              <label for="colorInputSmall">Warna</label>
-              <input type="text" id="colorInputSmall" placeholder="Contoh: Merah / Hitam" />
-            </div>
-            <div class="form-grid-2" style="margin-top: 8px;">
-              <div class="input-group">
-                <label for="qtySInput">QTY Size S (Kg)</label>
-                <input type="number" id="qtySInput" placeholder="0" min="0" step="any" />
-              </div>
-              <div class="input-group">
-                <label for="qtyLInput">QTY Size L (Kg)</label>
-                <input type="number" id="qtyLInput" placeholder="0" min="0" step="any" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Form Medium -->
-          <div id="formMediumContainer" style="display: none;">
-            <div class="input-group">
-              <label for="modelInputMedium">Model</label>
-              <input type="text" id="modelInputMedium" placeholder="Masukkan Jenis Model" />
-            </div>
-            <div class="input-group" style="margin-top: 8px;">
-              <label for="colorInputMedium">Warna</label>
-              <input type="text" id="colorInputMedium" placeholder="Contoh: Merah / Putih" />
-            </div>
-            <div class="input-group" style="margin-top: 8px;">
-              <label for="qtyMediumInput">QTY Medium (Kg)</label>
-              <input type="number" id="qtyMediumInput" placeholder="0" min="0" step="any" />
-            </div>
-          </div>
-
-          <!-- Form Untested -->
-          <div id="formUntestedContainer" style="display: none;">
-            <div class="input-group">
-              <label for="modelInputUntested">Model / Nama Barang</label>
-              <input type="text" id="modelInputUntested" placeholder="Contoh: Model Medium A" />
-            </div>
-            <div class="input-group" style="margin-top: 8px;">
-              <label for="batchInputUntested">No. Batch / Lot</label>
-              <input type="text" id="batchInputUntested" placeholder="Contoh: BATCH-2026-01" />
-            </div>
-            <div class="input-group" style="margin-top: 8px;">
-              <label for="colorInputUntested">Warna</label>
-              <input type="text" id="colorInputUntested" placeholder="Contoh: Hitam" />
-            </div>
-            <div class="input-group" style="margin-top: 8px;">
-              <label for="qtyUntestedInput">QTY (Kg)</label>
-              <input type="number" id="qtyUntestedInput" placeholder="0" min="0" step="any" />
-            </div>
-          </div>
-
-          <div class="btn-group" style="margin-top: 12px;">
-            <button class="btn" onclick="saveItemData()">Simpan / Update Data</button>
-            <button class="btn btn-danger" onclick="deleteItemData()">Kosongkan Lokasi</button>
-          </div>
+      <!-- Area Atas: Compound Medium Pass -->
+      <div class="zone-top" onclick="openZone('MEDIUM')">
+        <div>
+          Area Compound Medium Sudah Test / Pass
+          <span class="touch-hint">👆 Sentuh untuk lihat Stok & Denah A - Z</span>
         </div>
       </div>
 
-      <div>
-        <div class="panel">
-          <div class="panel-title">
-            <span>Denah Gudang</span>
-            <div class="legend">
-              <div class="legend-item"><div class="legend-box" style="background:#0f172a; border:1px solid #334155;"></div> Kosong</div>
-              <div class="legend-item" id="legendPass"><div class="legend-box" style="background:var(--cell-filled);"></div> Terisi</div>
-              <div class="legend-item" id="legendUntested" style="display:none;"><div class="legend-box" style="background:var(--cell-untested);"></div> Belum Slab</div>
-              <div class="legend-item"><div class="legend-box" style="background:var(--cell-active);"></div> Dipilih</div>
-            </div>
+      <!-- Grid Bawah (Kiri, Tengah, Kanan) -->
+      <div class="master-grid-bottom">
+        <!-- Area Kiri: Compound Medium Pass -->
+        <div class="zone-left" onclick="openZone('MEDIUM')">
+          <div>
+            Area Compound Medium<br>Sudah Test / Pass
+            <span class="touch-hint">👆 Sentuh area</span>
+          </div>
+        </div>
+
+        <!-- Area Tengah: Belum Test & Mesin 1, 2, 3 -->
+        <div class="zone-middle">
+          <div class="zone-untested" onclick="openZone('UNTESTED')">
+            Compound Medium Belum Test
+            <span class="touch-hint" style="color: #047857;">👆 Sentuh area Line 1 - Line 3</span>
           </div>
 
-          <div class="warehouse-map">
-            <div class="map-controls" id="mediumMapControls" style="display: none;">
-              <span style="font-size: 0.8rem; color: var(--text-muted);" id="focusStatusLabel">Tampilan: Fokus 1 Blok</span>
-              <button class="btn btn-sm btn-secondary" id="toggleBlockViewBtn" onclick="toggleMediumBlockFocus()">Tampilkan Semua Blok</button>
+          <div class="machines-row">
+            <div class="machine-card">
+              <span>Mesin</span>
+              <span style="font-size: 1.2rem; margin-top: 4px;">1</span>
             </div>
-
-            <!-- Map Small -->
-            <div id="mapSmall" style="display: flex; gap: 16px;">
-              <div class="row-numbers" id="rowNumbersSmall"></div>
-              <div class="block">
-                <div class="block-header">A</div>
-                <div class="rack-pairs">
-                  <div class="rack-column" id="col-A-L"></div>
-                  <div class="rack-column" id="col-A-R"></div>
-                </div>
-                <div class="arrow-indicator">&darr; 1-way</div>
-              </div>
-              <div class="block">
-                <div class="block-header">B</div>
-                <div class="rack-pairs">
-                  <div class="rack-column" id="col-B-L"></div>
-                  <div class="rack-column" id="col-B-R"></div>
-                </div>
-                <div class="arrow-indicator">&darr; 1-way</div>
-              </div>
-              <div class="block">
-                <div class="block-header">C</div>
-                <div class="rack-pairs">
-                  <div class="rack-column" id="col-C-L"></div>
-                  <div class="rack-column" id="col-C-R"></div>
-                </div>
-                <div class="arrow-indicator">&darr; 1-way</div>
-              </div>
+            <div class="machine-card">
+              <span>Mesin</span>
+              <span style="font-size: 1.2rem; margin-top: 4px;">2</span>
             </div>
-
-            <!-- Map Medium (Grup A sampai Z) -->
-            <div id="mapMedium" class="medium-map-grid" style="display: none;">
-              <div class="medium-row-group" id="mediumGroup1"></div>
-              <div class="medium-row-group" id="mediumGroup2"></div>
-              <div class="medium-row-group" id="mediumGroup3"></div>
-              <div class="medium-row-group" id="mediumGroup4"></div>
-              <div class="medium-row-group" id="mediumGroup5"></div>
+            <div class="machine-card">
+              <span>Mesin</span>
+              <span style="font-size: 1.2rem; margin-top: 4px;">3</span>
             </div>
+          </div>
+        </div>
 
-            <!-- Map Untested -->
-            <div id="mapUntested" style="display: none;">
-              <div style="display: flex; gap: 24px;">
-                <div class="row-numbers" id="rowNumbersUntested"></div>
-                <div class="block">
-                  <div class="block-header">Line 1</div>
-                  <div class="rack-pairs">
-                    <div class="rack-column" id="col-LINE1-L"></div>
-                    <div class="rack-column" id="col-LINE1-R"></div>
-                  </div>
-                </div>
-                <div class="block">
-                  <div class="block-header">Line 2</div>
-                  <div class="rack-pairs">
-                    <div class="rack-column" id="col-LINE2-L"></div>
-                    <div class="rack-column" id="col-LINE2-R"></div>
-                  </div>
-                </div>
-                <div class="block">
-                  <div class="block-header">Line 3</div>
-                  <div class="rack-pairs">
-                    <div class="rack-column" id="col-LINE3-L"></div>
-                    <div class="rack-column" id="col-LINE3-R"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+        <!-- Area Kanan: Small & Large -->
+        <div class="zone-right" onclick="openZone('SMALL')">
+          <div>
+            Area Compound<br>Small dan Large
+            <span class="touch-hint" style="color: #713f12;">👆 Sentuh area Blok A - C</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Panel Summary & Filter Stok -->
-    <div class="panel" style="background: var(--card-bg);">
-      <div class="panel-title">
-        <span id="summaryTitle">Daftar Stok Summary</span>
-        <span id="totalSummaryBadge" style="font-size: 0.8rem; color: var(--text-muted);">Memuat data...</span>
+    <!-- TAMPILAN 2: DETAIL FORM, DENAH KOTAK, & TABEL SUMMARY -->
+    <div id="detailView" class="detail-view-container" style="display: none;">
+      
+      <!-- Quick Switcher Tabs -->
+      <div class="denah-switcher">
+        <button class="switch-btn" id="btnSwitchSmall" onclick="switchWarehouseView('SMALL')">Small & Large</button>
+        <button class="switch-btn" id="btnSwitchMedium" onclick="switchWarehouseView('MEDIUM')">Medium (Pass)</button>
+        <button class="switch-btn" id="btnSwitchUntested" onclick="switchWarehouseView('UNTESTED')">Medium Belum Test</button>
       </div>
 
-      <!-- Tab khusus Small -->
-      <div class="tabs-container" id="mcsTabsContainer">
-        <button class="tab-btn active" onclick="switchMcsTab('ALL', this)">Semua MCS</button>
-        <button class="tab-btn" onclick="switchMcsTab('RIP-024', this)">RIP-024</button>
-        <button class="tab-btn" onclick="switchMcsTab('LCIP-001', this)">LCIP-001</button>
-        <button class="tab-btn" onclick="switchMcsTab('LCIP-003', this)">LCIP-003</button>
-        <button class="tab-btn" onclick="switchMcsTab('LCIP-024', this)">LCIP-024</button>
-        <button class="tab-btn" onclick="switchMcsTab('IU-007', this)">IU-007</button>
-        <button class="tab-btn" onclick="switchMcsTab('IU-009', this)">IU-009</button>
-        <button class="tab-btn" onclick="switchMcsTab('CMP-014', this)">CMP-014</button>
-        <button class="tab-btn" onclick="switchMcsTab('CMP-001', this)">CMP-001</button>
+      <div class="container">
+        <!-- Panel Form Input -->
+        <div>
+          <h1 id="viewTitle" style="font-size: 1.2rem; color: var(--accent-blue); margin-bottom: 2px;">Sistem Lokasi</h1>
+          <p class="subtitle" style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px;">Manajemen Data Per Lokasi Gudang</p>
+
+          <div class="panel">
+            <div class="panel-title">
+              <span>Detail Lokasi: <span class="badge" id="codeBadge">A-L-01</span></span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+              <div class="input-group">
+                <label id="blockLabel">Blok / Line</label>
+                <select id="blockSelect" onchange="updateLocationUI()"></select>
+              </div>
+
+              <div class="input-group">
+                <label>Sisi</label>
+                <select id="sideSelect" onchange="updateLocationUI()">
+                  <option value="L">Kiri (L)</option>
+                  <option value="R">Kanan (R)</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label>Baris</label>
+                <input type="number" id="rowInput" min="1" max="15" value="1" onchange="updateLocationUI()" />
+              </div>
+            </div>
+
+            <hr style="border-color: var(--border); margin: 2px 0;" />
+
+            <div class="panel-title">Keterangan Barang</div>
+
+            <!-- Form Small -->
+            <div id="formSmallContainer">
+              <div class="input-group">
+                <label for="mcsInput">MCS</label>
+                <select id="mcsInput">
+                  <option value="">-- Pilih MCS --</option>
+                  <option value="RIP-024">RIP-024</option>
+                  <option value="LCIP-001">LCIP-001</option>
+                  <option value="LCIP-003">LCIP-003</option>
+                  <option value="LCIP-024">LCIP-024</option>
+                  <option value="IU-007">IU-007</option>
+                  <option value="IU-009">IU-009</option>
+                  <option value="CMP-014">CMP-014</option>
+                  <option value="CMP-001">CMP-001</option>
+                </select>
+              </div>
+              <div class="input-group" style="margin-top: 8px;">
+                <label for="colorInputSmall">Warna</label>
+                <input type="text" id="colorInputSmall" placeholder="Contoh: Merah / Hitam" />
+              </div>
+              <div class="form-grid-2" style="margin-top: 8px;">
+                <div class="input-group">
+                  <label for="qtySInput">QTY Size S (Kg)</label>
+                  <input type="number" id="qtySInput" placeholder="0" min="0" step="any" />
+                </div>
+                <div class="input-group">
+                  <label for="qtyLInput">QTY Size L (Kg)</label>
+                  <input type="number" id="qtyLInput" placeholder="0" min="0" step="any" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Medium -->
+            <div id="formMediumContainer" style="display: none;">
+              <div class="input-group">
+                <label for="modelInputMedium">Model</label>
+                <input type="text" id="modelInputMedium" placeholder="Masukkan Jenis Model" />
+              </div>
+              <div class="input-group" style="margin-top: 8px;">
+                <label for="colorInputMedium">Warna</label>
+                <input type="text" id="colorInputMedium" placeholder="Contoh: Merah / Putih" />
+              </div>
+              <div class="input-group" style="margin-top: 8px;">
+                <label for="qtyMediumInput">QTY Medium (Kg)</label>
+                <input type="number" id="qtyMediumInput" placeholder="0" min="0" step="any" />
+              </div>
+            </div>
+
+            <!-- Form Untested -->
+            <div id="formUntestedContainer" style="display: none;">
+              <div class="input-group">
+                <label for="modelInputUntested">Model / Nama Barang</label>
+                <input type="text" id="modelInputUntested" placeholder="Contoh: Model Medium A" />
+              </div>
+              <div class="input-group" style="margin-top: 8px;">
+                <label for="batchInputUntested">No. Batch / Lot</label>
+                <input type="text" id="batchInputUntested" placeholder="Contoh: BATCH-2026-01" />
+              </div>
+              <div class="input-group" style="margin-top: 8px;">
+                <label for="colorInputUntested">Warna</label>
+                <input type="text" id="colorInputUntested" placeholder="Contoh: Hitam" />
+              </div>
+              <div class="input-group" style="margin-top: 8px;">
+                <label for="qtyUntestedInput">QTY (Kg)</label>
+                <input type="number" id="qtyUntestedInput" placeholder="0" min="0" step="any" />
+              </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 8px;">
+              <button class="btn" onclick="saveItemData()">Simpan Data</button>
+              <button class="btn btn-danger" onclick="deleteItemData()">Kosongkan</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel Denah Kotak -->
+        <div>
+          <div class="panel">
+            <div class="panel-title">
+              <span>Denah Grid</span>
+              <div class="legend">
+                <div class="legend-item"><div class="legend-box" style="background:#0f172a; border:1px solid #334155;"></div> Kosong</div>
+                <div class="legend-item" id="legendPass"><div class="legend-box" style="background:var(--cell-filled);"></div> Terisi</div>
+                <div class="legend-item" id="legendUntested" style="display:none;"><div class="legend-box" style="background:var(--cell-untested);"></div> Belum Test</div>
+                <div class="legend-item"><div class="legend-box" style="background:var(--cell-active);"></div> Dipilih</div>
+              </div>
+            </div>
+
+            <div class="warehouse-map">
+              <div class="map-controls" id="mediumMapControls" style="display: none;">
+                <span style="font-size: 0.78rem; color: var(--text-muted);" id="focusStatusLabel">Fokus 1 Blok</span>
+                <button class="btn btn-sm btn-secondary" id="toggleBlockViewBtn" onclick="toggleMediumBlockFocus()">Tampilkan Semua A-Z</button>
+              </div>
+
+              <!-- Map Small -->
+              <div id="mapSmall" style="display: flex; gap: 16px;">
+                <div class="row-numbers" id="rowNumbersSmall"></div>
+                <div class="block">
+                  <div class="block-header">A</div>
+                  <div class="rack-pairs">
+                    <div class="rack-column" id="col-A-L"></div>
+                    <div class="rack-column" id="col-A-R"></div>
+                  </div>
+                  <div class="arrow-indicator">&darr; 1-way</div>
+                </div>
+                <div class="block">
+                  <div class="block-header">B</div>
+                  <div class="rack-pairs">
+                    <div class="rack-column" id="col-B-L"></div>
+                    <div class="rack-column" id="col-B-R"></div>
+                  </div>
+                  <div class="arrow-indicator">&darr; 1-way</div>
+                </div>
+                <div class="block">
+                  <div class="block-header">C</div>
+                  <div class="rack-pairs">
+                    <div class="rack-column" id="col-C-L"></div>
+                    <div class="rack-column" id="col-C-R"></div>
+                  </div>
+                  <div class="arrow-indicator">&darr; 1-way</div>
+                </div>
+              </div>
+
+              <!-- Map Medium A-Z -->
+              <div id="mapMedium" class="medium-map-grid" style="display: none;">
+                <div class="medium-row-group" id="mediumGroup1"></div>
+                <div class="medium-row-group" id="mediumGroup2"></div>
+                <div class="medium-row-group" id="mediumGroup3"></div>
+                <div class="medium-row-group" id="mediumGroup4"></div>
+                <div class="medium-row-group" id="mediumGroup5"></div>
+              </div>
+
+              <!-- Map Untested -->
+              <div id="mapUntested" style="display: none;">
+                <div style="display: flex; gap: 20px;">
+                  <div class="row-numbers" id="rowNumbersUntested"></div>
+                  <div class="block">
+                    <div class="block-header">Line 1</div>
+                    <div class="rack-pairs">
+                      <div class="rack-column" id="col-LINE1-L"></div>
+                      <div class="rack-column" id="col-LINE1-R"></div>
+                    </div>
+                  </div>
+                  <div class="block">
+                    <div class="block-header">Line 2</div>
+                    <div class="rack-pairs">
+                      <div class="rack-column" id="col-LINE2-L"></div>
+                      <div class="rack-column" id="col-LINE2-R"></div>
+                    </div>
+                  </div>
+                  <div class="block">
+                    <div class="block-header">Line 3</div>
+                    <div class="rack-pairs">
+                      <div class="rack-column" id="col-LINE3-L"></div>
+                      <div class="rack-column" id="col-LINE3-R"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
       </div>
 
-      <!-- Control Bar Pencarian & Dropdown Filter -->
-      <div class="filter-bar">
-        <input type="text" id="summarySearchInput" placeholder="Cari Kode Lokasi, Model, Warna, Batch..." oninput="renderInventoryTable()" />
-        <select id="summaryBlockFilter" onchange="renderInventoryTable()">
-          <option value="ALL">-- Semua Blok/Line --</option>
-        </select>
+      <!-- Panel Summary & Filter Stok -->
+      <div class="panel" style="background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px);">
+        <div class="panel-title">
+          <span id="summaryTitle">Daftar Stok Summary</span>
+          <span id="totalSummaryBadge" style="font-size: 0.8rem; color: var(--text-muted);">Memuat data...</span>
+        </div>
+
+        <!-- Tab khusus Small -->
+        <div class="tabs-container" id="mcsTabsContainer">
+          <button class="tab-btn active" onclick="switchMcsTab('ALL', this)">Semua MCS</button>
+          <button class="tab-btn" onclick="switchMcsTab('RIP-024', this)">RIP-024</button>
+          <button class="tab-btn" onclick="switchMcsTab('LCIP-001', this)">LCIP-001</button>
+          <button class="tab-btn" onclick="switchMcsTab('LCIP-003', this)">LCIP-003</button>
+          <button class="tab-btn" onclick="switchMcsTab('LCIP-024', this)">LCIP-024</button>
+          <button class="tab-btn" onclick="switchMcsTab('IU-007', this)">IU-007</button>
+          <button class="tab-btn" onclick="switchMcsTab('IU-009', this)">IU-009</button>
+          <button class="tab-btn" onclick="switchMcsTab('CMP-014', this)">CMP-014</button>
+          <button class="tab-btn" onclick="switchMcsTab('CMP-001', this)">CMP-001</button>
+        </div>
+
+        <!-- Filter Search Bar & Select Dropdown -->
+        <div class="filter-bar">
+          <input type="text" id="summarySearchInput" placeholder="Cari Kode Lokasi, Model, Warna, Batch..." oninput="renderInventoryTable()" />
+          <select id="summaryBlockFilter" onchange="renderInventoryTable()">
+            <option value="ALL">-- Semua Blok/Line --</option>
+          </select>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead id="inventoryTableHead"></thead>
+            <tbody id="inventoryTableBody"></tbody>
+          </table>
+        </div>
       </div>
 
-      <div class="table-container">
-        <table>
-          <thead id="inventoryTableHead"></thead>
-          <tbody id="inventoryTableBody"></tbody>
-        </table>
-      </div>
     </div>
   </div>
 
@@ -376,11 +566,8 @@
     let warehouseDataUntested = {};
 
     const smallBlocks = ['A', 'B', 'C'];
-    
-    // Daftar Lengkap Blok A sampai Z
     const allAZBlocks = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
 
-    // Pengelompokan Medium A-Z ke dalam 5 grup baris denah
     const mediumBlocksConfig = {
       group1: { blocks: ['A', 'B', 'C', 'D', 'E'], rows: 4 },
       group2: { blocks: ['F', 'G', 'H', 'I', 'J'], rows: 4 },
@@ -389,6 +576,20 @@
       group5: { blocks: ['U', 'V', 'W', 'X', 'Y', 'Z'], rows: 7 }
     };
     const untestedLines = ['LINE1', 'LINE2', 'LINE3'];
+
+    // Navigation Layout Control
+    window.showMasterLayoutView = function() {
+      document.getElementById('masterLayoutView').style.display = 'flex';
+      document.getElementById('detailView').style.display = 'none';
+      document.getElementById('btnMainLayoutNav').style.display = 'none';
+    };
+
+    window.openZone = function(mode) {
+      document.getElementById('masterLayoutView').style.display = 'none';
+      document.getElementById('detailView').style.display = 'flex';
+      document.getElementById('btnMainLayoutNav').style.display = 'flex';
+      switchWarehouseView(mode);
+    };
 
     function initMaps() {
       // Small Map Init
@@ -416,7 +617,7 @@
         });
       });
 
-      // Medium Map Init (Blok A-Z)
+      // Medium Map Init
       Object.keys(mediumBlocksConfig).forEach((grpKey, idx) => {
         const groupObj = mediumBlocksConfig[grpKey];
         const container = document.getElementById(`mediumGroup${idx + 1}`);
@@ -430,12 +631,12 @@
 
           const header = document.createElement('div');
           header.className = 'block-header';
-          header.textContent = block; // Cukup huruf "A", "B", dst. tanpa kata "Blok"
+          header.textContent = block;
           blockDiv.appendChild(header);
 
           const innerContainer = document.createElement('div');
           innerContainer.style.display = 'flex';
-          innerContainer.style.gap = '8px';
+          innerContainer.style.gap = '6px';
 
           const rowNums = document.createElement('div');
           rowNums.className = 'row-numbers';
@@ -496,7 +697,7 @@
         });
       });
 
-      // Firebase Sync
+      // Firebase Realtime Listeners
       onValue(stockRefSmall, (snapshot) => {
         warehouseDataSmall = snapshot.val() || {};
         renderFilledCells();
@@ -515,7 +716,7 @@
         renderInventoryTable();
       });
 
-      switchWarehouseView('SMALL');
+      showMasterLayoutView();
     }
 
     window.toggleMediumBlockFocus = function() {
@@ -524,11 +725,11 @@
       const label = document.getElementById('focusStatusLabel');
 
       if (isMediumFocusMode) {
-        btn.textContent = 'Tampilkan Semua Blok';
-        label.textContent = 'Tampilan: Fokus 1 Blok';
+        btn.textContent = 'Tampilkan Semua A-Z';
+        label.textContent = 'Fokus 1 Blok';
       } else {
         btn.textContent = 'Fokus 1 Blok';
-        label.textContent = 'Tampilan: Semua Blok';
+        label.textContent = 'Tampilan Semua A-Z';
       }
       applyMediumBlockFilter();
     };
@@ -579,13 +780,13 @@
       summaryBlockFilter.innerHTML = '<option value="ALL">-- Semua Blok/Line --</option>';
 
       if (mode === 'SMALL') {
-        document.getElementById('viewTitle').textContent = 'Sistem Lokasi & Stok (Small & Large)';
-        document.getElementById('summaryTitle').textContent = 'Daftar Stok Berdasarkan MCS';
+        document.getElementById('viewTitle').textContent = 'Compound Small & Large';
+        document.getElementById('summaryTitle').textContent = 'Daftar Stok Small & Large';
         document.getElementById('blockLabel').textContent = 'Blok';
         smallBlocks.forEach(b => {
           const opt = document.createElement('option');
           opt.value = b;
-          opt.textContent = b; // Hanya huruf "A"
+          opt.textContent = b;
           blockSelect.appendChild(opt);
 
           const optF = document.createElement('option');
@@ -594,13 +795,13 @@
           summaryBlockFilter.appendChild(optF);
         });
       } else if (mode === 'MEDIUM') {
-        document.getElementById('viewTitle').textContent = 'Sistem Lokasi & Stok (Medium - Pass)';
-        document.getElementById('summaryTitle').textContent = 'Daftar Stok Lokasi Medium (Model & Warna)';
+        document.getElementById('viewTitle').textContent = 'Compound Medium (Pass)';
+        document.getElementById('summaryTitle').textContent = 'Daftar Stok Medium (Pass)';
         document.getElementById('blockLabel').textContent = 'Blok';
         allAZBlocks.forEach(b => {
           const opt = document.createElement('option');
           opt.value = b;
-          opt.textContent = b; // Cukup "A", "B", dst.
+          opt.textContent = b;
           blockSelect.appendChild(opt);
 
           const optF = document.createElement('option');
@@ -609,8 +810,8 @@
           summaryBlockFilter.appendChild(optF);
         });
       } else {
-        document.getElementById('viewTitle').textContent = 'Denah Medium Belum Slab';
-        document.getElementById('summaryTitle').textContent = 'Daftar Stok Medium Belum Slab';
+        document.getElementById('viewTitle').textContent = 'Compound Medium Belum Test';
+        document.getElementById('summaryTitle').textContent = 'Daftar Stok Medium Belum Test';
         document.getElementById('blockLabel').textContent = 'Line';
         untestedLines.forEach(l => {
           const opt = document.createElement('option');
@@ -703,7 +904,7 @@
       if (currentWarehouseMode === 'SMALL') return 15;
       if (currentWarehouseMode === 'UNTESTED') return 7;
       if (['A','B','C','D','E','F','G','H','I','J'].includes(block)) return 4;
-      return 7; // Blok K sampai Z memiliki 7 baris
+      return 7;
     }
 
     window.updateLocationUI = function() {
@@ -813,7 +1014,7 @@
               <td>${qtyS} Kg</td>
               <td>${qtyL} Kg</td>
               <td>
-                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
+                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat</button>
               </td>
             `;
             tbody.appendChild(row);
@@ -824,7 +1025,7 @@
           tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Tidak ada data ditemukan.</td></tr>`;
         }
 
-        document.getElementById('totalSummaryBadge').textContent = `Menampilkan ${count} Lokasi | S: ${totalQtySGudang} Kg | L: ${totalQtyLGudang} Kg`;
+        document.getElementById('totalSummaryBadge').textContent = `${count} Lokasi | S: ${totalQtySGudang} Kg | L: ${totalQtyLGudang} Kg`;
 
       } else if (currentWarehouseMode === 'MEDIUM') {
         thead.innerHTML = `
@@ -863,7 +1064,7 @@
               <td>${item.color || '-'}</td>
               <td>${qtyM} Kg</td>
               <td>
-                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
+                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat</button>
               </td>
             `;
             tbody.appendChild(row);
@@ -871,10 +1072,10 @@
         });
 
         if (count === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="empty-msg">Tidak ada data Medium ditemukan.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" class="empty-msg">Tidak ada data ditemukan.</td></tr>`;
         }
 
-        document.getElementById('totalSummaryBadge').textContent = `Menampilkan ${count} Lokasi | Total QTY: ${totalQtyMedium} Kg`;
+        document.getElementById('totalSummaryBadge').textContent = `${count} Lokasi | QTY: ${totalQtyMedium} Kg`;
 
       } else {
         thead.innerHTML = `
@@ -916,7 +1117,7 @@
               <td>${item.color || '-'}</td>
               <td>${qty} Kg</td>
               <td>
-                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
+                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat</button>
               </td>
             `;
             tbody.appendChild(row);
@@ -927,7 +1128,7 @@
           tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Tidak ada data ditemukan.</td></tr>`;
         }
 
-        document.getElementById('totalSummaryBadge').textContent = `Menampilkan ${count} Lokasi | Total QTY: ${totalQtyUntested} Kg`;
+        document.getElementById('totalSummaryBadge').textContent = `${count} Lokasi | QTY: ${totalQtyUntested} Kg`;
       }
     };
 
@@ -993,13 +1194,13 @@
         const qty = document.getElementById('qtyUntestedInput').value.trim();
 
         if (!model && !batch && !color && !qty) {
-          alert('Harap isi data barang Medium Belum Slab!');
+          alert('Harap isi data barang Belum Test!');
           return;
         }
 
         set(ref(database, 'warehouseStockUntested/' + locCode), {
           model, batch, color, qty
-        }).then(() => alert(`Data ${locCode} (Belum Slab) tersimpan!`));
+        }).then(() => alert(`Data ${locCode} (Belum Test) tersimpan!`));
       }
     };
 
