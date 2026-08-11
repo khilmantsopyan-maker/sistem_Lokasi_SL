@@ -3,7 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#090d16" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Gudang Compound" />
   <title>Sistem Lokasi & Stok Gudang Premium</title>
+
+  <!-- Web App Manifest via Data URI -->
+  <link rel="manifest" href='data:application/json,{
+    "name": "Sistem Lokasi Gudang Compound",
+    "short_name": "GudangApp",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#090d16",
+    "theme_color": "#090d16",
+    "icons": [
+      {
+        "src": "https://cdn-icons-png.flaticon.com/512/2897/2897785.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "https://cdn-icons-png.flaticon.com/512/2897/2897785.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }' />
+
   <style>
     :root {
       --bg: #090d16;
@@ -32,8 +59,13 @@
     .top-title h1 { font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .top-title p { font-size: 0.78rem; color: var(--text-muted); }
 
+    .header-actions { display: flex; gap: 8px; align-items: center; }
+
     .nav-btn-main { padding: 8px 16px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 6px; }
     .nav-btn-main:hover { background: var(--accent-blue); color: #090d16; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
+
+    .install-btn { padding: 8px 16px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; color: #ffffff; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
+    .install-btn:hover { background: #16a34a; transform: translateY(-1px); }
 
     /* LAYOUT TAMPILAN UTAMA (MIMIC SCREENSHOT) */
     .master-layout-container { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 16px; transition: all 0.4s ease; }
@@ -223,12 +255,17 @@
         <h1>Gudang Compound System</h1>
         <p>Interactive Location & Stock Database</p>
       </div>
-      <button class="nav-btn-main" id="btnMainLayoutNav" onclick="showMasterLayoutView()">
-        <span>&larr;</span> Layout Utama Gudang
-      </button>
+      <div class="header-actions">
+        <button class="install-btn" id="pwaInstallBtn">
+          <span>📲</span> Install Aplikasi
+        </button>
+        <button class="nav-btn-main" id="btnMainLayoutNav" onclick="showMasterLayoutView()">
+          <span>&larr;</span> Layout Utama Gudang
+        </button>
+      </div>
     </div>
 
-    <!-- TAMPILAN 1: VISUAL DENAH UTAMA INTERAKTIF (MODAL/HOMEPAGE LAYOUT) -->
+    <!-- TAMPILAN 1: VISUAL DENAH UTAMA INTERAKTIF -->
     <div id="masterLayoutView" class="master-layout-container">
       <div style="display: flex; justify-content: space-between; align-items: center;">
         <span style="font-size: 0.9rem; font-weight: 600; color: var(--accent-blue);">Peta Visual Area Gudang</span>
@@ -1218,6 +1255,44 @@
     };
 
     window.onload = initMaps;
+  </script>
+
+  <!-- PWA Service Worker & Install Logic -->
+  <script>
+    let deferredPrompt;
+    const installBtn = document.getElementById('pwaInstallBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'flex';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        installBtn.style.display = 'none';
+      }
+      deferredPrompt = null;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      installBtn.style.display = 'none';
+    });
+
+    // Inline Service Worker Registrasi
+    if ('serviceWorker' in navigator) {
+      const swCode = `
+        self.addEventListener('install', (e) => self.skipWaiting());
+        self.addEventListener('activate', (e) => self.clients.claim());
+        self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));
+      `;
+      const blob = new Blob([swCode], { type: 'application/javascript' });
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).catch(() => {});
+    }
   </script>
 </body>
 </html>
