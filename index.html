@@ -15,381 +15,99 @@
       --border: #334155;
       --cell-active: #f59e0b;
       --cell-filled: #10b981;
+      --cell-untested: #ef4444;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .main-wrapper { max-width: 1200px; width: 100%; display: flex; flex-direction: column; gap: 20px; }
+    
+    .denah-switcher { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .switch-btn { padding: 10px 20px; background: var(--card-bg); border: 2px solid var(--border); color: var(--text-muted); border-radius: 8px; font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+    .switch-btn:hover { border-color: var(--accent); color: var(--text); }
+    .switch-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+    .container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; width: 100%; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media (max-width: 850px) { .container { grid-template-columns: 1fr; } }
 
-    .main-wrapper {
-      max-width: 1100px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+    h1 { font-size: 1.4rem; margin-bottom: 4px; color: var(--accent); }
+    p.subtitle { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px; }
 
-    .denah-switcher {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
+    .panel { background: #0f172a; padding: 16px; border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+    .panel-title { font-size: 0.95rem; font-weight: 600; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
 
-    .switch-btn {
-      padding: 10px 24px;
-      background: var(--card-bg);
-      border: 2px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
+    .input-group { display: flex; flex-direction: column; gap: 4px; }
+    .input-group label { font-size: 0.75rem; color: var(--text-muted); }
+    select, input[type="number"], input[type="text"] { width: 100%; padding: 8px 12px; background: #1e293b; border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; outline: none; }
+    select:focus, input:focus { border-color: var(--accent); }
 
-    .switch-btn:hover {
-      border-color: var(--accent);
-      color: var(--text);
-    }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn-group { display: flex; gap: 8px; }
+    .btn { flex: 1; padding: 10px; background: var(--accent); color: #0f172a; border: none; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer; transition: background 0.2s; }
+    .btn:hover { background: var(--accent-hover); color: #fff; }
+    .btn-sm { padding: 4px 8px; font-size: 0.75rem; }
+    .btn-secondary { background: #334155; color: #f8fafc; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-danger { background: #ef4444; color: #fff; }
+    .btn-danger:hover { background: #dc2626; }
 
-    .switch-btn.active {
-      background: var(--accent);
-      color: #0f172a;
-      border-color: var(--accent);
-    }
+    .badge { display: inline-block; background: var(--accent); color: #0f172a; padding: 2px 8px; border-radius: 4px; font-weight: bold; font-family: monospace; font-size: 1rem; }
+    .legend { display: flex; gap: 12px; font-size: 0.75rem; color: var(--text-muted); }
+    .legend-item { display: flex; align-items: center; gap: 4px; }
+    .legend-box { width: 12px; height: 12px; border-radius: 2px; }
 
-    .container {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
-      width: 100%;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    .warehouse-map { display: flex; flex-direction: column; align-items: center; gap: 16px; background: #1e293b; padding: 16px; border-radius: 8px; border: 1px solid var(--border); max-height: 580px; overflow: auto; }
+    .medium-map-grid { display: flex; flex-direction: column; gap: 20px; align-items: center; width: 100%; }
+    .medium-row-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .row-numbers { display: flex; flex-direction: column; gap: 4px; margin-top: 26px; }
+    .row-num { height: 32px; font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; width: 20px; }
+
+    .block { display: flex; flex-direction: column; align-items: center; transition: all 0.3s ease; }
+    .block.hidden-block { display: none !important; }
+    .block-header { font-weight: bold; color: var(--accent); margin-bottom: 6px; font-size: 1rem; }
+    .rack-pairs { display: flex; gap: 4px; }
+    .rack-column { display: flex; flex-direction: column; gap: 4px; }
+
+    .cell { width: 32px; height: 32px; background: #0f172a; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+    .cell:hover { border-color: var(--accent); }
+    .cell.filled { background: var(--cell-filled); }
+    .cell.untested-filled { background: var(--cell-untested); }
+    .cell.active { background: var(--cell-active) !important; border-color: #fff; }
+
+    .arrow-indicator { text-align: center; margin-top: 8px; color: var(--accent); font-size: 0.85rem; }
+
+    .filter-bar {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 850px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    h1 {
-      font-size: 1.4rem;
-      margin-bottom: 4px;
-      color: var(--accent);
-    }
-
-    p.subtitle {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      margin-bottom: 16px;
-    }
-
-    .panel {
-      background: #0f172a;
-      padding: 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .panel-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--accent);
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .input-group label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    select, input[type="number"], input[type="text"] {
-      width: 100%;
-      padding: 8px 12px;
-      background: #1e293b;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-size: 0.9rem;
-      outline: none;
-    }
-
-    select:focus, input:focus {
-      border-color: var(--accent);
-    }
-
-    .form-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn {
-      flex: 1;
-      padding: 10px;
-      background: var(--accent);
-      color: #0f172a;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .btn:hover {
-      background: var(--accent-hover);
-      color: #fff;
-    }
-
-    .btn-sm {
-      padding: 4px 8px;
-      font-size: 0.75rem;
-    }
-
-    .btn-danger {
-      background: #ef4444;
-      color: #fff;
-    }
-
-    .btn-danger:hover {
-      background: #dc2626;
-    }
-
-    .badge {
-      display: inline-block;
-      background: var(--accent);
-      color: #0f172a;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-weight: bold;
-      font-family: monospace;
-      font-size: 1rem;
-    }
-
-    .legend {
-      display: flex;
-      gap: 12px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .legend-box {
-      width: 12px;
-      height: 12px;
-      border-radius: 2px;
-    }
-
-    .warehouse-map {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      background: #1e293b;
-      padding: 16px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      max-height: 580px;
-      overflow: auto;
-    }
-
-    .medium-map-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      align-items: center;
-    }
-
-    .medium-row-group {
-      display: flex;
-      gap: 12px;
-    }
-
-    .row-numbers {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-top: 26px;
-    }
-
-    .row-num {
-      height: 32px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 20px;
-    }
-
-    .block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .block-header {
-      font-weight: bold;
-      color: var(--accent);
-      margin-bottom: 6px;
-      font-size: 1rem;
-    }
-
-    .rack-pairs {
-      display: flex;
-      gap: 4px;
-    }
-
-    .rack-column {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .cell {
-      width: 32px;
-      height: 32px;
-      background: #0f172a;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .cell:hover {
-      border-color: var(--accent);
-    }
-
-    .cell.filled {
-      background: var(--cell-filled);
-    }
-
-    .cell.active {
-      background: var(--cell-active) !important;
-      border-color: #fff;
-    }
-
-    .arrow-indicator {
-      text-align: center;
-      margin-top: 8px;
-      color: var(--accent);
-      font-size: 0.85rem;
-    }
-
-    .tabs-container {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .tab-btn {
-      padding: 6px 12px;
-      background: #1e293b;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: all 0.2s;
-    }
-
-    .tab-btn:hover {
-      border-color: var(--accent);
-      color: var(--text);
-    }
-
-    .tab-btn.active {
-      background: var(--accent);
-      color: #0f172a;
-      border-color: var(--accent);
-    }
-
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
+      grid-template-columns: 2fr 1fr;
+      gap: 10px;
       margin-top: 8px;
     }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 0.85rem;
+    @media (max-width: 600px) {
+      .filter-bar { grid-template-columns: 1fr; }
     }
 
-    th, td {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-    }
+    .tabs-container { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+    .tab-btn { padding: 6px 12px; background: #1e293b; border: 1px solid var(--border); color: var(--text-muted); border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; white-space: nowrap; transition: all 0.2s; }
+    .tab-btn:hover { border-color: var(--accent); color: var(--text); }
+    .tab-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
 
-    th {
-      background: #1e293b;
-      color: var(--accent);
-      font-weight: 600;
-    }
+    .table-container { width: 100%; max-height: 350px; overflow-y: auto; margin-top: 8px; border: 1px solid var(--border); border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; }
+    th, td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+    th { background: #1e293b; color: var(--accent); font-weight: 600; position: sticky; top: 0; z-index: 2; }
+    tr:hover { background: rgba(56, 189, 248, 0.05); }
+    .empty-msg { text-align: center; color: var(--text-muted); padding: 16px; font-style: italic; }
 
-    tr:hover {
-      background: rgba(56, 189, 248, 0.05);
-    }
-
-    .empty-msg {
-      text-align: center;
-      color: var(--text-muted);
-      padding: 16px;
-      font-style: italic;
-    }
+    .map-controls { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   </style>
 </head>
 <body>
 
   <div class="main-wrapper">
-    <!-- Tombol Pemilih Denah Utama -->
     <div class="denah-switcher">
       <button class="switch-btn active" id="btnSwitchSmall" onclick="switchWarehouseView('SMALL')">Denah Small & Large</button>
-      <button class="switch-btn" id="btnSwitchMedium" onclick="switchWarehouseView('MEDIUM')">Denah Medium</button>
+      <button class="switch-btn" id="btnSwitchMedium" onclick="switchWarehouseView('MEDIUM')">Denah Medium (Pass / Tested)</button>
+      <button class="switch-btn" id="btnSwitchUntested" onclick="switchWarehouseView('UNTESTED')">Medium Belum Slab</button>
     </div>
 
     <div class="container">
@@ -404,7 +122,7 @@
 
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
             <div class="input-group">
-              <label>Blok</label>
+              <label id="blockLabel">Blok / Line</label>
               <select id="blockSelect" onchange="updateLocationUI()"></select>
             </div>
 
@@ -426,7 +144,7 @@
 
           <div class="panel-title">Keterangan Barang</div>
 
-          <!-- Form Khusus Small -->
+          <!-- Form Small -->
           <div id="formSmallContainer">
             <div class="input-group">
               <label for="mcsInput">MCS</label>
@@ -442,18 +160,15 @@
                 <option value="CMP-001">CMP-001</option>
               </select>
             </div>
-
             <div class="input-group" style="margin-top: 8px;">
               <label for="colorInputSmall">Warna</label>
               <input type="text" id="colorInputSmall" placeholder="Contoh: Merah / Hitam" />
             </div>
-
             <div class="form-grid-2" style="margin-top: 8px;">
               <div class="input-group">
                 <label for="qtySInput">QTY Size S (Kg)</label>
                 <input type="number" id="qtySInput" placeholder="0" min="0" step="any" />
               </div>
-
               <div class="input-group">
                 <label for="qtyLInput">QTY Size L (Kg)</label>
                 <input type="number" id="qtyLInput" placeholder="0" min="0" step="any" />
@@ -461,21 +176,39 @@
             </div>
           </div>
 
-          <!-- Form Khusus Medium -->
+          <!-- Form Medium -->
           <div id="formMediumContainer" style="display: none;">
             <div class="input-group">
               <label for="modelInputMedium">Model</label>
               <input type="text" id="modelInputMedium" placeholder="Masukkan Jenis Model" />
             </div>
-
             <div class="input-group" style="margin-top: 8px;">
               <label for="colorInputMedium">Warna</label>
               <input type="text" id="colorInputMedium" placeholder="Contoh: Merah / Putih" />
             </div>
-
             <div class="input-group" style="margin-top: 8px;">
               <label for="qtyMediumInput">QTY Medium (Kg)</label>
               <input type="number" id="qtyMediumInput" placeholder="0" min="0" step="any" />
+            </div>
+          </div>
+
+          <!-- Form Untested -->
+          <div id="formUntestedContainer" style="display: none;">
+            <div class="input-group">
+              <label for="modelInputUntested">Model / Nama Barang</label>
+              <input type="text" id="modelInputUntested" placeholder="Contoh: Model Medium A" />
+            </div>
+            <div class="input-group" style="margin-top: 8px;">
+              <label for="batchInputUntested">No. Batch / Lot</label>
+              <input type="text" id="batchInputUntested" placeholder="Contoh: BATCH-2026-01" />
+            </div>
+            <div class="input-group" style="margin-top: 8px;">
+              <label for="colorInputUntested">Warna</label>
+              <input type="text" id="colorInputUntested" placeholder="Contoh: Hitam" />
+            </div>
+            <div class="input-group" style="margin-top: 8px;">
+              <label for="qtyUntestedInput">QTY (Kg)</label>
+              <input type="number" id="qtyUntestedInput" placeholder="0" min="0" step="any" />
             </div>
           </div>
 
@@ -492,13 +225,19 @@
             <span>Denah Gudang</span>
             <div class="legend">
               <div class="legend-item"><div class="legend-box" style="background:#0f172a; border:1px solid #334155;"></div> Kosong</div>
-              <div class="legend-item"><div class="legend-box" style="background:var(--cell-filled);"></div> Terisi</div>
+              <div class="legend-item" id="legendPass"><div class="legend-box" style="background:var(--cell-filled);"></div> Terisi</div>
+              <div class="legend-item" id="legendUntested" style="display:none;"><div class="legend-box" style="background:var(--cell-untested);"></div> Belum Slab</div>
               <div class="legend-item"><div class="legend-box" style="background:var(--cell-active);"></div> Dipilih</div>
             </div>
           </div>
 
           <div class="warehouse-map">
-            <!-- Container Map Small -->
+            <div class="map-controls" id="mediumMapControls" style="display: none;">
+              <span style="font-size: 0.8rem; color: var(--text-muted);" id="focusStatusLabel">Tampilan: Fokus 1 Blok</span>
+              <button class="btn btn-sm btn-secondary" id="toggleBlockViewBtn" onclick="toggleMediumBlockFocus()">Tampilkan Semua Blok</button>
+            </div>
+
+            <!-- Map Small -->
             <div id="mapSmall" style="display: flex; gap: 16px;">
               <div class="row-numbers" id="rowNumbersSmall"></div>
               <div class="block">
@@ -527,27 +266,56 @@
               </div>
             </div>
 
-            <!-- Container Map Medium -->
+            <!-- Map Medium (Grup A sampai Z) -->
             <div id="mapMedium" class="medium-map-grid" style="display: none;">
-              <!-- Row 1: Blok A - E (4 Baris) -->
               <div class="medium-row-group" id="mediumGroup1"></div>
-              <!-- Row 2: Blok F - J (4 Baris) -->
               <div class="medium-row-group" id="mediumGroup2"></div>
-              <!-- Row 3: Blok K - O (7 Baris) -->
               <div class="medium-row-group" id="mediumGroup3"></div>
+              <div class="medium-row-group" id="mediumGroup4"></div>
+              <div class="medium-row-group" id="mediumGroup5"></div>
             </div>
+
+            <!-- Map Untested -->
+            <div id="mapUntested" style="display: none;">
+              <div style="display: flex; gap: 24px;">
+                <div class="row-numbers" id="rowNumbersUntested"></div>
+                <div class="block">
+                  <div class="block-header">Line 1</div>
+                  <div class="rack-pairs">
+                    <div class="rack-column" id="col-LINE1-L"></div>
+                    <div class="rack-column" id="col-LINE1-R"></div>
+                  </div>
+                </div>
+                <div class="block">
+                  <div class="block-header">Line 2</div>
+                  <div class="rack-pairs">
+                    <div class="rack-column" id="col-LINE2-L"></div>
+                    <div class="rack-column" id="col-LINE2-R"></div>
+                  </div>
+                </div>
+                <div class="block">
+                  <div class="block-header">Line 3</div>
+                  <div class="rack-pairs">
+                    <div class="rack-column" id="col-LINE3-L"></div>
+                    <div class="rack-column" id="col-LINE3-R"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Panel Tabel Stok -->
+    <!-- Panel Summary & Filter Stok -->
     <div class="panel" style="background: var(--card-bg);">
       <div class="panel-title">
-        <span id="summaryTitle">Daftar Stok Berdasarkan MCS</span>
-        <span id="totalSummaryBadge" style="font-size: 0.8rem; color: var(--text-muted);">Menghubungkan ke Database...</span>
+        <span id="summaryTitle">Daftar Stok Summary</span>
+        <span id="totalSummaryBadge" style="font-size: 0.8rem; color: var(--text-muted);">Memuat data...</span>
       </div>
 
+      <!-- Tab khusus Small -->
       <div class="tabs-container" id="mcsTabsContainer">
         <button class="tab-btn active" onclick="switchMcsTab('ALL', this)">Semua MCS</button>
         <button class="tab-btn" onclick="switchMcsTab('RIP-024', this)">RIP-024</button>
@@ -558,6 +326,14 @@
         <button class="tab-btn" onclick="switchMcsTab('IU-009', this)">IU-009</button>
         <button class="tab-btn" onclick="switchMcsTab('CMP-014', this)">CMP-014</button>
         <button class="tab-btn" onclick="switchMcsTab('CMP-001', this)">CMP-001</button>
+      </div>
+
+      <!-- Control Bar Pencarian & Dropdown Filter -->
+      <div class="filter-bar">
+        <input type="text" id="summarySearchInput" placeholder="Cari Kode Lokasi, Model, Warna, Batch..." oninput="renderInventoryTable()" />
+        <select id="summaryBlockFilter" onchange="renderInventoryTable()">
+          <option value="ALL">-- Semua Blok/Line --</option>
+        </select>
       </div>
 
       <div class="table-container">
@@ -589,22 +365,33 @@
 
     const stockRefSmall = ref(database, 'warehouseStock');
     const stockRefMedium = ref(database, 'warehouseStockMedium');
+    const stockRefUntested = ref(database, 'warehouseStockUntested');
 
-    let currentWarehouseMode = 'SMALL'; // 'SMALL' atau 'MEDIUM'
+    let currentWarehouseMode = 'SMALL';
     let activeMcsTab = 'ALL';
+    let isMediumFocusMode = true;
 
     let warehouseDataSmall = {};
     let warehouseDataMedium = {};
+    let warehouseDataUntested = {};
 
     const smallBlocks = ['A', 'B', 'C'];
+    
+    // Daftar Lengkap Blok A sampai Z
+    const allAZBlocks = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+
+    // Pengelompokan Medium A-Z ke dalam 5 grup baris denah
     const mediumBlocksConfig = {
       group1: { blocks: ['A', 'B', 'C', 'D', 'E'], rows: 4 },
       group2: { blocks: ['F', 'G', 'H', 'I', 'J'], rows: 4 },
-      group3: { blocks: ['K', 'L', 'M', 'N', 'O'], rows: 7 }
+      group3: { blocks: ['K', 'L', 'M', 'N', 'O'], rows: 7 },
+      group4: { blocks: ['P', 'Q', 'R', 'S', 'T'], rows: 7 },
+      group5: { blocks: ['U', 'V', 'W', 'X', 'Y', 'Z'], rows: 7 }
     };
+    const untestedLines = ['LINE1', 'LINE2', 'LINE3'];
 
     function initMaps() {
-      // Build Small Map
+      // Small Map Init
       const rowNumSmall = document.getElementById('rowNumbersSmall');
       rowNumSmall.innerHTML = '';
       for (let r = 1; r <= 15; r++) {
@@ -629,31 +416,37 @@
         });
       });
 
-      // Build Medium Map
+      // Medium Map Init (Blok A-Z)
       Object.keys(mediumBlocksConfig).forEach((grpKey, idx) => {
         const groupObj = mediumBlocksConfig[grpKey];
         const container = document.getElementById(`mediumGroup${idx + 1}`);
+        if (!container) return;
         container.innerHTML = '';
-
-        // Add Row Numbers
-        const rowNums = document.createElement('div');
-        rowNums.className = 'row-numbers';
-        for (let r = 1; r <= groupObj.rows; r++) {
-          const div = document.createElement('div');
-          div.className = 'row-num';
-          div.textContent = r;
-          rowNums.appendChild(div);
-        }
-        container.appendChild(rowNums);
 
         groupObj.blocks.forEach(block => {
           const blockDiv = document.createElement('div');
           blockDiv.className = 'block';
+          blockDiv.id = `medium-block-wrapper-${block}`;
 
           const header = document.createElement('div');
           header.className = 'block-header';
-          header.textContent = block;
+          header.textContent = block; // Cukup huruf "A", "B", dst. tanpa kata "Blok"
           blockDiv.appendChild(header);
+
+          const innerContainer = document.createElement('div');
+          innerContainer.style.display = 'flex';
+          innerContainer.style.gap = '8px';
+
+          const rowNums = document.createElement('div');
+          rowNums.className = 'row-numbers';
+          rowNums.style.marginTop = '0';
+          for (let r = 1; r <= groupObj.rows; r++) {
+            const div = document.createElement('div');
+            div.className = 'row-num';
+            div.textContent = r;
+            rowNums.appendChild(div);
+          }
+          innerContainer.appendChild(rowNums);
 
           const rackPairs = document.createElement('div');
           rackPairs.className = 'rack-pairs';
@@ -672,12 +465,38 @@
             rackPairs.appendChild(col);
           });
 
-          blockDiv.appendChild(rackPairs);
+          innerContainer.appendChild(rackPairs);
+          blockDiv.appendChild(innerContainer);
           container.appendChild(blockDiv);
         });
       });
 
-      // Firebase Realtime Observers
+      // Untested Map Init
+      const rowNumUntested = document.getElementById('rowNumbersUntested');
+      rowNumUntested.innerHTML = '';
+      for (let r = 1; r <= 7; r++) {
+        const div = document.createElement('div');
+        div.className = 'row-num';
+        div.textContent = r;
+        rowNumUntested.appendChild(div);
+      }
+
+      untestedLines.forEach(line => {
+        ['L', 'R'].forEach(side => {
+          const colContainer = document.getElementById(`col-${line}-${side}`);
+          colContainer.innerHTML = '';
+          for (let r = 1; r <= 7; r++) {
+            const locCode = `${line}-${side}-${String(r).padStart(2, '0')}`;
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = `cell-UNTESTED-${locCode}`;
+            cell.onclick = () => selectCell(line, side, r);
+            colContainer.appendChild(cell);
+          }
+        });
+      });
+
+      // Firebase Sync
       onValue(stockRefSmall, (snapshot) => {
         warehouseDataSmall = snapshot.val() || {};
         renderFilledCells();
@@ -690,7 +509,44 @@
         renderInventoryTable();
       });
 
+      onValue(stockRefUntested, (snapshot) => {
+        warehouseDataUntested = snapshot.val() || {};
+        renderFilledCells();
+        renderInventoryTable();
+      });
+
       switchWarehouseView('SMALL');
+    }
+
+    window.toggleMediumBlockFocus = function() {
+      isMediumFocusMode = !isMediumFocusMode;
+      const btn = document.getElementById('toggleBlockViewBtn');
+      const label = document.getElementById('focusStatusLabel');
+
+      if (isMediumFocusMode) {
+        btn.textContent = 'Tampilkan Semua Blok';
+        label.textContent = 'Tampilan: Fokus 1 Blok';
+      } else {
+        btn.textContent = 'Fokus 1 Blok';
+        label.textContent = 'Tampilan: Semua Blok';
+      }
+      applyMediumBlockFilter();
+    };
+
+    function applyMediumBlockFilter() {
+      if (currentWarehouseMode !== 'MEDIUM') return;
+      const selectedBlock = document.getElementById('blockSelect').value;
+
+      allAZBlocks.forEach(b => {
+        const el = document.getElementById(`medium-block-wrapper-${b}`);
+        if (el) {
+          if (!isMediumFocusMode || b === selectedBlock) {
+            el.classList.remove('hidden-block');
+          } else {
+            el.classList.add('hidden-block');
+          }
+        }
+      });
     }
 
     window.switchWarehouseView = function(mode) {
@@ -698,37 +554,76 @@
 
       document.getElementById('btnSwitchSmall').classList.toggle('active', mode === 'SMALL');
       document.getElementById('btnSwitchMedium').classList.toggle('active', mode === 'MEDIUM');
+      document.getElementById('btnSwitchUntested').classList.toggle('active', mode === 'UNTESTED');
 
       document.getElementById('mapSmall').style.display = mode === 'SMALL' ? 'flex' : 'none';
       document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'flex' : 'none';
+      document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
+
+      document.getElementById('mediumMapControls').style.display = mode === 'MEDIUM' ? 'flex' : 'none';
 
       document.getElementById('formSmallContainer').style.display = mode === 'SMALL' ? 'block' : 'none';
       document.getElementById('formMediumContainer').style.display = mode === 'MEDIUM' ? 'block' : 'none';
+      document.getElementById('formUntestedContainer').style.display = mode === 'UNTESTED' ? 'block' : 'none';
+
+      document.getElementById('legendPass').style.display = mode !== 'UNTESTED' ? 'flex' : 'none';
+      document.getElementById('legendUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
 
       document.getElementById('mcsTabsContainer').style.display = mode === 'SMALL' ? 'flex' : 'none';
 
-      document.getElementById('viewTitle').textContent = mode === 'SMALL' 
-        ? 'Sistem Lokasi & Stok (Small & Large)' 
-        : 'Sistem Lokasi & Stok (Medium)';
+      document.getElementById('summarySearchInput').value = '';
 
-      document.getElementById('summaryTitle').textContent = mode === 'SMALL' 
-        ? 'Daftar Stok Berdasarkan MCS' 
-        : 'Daftar Stok Lokasi Medium (Model & Warna)';
-
-      // Update Select Block Options
       const blockSelect = document.getElementById('blockSelect');
+      const summaryBlockFilter = document.getElementById('summaryBlockFilter');
       blockSelect.innerHTML = '';
+      summaryBlockFilter.innerHTML = '<option value="ALL">-- Semua Blok/Line --</option>';
 
-      const blocksToLoad = mode === 'SMALL' 
-        ? smallBlocks 
-        : ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'];
+      if (mode === 'SMALL') {
+        document.getElementById('viewTitle').textContent = 'Sistem Lokasi & Stok (Small & Large)';
+        document.getElementById('summaryTitle').textContent = 'Daftar Stok Berdasarkan MCS';
+        document.getElementById('blockLabel').textContent = 'Blok';
+        smallBlocks.forEach(b => {
+          const opt = document.createElement('option');
+          opt.value = b;
+          opt.textContent = b; // Hanya huruf "A"
+          blockSelect.appendChild(opt);
 
-      blocksToLoad.forEach(b => {
-        const opt = document.createElement('option');
-        opt.value = b;
-        opt.textContent = `Blok ${b}`;
-        blockSelect.appendChild(opt);
-      });
+          const optF = document.createElement('option');
+          optF.value = b;
+          optF.textContent = b;
+          summaryBlockFilter.appendChild(optF);
+        });
+      } else if (mode === 'MEDIUM') {
+        document.getElementById('viewTitle').textContent = 'Sistem Lokasi & Stok (Medium - Pass)';
+        document.getElementById('summaryTitle').textContent = 'Daftar Stok Lokasi Medium (Model & Warna)';
+        document.getElementById('blockLabel').textContent = 'Blok';
+        allAZBlocks.forEach(b => {
+          const opt = document.createElement('option');
+          opt.value = b;
+          opt.textContent = b; // Cukup "A", "B", dst.
+          blockSelect.appendChild(opt);
+
+          const optF = document.createElement('option');
+          optF.value = b;
+          optF.textContent = b;
+          summaryBlockFilter.appendChild(optF);
+        });
+      } else {
+        document.getElementById('viewTitle').textContent = 'Denah Medium Belum Slab';
+        document.getElementById('summaryTitle').textContent = 'Daftar Stok Medium Belum Slab';
+        document.getElementById('blockLabel').textContent = 'Line';
+        untestedLines.forEach(l => {
+          const opt = document.createElement('option');
+          opt.value = l;
+          opt.textContent = l.replace('LINE', 'Line ');
+          blockSelect.appendChild(opt);
+
+          const optF = document.createElement('option');
+          optF.value = l;
+          optF.textContent = l.replace('LINE', 'Line ');
+          summaryBlockFilter.appendChild(optF);
+        });
+      }
 
       document.getElementById('rowInput').value = 1;
       updateLocationUI();
@@ -758,7 +653,7 @@
             }
           });
         });
-      } else {
+      } else if (currentWarehouseMode === 'MEDIUM') {
         Object.keys(mediumBlocksConfig).forEach(grpKey => {
           const groupObj = mediumBlocksConfig[grpKey];
           groupObj.blocks.forEach(block => {
@@ -781,13 +676,34 @@
             });
           });
         });
+      } else {
+        untestedLines.forEach(line => {
+          ['L', 'R'].forEach(side => {
+            for (let r = 1; r <= 7; r++) {
+              const locCode = `${line}-${side}-${String(r).padStart(2, '0')}`;
+              const cell = document.getElementById(`cell-UNTESTED-${locCode}`);
+              if (cell) {
+                const data = warehouseDataUntested[locCode];
+                const qty = parseFloat(data?.qty) || 0;
+                if (data && (data.model || data.batch || data.color || qty > 0)) {
+                  cell.classList.add('untested-filled');
+                  cell.title = `${locCode} | Model: ${data.model || '-'} | Batch: ${data.batch || '-'} | QTY: ${qty} Kg`;
+                } else {
+                  cell.classList.remove('untested-filled');
+                  cell.title = `${locCode} (Kosong)`;
+                }
+              }
+            }
+          });
+        });
       }
     }
 
     function getMaxRowForBlock(block) {
       if (currentWarehouseMode === 'SMALL') return 15;
+      if (currentWarehouseMode === 'UNTESTED') return 7;
       if (['A','B','C','D','E','F','G','H','I','J'].includes(block)) return 4;
-      return 7;
+      return 7; // Blok K sampai Z memiliki 7 baris
     }
 
     window.updateLocationUI = function() {
@@ -810,17 +726,25 @@
 
       document.getElementById('codeBadge').textContent = locCode;
 
+      applyMediumBlockFilter();
+
       if (currentWarehouseMode === 'SMALL') {
         const item = warehouseDataSmall[locCode];
         document.getElementById('mcsInput').value = item?.mcs || '';
         document.getElementById('colorInputSmall').value = item?.color || '';
         document.getElementById('qtySInput').value = item?.qtyS || '';
         document.getElementById('qtyLInput').value = item?.qtyL || '';
-      } else {
+      } else if (currentWarehouseMode === 'MEDIUM') {
         const item = warehouseDataMedium[locCode];
         document.getElementById('modelInputMedium').value = item?.model || '';
         document.getElementById('colorInputMedium').value = item?.color || '';
         document.getElementById('qtyMediumInput').value = item?.qtyM || '';
+      } else {
+        const item = warehouseDataUntested[locCode];
+        document.getElementById('modelInputUntested').value = item?.model || '';
+        document.getElementById('batchInputUntested').value = item?.batch || '';
+        document.getElementById('colorInputUntested').value = item?.color || '';
+        document.getElementById('qtyUntestedInput').value = item?.qty || '';
       }
     };
 
@@ -838,9 +762,12 @@
       renderInventoryTable();
     };
 
-    function renderInventoryTable() {
+    window.renderInventoryTable = function() {
       const thead = document.getElementById('inventoryTableHead');
       const tbody = document.getElementById('inventoryTableBody');
+      const query = document.getElementById('summarySearchInput').value.toLowerCase().trim();
+      const selectedBlockFilter = document.getElementById('summaryBlockFilter').value;
+
       tbody.innerHTML = '';
 
       if (currentWarehouseMode === 'SMALL') {
@@ -864,37 +791,42 @@
           const item = warehouseDataSmall[locCode];
           const qtyS = parseFloat(item?.qtyS) || 0;
           const qtyL = parseFloat(item?.qtyL) || 0;
+          const block = locCode.split('-')[0];
 
           if (item && (item.mcs || item.color || qtyS > 0 || qtyL > 0)) {
-            if (activeMcsTab === 'ALL' || item.mcs === activeMcsTab) {
-              count++;
-              totalQtySGudang += qtyS;
-              totalQtyLGudang += qtyL;
+            if (activeMcsTab !== 'ALL' && item.mcs !== activeMcsTab) return;
+            if (selectedBlockFilter !== 'ALL' && block !== selectedBlockFilter) return;
+            const matchSearch = locCode.toLowerCase().includes(query) ||
+                                (item.mcs || '').toLowerCase().includes(query) ||
+                                (item.color || '').toLowerCase().includes(query);
+            if (!matchSearch) return;
 
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                <td><strong>${locCode}</strong></td>
-                <td>${item.mcs || '-'}</td>
-                <td>${item.color || '-'}</td>
-                <td>${qtyS} Kg</td>
-                <td>${qtyL} Kg</td>
-                <td>
-                  <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
-                </td>
-              `;
-              tbody.appendChild(row);
-            }
+            count++;
+            totalQtySGudang += qtyS;
+            totalQtyLGudang += qtyL;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><strong>${locCode}</strong></td>
+              <td>${item.mcs || '-'}</td>
+              <td>${item.color || '-'}</td>
+              <td>${qtyS} Kg</td>
+              <td>${qtyL} Kg</td>
+              <td>
+                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
+              </td>
+            `;
+            tbody.appendChild(row);
           }
         });
 
         if (count === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Belum ada barang terdata.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Tidak ada data ditemukan.</td></tr>`;
         }
 
-        const labelFilter = activeMcsTab === 'ALL' ? 'Keseluruhan' : activeMcsTab;
-        document.getElementById('totalSummaryBadge').textContent = `[Filter: ${labelFilter}] ${count} Lokasi | S: ${totalQtySGudang} Kg | L: ${totalQtyLGudang} Kg`;
+        document.getElementById('totalSummaryBadge').textContent = `Menampilkan ${count} Lokasi | S: ${totalQtySGudang} Kg | L: ${totalQtyLGudang} Kg`;
 
-      } else {
+      } else if (currentWarehouseMode === 'MEDIUM') {
         thead.innerHTML = `
           <tr>
             <th>Lokasi</th>
@@ -912,8 +844,15 @@
         locations.forEach(locCode => {
           const item = warehouseDataMedium[locCode];
           const qtyM = parseFloat(item?.qtyM) || 0;
+          const block = locCode.split('-')[0];
 
           if (item && (item.model || item.color || qtyM > 0)) {
+            if (selectedBlockFilter !== 'ALL' && block !== selectedBlockFilter) return;
+            const matchSearch = locCode.toLowerCase().includes(query) ||
+                                (item.model || '').toLowerCase().includes(query) ||
+                                (item.color || '').toLowerCase().includes(query);
+            if (!matchSearch) return;
+
             count++;
             totalQtyMedium += qtyM;
 
@@ -932,12 +871,65 @@
         });
 
         if (count === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="empty-msg">Belum ada barang Medium terdata.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" class="empty-msg">Tidak ada data Medium ditemukan.</td></tr>`;
         }
 
-        document.getElementById('totalSummaryBadge').textContent = `Total: ${count} Lokasi | QTY Medium: ${totalQtyMedium} Kg`;
+        document.getElementById('totalSummaryBadge').textContent = `Menampilkan ${count} Lokasi | Total QTY: ${totalQtyMedium} Kg`;
+
+      } else {
+        thead.innerHTML = `
+          <tr>
+            <th>Lokasi</th>
+            <th>Model / Nama</th>
+            <th>No. Batch</th>
+            <th>Warna</th>
+            <th>QTY</th>
+            <th>Aksi</th>
+          </tr>
+        `;
+
+        const locations = Object.keys(warehouseDataUntested).sort();
+        let totalQtyUntested = 0;
+        let count = 0;
+
+        locations.forEach(locCode => {
+          const item = warehouseDataUntested[locCode];
+          const qty = parseFloat(item?.qty) || 0;
+          const line = locCode.split('-')[0];
+
+          if (item && (item.model || item.batch || item.color || qty > 0)) {
+            if (selectedBlockFilter !== 'ALL' && line !== selectedBlockFilter) return;
+            const matchSearch = locCode.toLowerCase().includes(query) ||
+                                (item.model || '').toLowerCase().includes(query) ||
+                                (item.batch || '').toLowerCase().includes(query) ||
+                                (item.color || '').toLowerCase().includes(query);
+            if (!matchSearch) return;
+
+            count++;
+            totalQtyUntested += qty;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><strong>${locCode}</strong></td>
+              <td>${item.model || '-'}</td>
+              <td>${item.batch || '-'}</td>
+              <td>${item.color || '-'}</td>
+              <td>${qty} Kg</td>
+              <td>
+                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          }
+        });
+
+        if (count === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Tidak ada data ditemukan.</td></tr>`;
+        }
+
+        document.getElementById('totalSummaryBadge').textContent = `Menampilkan ${count} Lokasi | Total QTY: ${totalQtyUntested} Kg`;
       }
-    }
+    };
 
     window.goToLocation = function(locCode) {
       const parts = locCode.split('-');
@@ -946,8 +938,8 @@
         document.getElementById('sideSelect').value = parts[1];
         document.getElementById('rowInput').value = parseInt(parts[2]);
         updateLocationUI();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     function getCurrentLocationCode() {
@@ -980,7 +972,7 @@
           mcs, color, qtyS, qtyL
         }).then(() => alert(`Data lokasi Small ${locCode} tersimpan!`));
 
-      } else {
+      } else if (currentWarehouseMode === 'MEDIUM') {
         const model = document.getElementById('modelInputMedium').value.trim();
         const color = document.getElementById('colorInputMedium').value.trim();
         const qtyM = document.getElementById('qtyMediumInput').value.trim();
@@ -993,14 +985,31 @@
         set(ref(database, 'warehouseStockMedium/' + locCode), {
           model, color, qtyM
         }).then(() => alert(`Data lokasi Medium ${locCode} tersimpan!`));
+
+      } else {
+        const model = document.getElementById('modelInputUntested').value.trim();
+        const batch = document.getElementById('batchInputUntested').value.trim();
+        const color = document.getElementById('colorInputUntested').value.trim();
+        const qty = document.getElementById('qtyUntestedInput').value.trim();
+
+        if (!model && !batch && !color && !qty) {
+          alert('Harap isi data barang Medium Belum Slab!');
+          return;
+        }
+
+        set(ref(database, 'warehouseStockUntested/' + locCode), {
+          model, batch, color, qty
+        }).then(() => alert(`Data ${locCode} (Belum Slab) tersimpan!`));
       }
     };
 
     window.deleteItemData = function() {
       const locCode = getCurrentLocationCode();
-      const dbPath = currentWarehouseMode === 'SMALL' 
-        ? 'warehouseStock/' + locCode 
-        : 'warehouseStockMedium/' + locCode;
+      let dbPath = '';
+
+      if (currentWarehouseMode === 'SMALL') dbPath = 'warehouseStock/' + locCode;
+      else if (currentWarehouseMode === 'MEDIUM') dbPath = 'warehouseStockMedium/' + locCode;
+      else dbPath = 'warehouseStockUntested/' + locCode;
 
       if (confirm(`Kosongkan lokasi ${locCode}?`)) {
         remove(ref(database, dbPath)).then(() => alert(`Lokasi ${locCode} dikosongkan!`));
