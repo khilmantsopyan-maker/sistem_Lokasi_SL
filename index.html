@@ -35,7 +35,7 @@
     }
 
     .main-wrapper {
-      max-width: 980px;
+      max-width: 1080px;
       width: 100%;
       display: flex;
       flex-direction: column;
@@ -194,31 +194,32 @@
 
     .warehouse-map {
       display: flex;
-      gap: 12px;
+      gap: 16px;
       justify-content: center;
       background: #1e293b;
-      padding: 12px;
+      padding: 16px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      max-height: 520px;
+      max-height: 580px;
       overflow-y: auto;
     }
 
     .row-numbers {
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      margin-top: 24px;
+      gap: 4px;
+      margin-top: 26px;
     }
 
+    /* Ukuran nomor baris disesuaikan dengan tinggi sel baru */
     .row-num {
-      height: 22px;
-      font-size: 0.7rem;
+      height: 32px;
+      font-size: 0.8rem;
       color: var(--text-muted);
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 16px;
+      width: 20px;
     }
 
     .block {
@@ -231,26 +232,27 @@
       font-weight: bold;
       color: var(--accent);
       margin-bottom: 6px;
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
 
     .rack-pairs {
       display: flex;
-      gap: 2px;
+      gap: 4px;
     }
 
     .rack-column {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
     }
 
+    /* KOTAK DIPERLEBAR & DIPERTINGGI KE 32px */
     .cell {
-      width: 22px;
-      height: 22px;
+      width: 32px;
+      height: 32px;
       background: #0f172a;
       border: 1px solid var(--border);
-      border-radius: 2px;
+      border-radius: 4px;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -270,9 +272,9 @@
 
     .arrow-indicator {
       text-align: center;
-      margin-top: 6px;
+      margin-top: 8px;
       color: var(--accent);
-      font-size: 0.8rem;
+      font-size: 0.85rem;
     }
 
     .tabs-container {
@@ -403,7 +405,6 @@
             <input type="text" id="colorInput" placeholder="Contoh: Merah / Hitam" />
           </div>
 
-          <!-- Inputan Size S & Size L Terpisah (Satuan Kg) -->
           <div class="form-grid-2">
             <div class="input-group">
               <label for="qtySInput">QTY Size S (Kg)</label>
@@ -495,7 +496,6 @@
               <th>Warna</th>
               <th>QTY S</th>
               <th>QTY L</th>
-              <th>Total QTY</th>
               <th>Aksi</th>
             </tr>
           </thead>
@@ -510,7 +510,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    // Konfigurasi Firebase Milikmu
     const firebaseConfig = {
       apiKey: "AIzaSyAC6hkXMsuB2wpYKbKBoYfuifdQVFykdHY",
       authDomain: "lokasi-system.firebaseapp.com",
@@ -584,7 +583,7 @@
 
               if (data && (data.mcs || totalQty > 0 || data.color)) {
                 cell.classList.add('filled');
-                cell.title = `${locCode} | MCS: ${data.mcs || '-'} | Warna: ${data.color || '-'} | S: ${qtyS} Kg | L: ${qtyL} Kg | Total: ${totalQty} Kg`;
+                cell.title = `${locCode} | MCS: ${data.mcs || '-'} | Warna: ${data.color || '-'} | S: ${qtyS} Kg | L: ${qtyL} Kg`;
               } else {
                 cell.classList.remove('filled');
                 cell.title = `${locCode} (Kosong)`;
@@ -607,7 +606,8 @@
       tbody.innerHTML = '';
 
       const locations = Object.keys(warehouseData).sort();
-      let totalQtyGudang = 0;
+      let totalQtySGudang = 0;
+      let totalQtyLGudang = 0;
       let count = 0;
 
       locations.forEach(locCode => {
@@ -619,7 +619,8 @@
         if (item && (item.mcs || item.color || totalLocQty > 0)) {
           if (activeMcsTab === 'ALL' || item.mcs === activeMcsTab) {
             count++;
-            totalQtyGudang += totalLocQty;
+            totalQtySGudang += qtyS;
+            totalQtyLGudang += qtyL;
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -628,7 +629,6 @@
               <td>${item.color || '-'}</td>
               <td>${qtyS} Kg</td>
               <td>${qtyL} Kg</td>
-              <td><strong>${totalLocQty} Kg</strong></td>
               <td>
                 <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat Lokasi</button>
               </td>
@@ -640,11 +640,11 @@
 
       if (count === 0) {
         const tabName = activeMcsTab === 'ALL' ? 'gudang' : `MCS ${activeMcsTab}`;
-        tbody.innerHTML = `<tr><td colspan="7" class="empty-msg">Belum ada barang untuk ${tabName}.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Belum ada barang untuk ${tabName}.</td></tr>`;
       }
 
       const labelFilter = activeMcsTab === 'ALL' ? 'Keseluruhan' : activeMcsTab;
-      document.getElementById('totalSummaryBadge').textContent = `[Filter: ${labelFilter}] Total: ${count} Lokasi | Total QTY: ${totalQtyGudang} Kg`;
+      document.getElementById('totalSummaryBadge').textContent = `[Filter: ${labelFilter}] ${count} Lokasi | S: ${totalQtySGudang} Kg | L: ${totalQtyLGudang} Kg`;
     }
 
     window.goToLocation = function(locCode) {
