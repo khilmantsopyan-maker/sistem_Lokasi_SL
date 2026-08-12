@@ -61,13 +61,13 @@
 
     .header-actions { display: flex; gap: 8px; align-items: center; }
 
-    .nav-btn-main { padding: 8px 16px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 6px; }
+    .nav-btn-main { padding: 8px 16px; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-blue); color: var(--accent-blue); border-radius: 10px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; display: none; align-items: center; gap: 6px; }
     .nav-btn-main:hover { background: var(--accent-blue); color: #090d16; box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
 
     .install-btn { padding: 8px 16px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; color: #ffffff; border-radius: 10px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3); }
     .install-btn:hover { background: #16a34a; transform: translateY(-1px); }
 
-    /* LAYOUT TAMPILAN UTAMA (MIMIC SCREENSHOT) */
+    /* LAYOUT TAMPILAN UTAMA */
     .master-layout-container { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 16px; transition: all 0.4s ease; }
     
     /* Top Zone */
@@ -90,7 +90,7 @@
     }
     .zone-top:hover, .zone-top:active { transform: translateY(-3px) scale(1.005); box-shadow: 0 12px 30px rgba(34, 197, 94, 0.4); }
 
-    /* Main Grid Layout (Left, Middle, Right) */
+    /* Main Grid Layout */
     .master-grid-bottom { display: grid; grid-template-columns: 1fr 1.5fr 1.2fr; gap: 16px; }
     @media (max-width: 820px) {
       .master-grid-bottom { grid-template-columns: 1fr; }
@@ -174,7 +174,7 @@
 
     .touch-hint { font-size: 0.75rem; font-weight: normal; opacity: 0.85; margin-top: 4px; display: block; }
 
-    /* DETAIL VIEW (FORM, DENAH & SUMMARY) */
+    /* DETAIL VIEW */
     .detail-view-container { display: flex; flex-direction: column; gap: 20px; }
 
     .denah-switcher { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
@@ -190,8 +190,8 @@
 
     .input-group { display: flex; flex-direction: column; gap: 4px; }
     .input-group label { font-size: 0.75rem; color: var(--text-muted); }
-    select, input[type="number"], input[type="text"] { width: 100%; padding: 10px 12px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
-    select:focus, input:focus { border-color: var(--accent-blue); box-shadow: 0 0 8px rgba(56, 189, 248, 0.2); }
+    select, input[type="number"], input[type="text"], textarea { width: 100%; padding: 10px 12px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+    select:focus, input:focus, textarea:focus { border-color: var(--accent-blue); box-shadow: 0 0 8px rgba(56, 189, 248, 0.2); }
 
     .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .btn-group { display: flex; gap: 8px; }
@@ -241,7 +241,6 @@
     th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
     th { background: rgba(30, 41, 59, 0.95); color: var(--accent-blue); font-weight: 600; position: sticky; top: 0; z-index: 2; backdrop-filter: blur(4px); }
     tr:hover { background: rgba(56, 189, 248, 0.08); }
-    .empty-msg { text-align: center; color: var(--text-muted); padding: 16px; font-style: italic; }
 
     .map-controls { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   </style>
@@ -398,6 +397,10 @@
                   <input type="number" id="qtyLInput" placeholder="0" min="0" step="any" />
                 </div>
               </div>
+              <div class="input-group" style="margin-top: 8px;">
+                <label for="notesInputSmall">Keterangan / Catatan</label>
+                <textarea id="notesInputSmall" rows="2" placeholder="Catatan tambahan (opsional)"></textarea>
+              </div>
             </div>
 
             <!-- Form Medium -->
@@ -413,6 +416,10 @@
               <div class="input-group" style="margin-top: 8px;">
                 <label for="qtyMediumInput">QTY Medium (Kg)</label>
                 <input type="number" id="qtyMediumInput" placeholder="0" min="0" step="any" />
+              </div>
+              <div class="input-group" style="margin-top: 8px;">
+                <label for="notesInputMedium">Keterangan / Catatan</label>
+                <textarea id="notesInputMedium" rows="2" placeholder="Catatan tambahan (opsional)"></textarea>
               </div>
             </div>
 
@@ -434,9 +441,13 @@
                 <label for="qtyUntestedInput">QTY (Kg)</label>
                 <input type="number" id="qtyUntestedInput" placeholder="0" min="0" step="any" />
               </div>
+              <div class="input-group" style="margin-top: 8px;">
+                <label for="notesInputUntested">Keterangan / Catatan</label>
+                <textarea id="notesInputUntested" rows="2" placeholder="Catatan tambahan (opsional)"></textarea>
+              </div>
             </div>
 
-            <div class="btn-group" style="margin-top: 8px;">
+            <div class="btn-group" style="margin-top: 12px;">
               <button class="btn" onclick="saveItemData()">Simpan Data</button>
               <button class="btn btn-danger" onclick="deleteItemData()">Kosongkan</button>
             </div>
@@ -555,7 +566,7 @@
 
         <!-- Filter Search Bar & Select Dropdown -->
         <div class="filter-bar">
-          <input type="text" id="summarySearchInput" placeholder="Cari Kode Lokasi, Model, Warna, Batch..." oninput="renderInventoryTable()" />
+          <input type="text" id="summarySearchInput" placeholder="Cari Kode Lokasi, Model, Warna, Batch, Keterangan..." oninput="renderInventoryTable()" />
           <select id="summaryBlockFilter" onchange="renderInventoryTable()">
             <option value="ALL">-- Semua Blok/Line --</option>
           </select>
@@ -648,43 +659,22 @@
             const cell = document.createElement('div');
             cell.className = 'cell';
             cell.id = `cell-SMALL-${locCode}`;
-            cell.onclick = () => selectCell(block, side, r);
+            cell.onclick = () => selectCell('SMALL', block, side, r);
             colContainer.appendChild(cell);
           }
         });
       });
 
       // Medium Map Init
-      Object.keys(mediumBlocksConfig).forEach((grpKey, idx) => {
-        const groupObj = mediumBlocksConfig[grpKey];
-        const container = document.getElementById(`mediumGroup${idx + 1}`);
-        if (!container) return;
-        container.innerHTML = '';
+      Object.keys(mediumBlocksConfig).forEach(gKey => {
+        const groupObj = mediumBlocksConfig[gKey];
+        const groupContainer = document.getElementById(`mediumGroup${gKey.replace('group', '')}`);
+        groupContainer.innerHTML = '';
 
         groupObj.blocks.forEach(block => {
           const blockDiv = document.createElement('div');
-          blockDiv.className = 'block';
-          blockDiv.id = `medium-block-wrapper-${block}`;
-
-          const header = document.createElement('div');
-          header.className = 'block-header';
-          header.textContent = block;
-          blockDiv.appendChild(header);
-
-          const innerContainer = document.createElement('div');
-          innerContainer.style.display = 'flex';
-          innerContainer.style.gap = '6px';
-
-          const rowNums = document.createElement('div');
-          rowNums.className = 'row-numbers';
-          rowNums.style.marginTop = '0';
-          for (let r = 1; r <= groupObj.rows; r++) {
-            const div = document.createElement('div');
-            div.className = 'row-num';
-            div.textContent = r;
-            rowNums.appendChild(div);
-          }
-          innerContainer.appendChild(rowNums);
+          blockDiv.className = `block block-med-${block}`;
+          blockDiv.innerHTML = `<div class="block-header">${block}</div>`;
 
           const rackPairs = document.createElement('div');
           rackPairs.className = 'rack-pairs';
@@ -697,22 +687,21 @@
               const cell = document.createElement('div');
               cell.className = 'cell';
               cell.id = `cell-MEDIUM-${locCode}`;
-              cell.onclick = () => selectCell(block, side, r);
+              cell.onclick = () => selectCell('MEDIUM', block, side, r);
               col.appendChild(cell);
             }
             rackPairs.appendChild(col);
           });
 
-          innerContainer.appendChild(rackPairs);
-          blockDiv.appendChild(innerContainer);
-          container.appendChild(blockDiv);
+          blockDiv.appendChild(rackPairs);
+          groupContainer.appendChild(blockDiv);
         });
       });
 
       // Untested Map Init
       const rowNumUntested = document.getElementById('rowNumbersUntested');
       rowNumUntested.innerHTML = '';
-      for (let r = 1; r <= 7; r++) {
+      for (let r = 1; r <= 15; r++) {
         const div = document.createElement('div');
         div.className = 'row-num';
         div.textContent = r;
@@ -723,38 +712,68 @@
         ['L', 'R'].forEach(side => {
           const colContainer = document.getElementById(`col-${line}-${side}`);
           colContainer.innerHTML = '';
-          for (let r = 1; r <= 7; r++) {
+          for (let r = 1; r <= 15; r++) {
             const locCode = `${line}-${side}-${String(r).padStart(2, '0')}`;
             const cell = document.createElement('div');
             cell.className = 'cell';
             cell.id = `cell-UNTESTED-${locCode}`;
-            cell.onclick = () => selectCell(line, side, r);
+            cell.onclick = () => selectCell('UNTESTED', line, side, r);
             colContainer.appendChild(cell);
           }
         });
       });
-
-      // Firebase Realtime Listeners
-      onValue(stockRefSmall, (snapshot) => {
-        warehouseDataSmall = snapshot.val() || {};
-        renderFilledCells();
-        renderInventoryTable();
-      });
-
-      onValue(stockRefMedium, (snapshot) => {
-        warehouseDataMedium = snapshot.val() || {};
-        renderFilledCells();
-        renderInventoryTable();
-      });
-
-      onValue(stockRefUntested, (snapshot) => {
-        warehouseDataUntested = snapshot.val() || {};
-        renderFilledCells();
-        renderInventoryTable();
-      });
-
-      showMasterLayoutView();
     }
+
+    window.switchWarehouseView = function(mode) {
+      currentWarehouseMode = mode;
+      
+      document.getElementById('btnSwitchSmall').classList.toggle('active', mode === 'SMALL');
+      document.getElementById('btnSwitchMedium').classList.toggle('active', mode === 'MEDIUM');
+      document.getElementById('btnSwitchUntested').classList.toggle('active', mode === 'UNTESTED');
+
+      document.getElementById('mapSmall').style.display = mode === 'SMALL' ? 'flex' : 'none';
+      document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'flex' : 'none';
+      document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
+
+      document.getElementById('formSmallContainer').style.display = mode === 'SMALL' ? 'block' : 'none';
+      document.getElementById('formMediumContainer').style.display = mode === 'MEDIUM' ? 'block' : 'none';
+      document.getElementById('formUntestedContainer').style.display = mode === 'UNTESTED' ? 'block' : 'none';
+
+      document.getElementById('mediumMapControls').style.display = mode === 'MEDIUM' ? 'flex' : 'none';
+      document.getElementById('mcsTabsContainer').style.display = mode === 'SMALL' ? 'flex' : 'none';
+
+      document.getElementById('legendPass').style.display = mode === 'UNTESTED' ? 'none' : 'flex';
+      document.getElementById('legendUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
+
+      const blockSelect = document.getElementById('blockSelect');
+      blockSelect.innerHTML = '';
+
+      if (mode === 'SMALL') {
+        document.getElementById('viewTitle').textContent = 'Sistem Lokasi Small & Large';
+        document.getElementById('summaryTitle').textContent = 'Summary Stok Small & Large';
+        document.getElementById('blockLabel').textContent = 'Blok';
+        document.getElementById('rowInput').max = 15;
+        smallBlocks.forEach(b => blockSelect.add(new Option(`Blok ${b}`, b)));
+      } else if (mode === 'MEDIUM') {
+        document.getElementById('viewTitle').textContent = 'Sistem Lokasi Medium (Pass)';
+        document.getElementById('summaryTitle').textContent = 'Summary Stok Medium (Pass)';
+        document.getElementById('blockLabel').textContent = 'Blok A-Z';
+        allAZBlocks.forEach(b => blockSelect.add(new Option(`Blok ${b}`, b)));
+      } else if (mode === 'UNTESTED') {
+        document.getElementById('viewTitle').textContent = 'Sistem Lokasi Medium Belum Test';
+        document.getElementById('summaryTitle').textContent = 'Summary Stok Belum Test';
+        document.getElementById('blockLabel').textContent = 'Line Area';
+        document.getElementById('rowInput').max = 15;
+        untestedLines.forEach(l => blockSelect.add(new Option(l.replace('LINE', 'Line '), l)));
+      }
+
+      blockSelect.selectedIndex = 0;
+      document.getElementById('sideSelect').value = 'L';
+      document.getElementById('rowInput').value = 1;
+
+      updateLocationUI();
+      renderInventoryTable();
+    };
 
     window.toggleMediumBlockFocus = function() {
       isMediumFocusMode = !isMediumFocusMode;
@@ -766,533 +785,392 @@
         label.textContent = 'Fokus 1 Blok';
       } else {
         btn.textContent = 'Fokus 1 Blok';
-        label.textContent = 'Tampilan Semua A-Z';
+        label.textContent = 'Semua Blok A-Z Tampil';
       }
-      applyMediumBlockFilter();
+      applyMediumBlockVisibility();
     };
 
-    function applyMediumBlockFilter() {
+    function applyMediumBlockVisibility() {
       if (currentWarehouseMode !== 'MEDIUM') return;
       const selectedBlock = document.getElementById('blockSelect').value;
 
       allAZBlocks.forEach(b => {
-        const el = document.getElementById(`medium-block-wrapper-${b}`);
-        if (el) {
+        const blockEls = document.querySelectorAll(`.block-med-${b}`);
+        blockEls.forEach(el => {
           if (!isMediumFocusMode || b === selectedBlock) {
             el.classList.remove('hidden-block');
           } else {
             el.classList.add('hidden-block');
           }
-        }
+        });
       });
     }
 
-    window.switchWarehouseView = function(mode) {
-      currentWarehouseMode = mode;
-
-      document.getElementById('btnSwitchSmall').classList.toggle('active', mode === 'SMALL');
-      document.getElementById('btnSwitchMedium').classList.toggle('active', mode === 'MEDIUM');
-      document.getElementById('btnSwitchUntested').classList.toggle('active', mode === 'UNTESTED');
-
-      document.getElementById('mapSmall').style.display = mode === 'SMALL' ? 'flex' : 'none';
-      document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'flex' : 'none';
-      document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
-
-      document.getElementById('mediumMapControls').style.display = mode === 'MEDIUM' ? 'flex' : 'none';
-
-      document.getElementById('formSmallContainer').style.display = mode === 'SMALL' ? 'block' : 'none';
-      document.getElementById('formMediumContainer').style.display = mode === 'MEDIUM' ? 'block' : 'none';
-      document.getElementById('formUntestedContainer').style.display = mode === 'UNTESTED' ? 'block' : 'none';
-
-      document.getElementById('legendPass').style.display = mode !== 'UNTESTED' ? 'flex' : 'none';
-      document.getElementById('legendUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
-
-      document.getElementById('mcsTabsContainer').style.display = mode === 'SMALL' ? 'flex' : 'none';
-
-      document.getElementById('summarySearchInput').value = '';
-
-      const blockSelect = document.getElementById('blockSelect');
-      const summaryBlockFilter = document.getElementById('summaryBlockFilter');
-      blockSelect.innerHTML = '';
-      summaryBlockFilter.innerHTML = '<option value="ALL">-- Semua Blok/Line --</option>';
-
-      if (mode === 'SMALL') {
-        document.getElementById('viewTitle').textContent = 'Compound Small & Large';
-        document.getElementById('summaryTitle').textContent = 'Daftar Stok Small & Large';
-        document.getElementById('blockLabel').textContent = 'Blok';
-        smallBlocks.forEach(b => {
-          const opt = document.createElement('option');
-          opt.value = b;
-          opt.textContent = b;
-          blockSelect.appendChild(opt);
-
-          const optF = document.createElement('option');
-          optF.value = b;
-          optF.textContent = b;
-          summaryBlockFilter.appendChild(optF);
-        });
-      } else if (mode === 'MEDIUM') {
-        document.getElementById('viewTitle').textContent = 'Compound Medium (Pass)';
-        document.getElementById('summaryTitle').textContent = 'Daftar Stok Medium (Pass)';
-        document.getElementById('blockLabel').textContent = 'Blok';
-        allAZBlocks.forEach(b => {
-          const opt = document.createElement('option');
-          opt.value = b;
-          opt.textContent = b;
-          blockSelect.appendChild(opt);
-
-          const optF = document.createElement('option');
-          optF.value = b;
-          optF.textContent = b;
-          summaryBlockFilter.appendChild(optF);
-        });
-      } else {
-        document.getElementById('viewTitle').textContent = 'Compound Medium Belum Test';
-        document.getElementById('summaryTitle').textContent = 'Daftar Stok Medium Belum Test';
-        document.getElementById('blockLabel').textContent = 'Line';
-        untestedLines.forEach(l => {
-          const opt = document.createElement('option');
-          opt.value = l;
-          opt.textContent = l.replace('LINE', 'Line ');
-          blockSelect.appendChild(opt);
-
-          const optF = document.createElement('option');
-          optF.value = l;
-          optF.textContent = l.replace('LINE', 'Line ');
-          summaryBlockFilter.appendChild(optF);
-        });
+    function selectCell(mode, block, side, row) {
+      if (mode !== currentWarehouseMode) {
+        switchWarehouseView(mode);
       }
-
-      document.getElementById('rowInput').value = 1;
-      updateLocationUI();
-      renderFilledCells();
-      renderInventoryTable();
-    };
-
-    function renderFilledCells() {
-      if (currentWarehouseMode === 'SMALL') {
-        smallBlocks.forEach(block => {
-          ['L', 'R'].forEach(side => {
-            for (let r = 1; r <= 15; r++) {
-              const locCode = `${block}-${side}-${String(r).padStart(2, '0')}`;
-              const cell = document.getElementById(`cell-SMALL-${locCode}`);
-              if (cell) {
-                const data = warehouseDataSmall[locCode];
-                const qtyS = parseFloat(data?.qtyS) || 0;
-                const qtyL = parseFloat(data?.qtyL) || 0;
-                if (data && (data.mcs || qtyS > 0 || qtyL > 0 || data.color)) {
-                  cell.classList.add('filled');
-                  cell.title = `${locCode} | MCS: ${data.mcs || '-'} | Warna: ${data.color || '-'} | S: ${qtyS} Kg | L: ${qtyL} Kg`;
-                } else {
-                  cell.classList.remove('filled');
-                  cell.title = `${locCode} (Kosong)`;
-                }
-              }
-            }
-          });
-        });
-      } else if (currentWarehouseMode === 'MEDIUM') {
-        Object.keys(mediumBlocksConfig).forEach(grpKey => {
-          const groupObj = mediumBlocksConfig[grpKey];
-          groupObj.blocks.forEach(block => {
-            ['L', 'R'].forEach(side => {
-              for (let r = 1; r <= groupObj.rows; r++) {
-                const locCode = `${block}-${side}-${String(r).padStart(2, '0')}`;
-                const cell = document.getElementById(`cell-MEDIUM-${locCode}`);
-                if (cell) {
-                  const data = warehouseDataMedium[locCode];
-                  const qtyM = parseFloat(data?.qtyM) || 0;
-                  if (data && (data.model || data.color || qtyM > 0)) {
-                    cell.classList.add('filled');
-                    cell.title = `${locCode} | Model: ${data.model || '-'} | Warna: ${data.color || '-'} | QTY: ${qtyM} Kg`;
-                  } else {
-                    cell.classList.remove('filled');
-                    cell.title = `${locCode} (Kosong)`;
-                  }
-                }
-              }
-            });
-          });
-        });
-      } else {
-        untestedLines.forEach(line => {
-          ['L', 'R'].forEach(side => {
-            for (let r = 1; r <= 7; r++) {
-              const locCode = `${line}-${side}-${String(r).padStart(2, '0')}`;
-              const cell = document.getElementById(`cell-UNTESTED-${locCode}`);
-              if (cell) {
-                const data = warehouseDataUntested[locCode];
-                const qty = parseFloat(data?.qty) || 0;
-                if (data && (data.model || data.batch || data.color || qty > 0)) {
-                  cell.classList.add('untested-filled');
-                  cell.title = `${locCode} | Model: ${data.model || '-'} | Batch: ${data.batch || '-'} | QTY: ${qty} Kg`;
-                } else {
-                  cell.classList.remove('untested-filled');
-                  cell.title = `${locCode} (Kosong)`;
-                }
-              }
-            }
-          });
-        });
-      }
-    }
-
-    function getMaxRowForBlock(block) {
-      if (currentWarehouseMode === 'SMALL') return 15;
-      if (currentWarehouseMode === 'UNTESTED') return 7;
-      if (['A','B','C','D','E','F','G','H','I','J'].includes(block)) return 4;
-      return 7;
-    }
-
-    window.updateLocationUI = function() {
-      const block = document.getElementById('blockSelect').value;
-      const side = document.getElementById('sideSelect').value;
-      let row = parseInt(document.getElementById('rowInput').value);
-
-      const maxRow = getMaxRowForBlock(block);
-      if (isNaN(row) || row < 1) row = 1;
-      if (row > maxRow) row = maxRow;
-      document.getElementById('rowInput').value = row;
-      document.getElementById('rowInput').max = maxRow;
-
-      const formattedRow = String(row).padStart(2, '0');
-      const locCode = `${block}-${side}-${formattedRow}`;
-
-      document.querySelectorAll('.cell.active').forEach(c => c.classList.remove('active'));
-      const activeCell = document.getElementById(`cell-${currentWarehouseMode}-${locCode}`);
-      if (activeCell) activeCell.classList.add('active');
-
-      document.getElementById('codeBadge').textContent = locCode;
-
-      applyMediumBlockFilter();
-
-      if (currentWarehouseMode === 'SMALL') {
-        const item = warehouseDataSmall[locCode];
-        document.getElementById('mcsInput').value = item?.mcs || '';
-        document.getElementById('colorInputSmall').value = item?.color || '';
-        document.getElementById('qtySInput').value = item?.qtyS || '';
-        document.getElementById('qtyLInput').value = item?.qtyL || '';
-      } else if (currentWarehouseMode === 'MEDIUM') {
-        const item = warehouseDataMedium[locCode];
-        document.getElementById('modelInputMedium').value = item?.model || '';
-        document.getElementById('colorInputMedium').value = item?.color || '';
-        document.getElementById('qtyMediumInput').value = item?.qtyM || '';
-      } else {
-        const item = warehouseDataUntested[locCode];
-        document.getElementById('modelInputUntested').value = item?.model || '';
-        document.getElementById('batchInputUntested').value = item?.batch || '';
-        document.getElementById('colorInputUntested').value = item?.color || '';
-        document.getElementById('qtyUntestedInput').value = item?.qty || '';
-      }
-    };
-
-    function selectCell(block, side, row) {
       document.getElementById('blockSelect').value = block;
       document.getElementById('sideSelect').value = side;
       document.getElementById('rowInput').value = row;
       updateLocationUI();
     }
 
-    window.switchMcsTab = function(mcsType, btnElement) {
-      activeMcsTab = mcsType;
-      document.querySelectorAll('#mcsTabsContainer .tab-btn').forEach(btn => btn.classList.remove('active'));
-      if (btnElement) btnElement.classList.add('active');
-      renderInventoryTable();
-    };
-
-    window.renderInventoryTable = function() {
-      const thead = document.getElementById('inventoryTableHead');
-      const tbody = document.getElementById('inventoryTableBody');
-      const query = document.getElementById('summarySearchInput').value.toLowerCase().trim();
-      const selectedBlockFilter = document.getElementById('summaryBlockFilter').value;
-
-      tbody.innerHTML = '';
-
-      if (currentWarehouseMode === 'SMALL') {
-        thead.innerHTML = `
-          <tr>
-            <th>Lokasi</th>
-            <th>MCS</th>
-            <th>Warna</th>
-            <th>QTY S</th>
-            <th>QTY L</th>
-            <th>Aksi</th>
-          </tr>
-        `;
-
-        const locations = Object.keys(warehouseDataSmall).sort();
-        let totalQtySGudang = 0;
-        let totalQtyLGudang = 0;
-        let count = 0;
-
-        locations.forEach(locCode => {
-          const item = warehouseDataSmall[locCode];
-          const qtyS = parseFloat(item?.qtyS) || 0;
-          const qtyL = parseFloat(item?.qtyL) || 0;
-          const block = locCode.split('-')[0];
-
-          if (item && (item.mcs || item.color || qtyS > 0 || qtyL > 0)) {
-            if (activeMcsTab !== 'ALL' && item.mcs !== activeMcsTab) return;
-            if (selectedBlockFilter !== 'ALL' && block !== selectedBlockFilter) return;
-            const matchSearch = locCode.toLowerCase().includes(query) ||
-                                (item.mcs || '').toLowerCase().includes(query) ||
-                                (item.color || '').toLowerCase().includes(query);
-            if (!matchSearch) return;
-
-            count++;
-            totalQtySGudang += qtyS;
-            totalQtyLGudang += qtyL;
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td><strong>${locCode}</strong></td>
-              <td>${item.mcs || '-'}</td>
-              <td>${item.color || '-'}</td>
-              <td>${qtyS} Kg</td>
-              <td>${qtyL} Kg</td>
-              <td>
-                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat</button>
-              </td>
-            `;
-            tbody.appendChild(row);
-          }
-        });
-
-        if (count === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Tidak ada data ditemukan.</td></tr>`;
-        }
-
-        document.getElementById('totalSummaryBadge').textContent = `${count} Lokasi | S: ${totalQtySGudang} Kg | L: ${totalQtyLGudang} Kg`;
-
-      } else if (currentWarehouseMode === 'MEDIUM') {
-        thead.innerHTML = `
-          <tr>
-            <th>Lokasi</th>
-            <th>Model</th>
-            <th>Warna</th>
-            <th>QTY Medium</th>
-            <th>Aksi</th>
-          </tr>
-        `;
-
-        const locations = Object.keys(warehouseDataMedium).sort();
-        let totalQtyMedium = 0;
-        let count = 0;
-
-        locations.forEach(locCode => {
-          const item = warehouseDataMedium[locCode];
-          const qtyM = parseFloat(item?.qtyM) || 0;
-          const block = locCode.split('-')[0];
-
-          if (item && (item.model || item.color || qtyM > 0)) {
-            if (selectedBlockFilter !== 'ALL' && block !== selectedBlockFilter) return;
-            const matchSearch = locCode.toLowerCase().includes(query) ||
-                                (item.model || '').toLowerCase().includes(query) ||
-                                (item.color || '').toLowerCase().includes(query);
-            if (!matchSearch) return;
-
-            count++;
-            totalQtyMedium += qtyM;
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td><strong>${locCode}</strong></td>
-              <td>${item.model || '-'}</td>
-              <td>${item.color || '-'}</td>
-              <td>${qtyM} Kg</td>
-              <td>
-                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat</button>
-              </td>
-            `;
-            tbody.appendChild(row);
-          }
-        });
-
-        if (count === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" class="empty-msg">Tidak ada data ditemukan.</td></tr>`;
-        }
-
-        document.getElementById('totalSummaryBadge').textContent = `${count} Lokasi | QTY: ${totalQtyMedium} Kg`;
-
-      } else {
-        thead.innerHTML = `
-          <tr>
-            <th>Lokasi</th>
-            <th>Model / Nama</th>
-            <th>No. Batch</th>
-            <th>Warna</th>
-            <th>QTY</th>
-            <th>Aksi</th>
-          </tr>
-        `;
-
-        const locations = Object.keys(warehouseDataUntested).sort();
-        let totalQtyUntested = 0;
-        let count = 0;
-
-        locations.forEach(locCode => {
-          const item = warehouseDataUntested[locCode];
-          const qty = parseFloat(item?.qty) || 0;
-          const line = locCode.split('-')[0];
-
-          if (item && (item.model || item.batch || item.color || qty > 0)) {
-            if (selectedBlockFilter !== 'ALL' && line !== selectedBlockFilter) return;
-            const matchSearch = locCode.toLowerCase().includes(query) ||
-                                (item.model || '').toLowerCase().includes(query) ||
-                                (item.batch || '').toLowerCase().includes(query) ||
-                                (item.color || '').toLowerCase().includes(query);
-            if (!matchSearch) return;
-
-            count++;
-            totalQtyUntested += qty;
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td><strong>${locCode}</strong></td>
-              <td>${item.model || '-'}</td>
-              <td>${item.batch || '-'}</td>
-              <td>${item.color || '-'}</td>
-              <td>${qty} Kg</td>
-              <td>
-                <button class="btn btn-sm" onclick="goToLocation('${locCode}')">Lihat</button>
-              </td>
-            `;
-            tbody.appendChild(row);
-          }
-        });
-
-        if (count === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">Tidak ada data ditemukan.</td></tr>`;
-        }
-
-        document.getElementById('totalSummaryBadge').textContent = `${count} Lokasi | QTY: ${totalQtyUntested} Kg`;
-      }
-    };
-
-    window.goToLocation = function(locCode) {
-      const parts = locCode.split('-');
-      if (parts.length === 3) {
-        document.getElementById('blockSelect').value = parts[0];
-        document.getElementById('sideSelect').value = parts[1];
-        document.getElementById('rowInput').value = parseInt(parts[2]);
-        updateLocationUI();
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    function getCurrentLocationCode() {
+    window.updateLocationUI = function() {
+      const mode = currentWarehouseMode;
       const block = document.getElementById('blockSelect').value;
       const side = document.getElementById('sideSelect').value;
-      let row = parseInt(document.getElementById('rowInput').value);
+      const row = parseInt(document.getElementById('rowInput').value) || 1;
 
-      const maxRow = getMaxRowForBlock(block);
-      if (isNaN(row) || row < 1) row = 1;
-      if (row > maxRow) row = maxRow;
+      if (mode === 'MEDIUM') {
+        let maxRow = 7;
+        Object.values(mediumBlocksConfig).forEach(g => {
+          if (g.blocks.includes(block)) maxRow = g.rows;
+        });
+        document.getElementById('rowInput').max = maxRow;
+        if (row > maxRow) document.getElementById('rowInput').value = maxRow;
+      }
 
-      return `${block}-${side}-${String(row).padStart(2, '0')}`;
-    }
+      const validRow = parseInt(document.getElementById('rowInput').value) || 1;
+      const code = `${block}-${side}-${String(validRow).padStart(2, '0')}`;
+      document.getElementById('codeBadge').textContent = code;
+
+      document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
+      const activeCell = document.getElementById(`cell-${mode}-${code}`);
+      if (activeCell) activeCell.classList.add('active');
+
+      if (mode === 'MEDIUM') applyMediumBlockVisibility();
+
+      let currentData = {};
+      if (mode === 'SMALL') currentData = warehouseDataSmall[code] || {};
+      else if (mode === 'MEDIUM') currentData = warehouseDataMedium[code] || {};
+      else if (mode === 'UNTESTED') currentData = warehouseDataUntested[code] || {};
+
+      if (mode === 'SMALL') {
+        document.getElementById('mcsInput').value = currentData.mcs || '';
+        document.getElementById('colorInputSmall').value = currentData.color || '';
+        document.getElementById('qtySInput').value = currentData.qtyS || '';
+        document.getElementById('qtyLInput').value = currentData.qtyL || '';
+        document.getElementById('notesInputSmall').value = currentData.notes || '';
+      } else if (mode === 'MEDIUM') {
+        document.getElementById('modelInputMedium').value = currentData.model || '';
+        document.getElementById('colorInputMedium').value = currentData.color || '';
+        document.getElementById('qtyMediumInput').value = currentData.qty || '';
+        document.getElementById('notesInputMedium').value = currentData.notes || '';
+      } else if (mode === 'UNTESTED') {
+        document.getElementById('modelInputUntested').value = currentData.model || '';
+        document.getElementById('batchInputUntested').value = currentData.batch || '';
+        document.getElementById('colorInputUntested').value = currentData.color || '';
+        document.getElementById('qtyUntestedInput').value = currentData.qty || '';
+        document.getElementById('notesInputUntested').value = currentData.notes || '';
+      }
+    };
 
     window.saveItemData = function() {
-      const locCode = getCurrentLocationCode();
+      const mode = currentWarehouseMode;
+      const code = document.getElementById('codeBadge').textContent;
 
-      if (currentWarehouseMode === 'SMALL') {
+      if (mode === 'SMALL') {
         const mcs = document.getElementById('mcsInput').value;
         const color = document.getElementById('colorInputSmall').value.trim();
-        const qtyS = document.getElementById('qtySInput').value.trim();
-        const qtyL = document.getElementById('qtyLInput').value.trim();
+        const qtyS = parseFloat(document.getElementById('qtySInput').value) || 0;
+        const qtyL = parseFloat(document.getElementById('qtyLInput').value) || 0;
+        const notes = document.getElementById('notesInputSmall').value.trim();
 
-        if (!mcs && !color && !qtyS && !qtyL) {
-          alert('Harap isi data barang Small!');
+        if (!mcs && qtyS === 0 && qtyL === 0) {
+          alert('Mohon isi MCS atau Jumlah QTY!');
           return;
         }
 
-        set(ref(database, 'warehouseStock/' + locCode), {
-          mcs, color, qtyS, qtyL
-        }).then(() => alert(`Data lokasi Small ${locCode} tersimpan!`));
-
-      } else if (currentWarehouseMode === 'MEDIUM') {
+        set(ref(database, `warehouseStock/${code}`), { mcs, color, qtyS, qtyL, notes, updatedAt: Date.now() });
+      } else if (mode === 'MEDIUM') {
         const model = document.getElementById('modelInputMedium').value.trim();
         const color = document.getElementById('colorInputMedium').value.trim();
-        const qtyM = document.getElementById('qtyMediumInput').value.trim();
+        const qty = parseFloat(document.getElementById('qtyMediumInput').value) || 0;
+        const notes = document.getElementById('notesInputMedium').value.trim();
 
-        if (!model && !color && !qtyM) {
-          alert('Harap isi data barang Medium!');
+        if (!model && qty === 0) {
+          alert('Mohon isi Model atau QTY Medium!');
           return;
         }
 
-        set(ref(database, 'warehouseStockMedium/' + locCode), {
-          model, color, qtyM
-        }).then(() => alert(`Data lokasi Medium ${locCode} tersimpan!`));
-
-      } else {
+        set(ref(database, `warehouseStockMedium/${code}`), { model, color, qty, notes, updatedAt: Date.now() });
+      } else if (mode === 'UNTESTED') {
         const model = document.getElementById('modelInputUntested').value.trim();
         const batch = document.getElementById('batchInputUntested').value.trim();
         const color = document.getElementById('colorInputUntested').value.trim();
-        const qty = document.getElementById('qtyUntestedInput').value.trim();
+        const qty = parseFloat(document.getElementById('qtyUntestedInput').value) || 0;
+        const notes = document.getElementById('notesInputUntested').value.trim();
 
-        if (!model && !batch && !color && !qty) {
-          alert('Harap isi data barang Belum Test!');
+        if (!model && qty === 0) {
+          alert('Mohon isi Nama Barang/Model atau QTY!');
           return;
         }
 
-        set(ref(database, 'warehouseStockUntested/' + locCode), {
-          model, batch, color, qty
-        }).then(() => alert(`Data ${locCode} (Belum Test) tersimpan!`));
+        set(ref(database, `warehouseStockUntested/${code}`), { model, batch, color, qty, notes, updatedAt: Date.now() });
       }
     };
 
     window.deleteItemData = function() {
-      const locCode = getCurrentLocationCode();
-      let dbPath = '';
+      const mode = currentWarehouseMode;
+      const code = document.getElementById('codeBadge').textContent;
 
-      if (currentWarehouseMode === 'SMALL') dbPath = 'warehouseStock/' + locCode;
-      else if (currentWarehouseMode === 'MEDIUM') dbPath = 'warehouseStockMedium/' + locCode;
-      else dbPath = 'warehouseStockUntested/' + locCode;
-
-      if (confirm(`Kosongkan lokasi ${locCode}?`)) {
-        remove(ref(database, dbPath)).then(() => alert(`Lokasi ${locCode} dikosongkan!`));
+      if (confirm(`Apakah Anda yakin ingin mengosongkan lokasi ${code}?`)) {
+        if (mode === 'SMALL') remove(ref(database, `warehouseStock/${code}`));
+        else if (mode === 'MEDIUM') remove(ref(database, `warehouseStockMedium/${code}`));
+        else if (mode === 'UNTESTED') remove(ref(database, `warehouseStockUntested/${code}`));
       }
     };
 
-    window.onload = initMaps;
-  </script>
+    function updateGridMapStatus(mode, data) {
+      document.querySelectorAll(`[id^="cell-${mode}-"]`).forEach(c => c.classList.remove('filled', 'untested-filled'));
 
-  <!-- PWA Service Worker & Install Logic -->
-  <script>
+      Object.keys(data).forEach(code => {
+        const cell = document.getElementById(`cell-${mode}-${code}`);
+        if (cell) {
+          if (mode === 'UNTESTED') {
+            cell.classList.add('untested-filled');
+          } else {
+            cell.classList.add('filled');
+          }
+        }
+      });
+    }
+
+    // Firebase Realtime Listeners
+    onValue(stockRefSmall, (snapshot) => {
+      warehouseDataSmall = snapshot.val() || {};
+      updateGridMapStatus('SMALL', warehouseDataSmall);
+      if (currentWarehouseMode === 'SMALL') {
+        updateLocationUI();
+        renderInventoryTable();
+      }
+    });
+
+    onValue(stockRefMedium, (snapshot) => {
+      warehouseDataMedium = snapshot.val() || {};
+      updateGridMapStatus('MEDIUM', warehouseDataMedium);
+      if (currentWarehouseMode === 'MEDIUM') {
+        updateLocationUI();
+        renderInventoryTable();
+      }
+    });
+
+    onValue(stockRefUntested, (snapshot) => {
+      warehouseDataUntested = snapshot.val() || {};
+      updateGridMapStatus('UNTESTED', warehouseDataUntested);
+      if (currentWarehouseMode === 'UNTESTED') {
+        updateLocationUI();
+        renderInventoryTable();
+      }
+    });
+
+    window.switchMcsTab = function(mcs, btn) {
+      activeMcsTab = mcs;
+      document.querySelectorAll('#mcsTabsContainer .tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderInventoryTable();
+    };
+
+    function populateFilterBlockDropdown() {
+      const select = document.getElementById('summaryBlockFilter');
+      const currentVal = select.value;
+      select.innerHTML = '<option value="ALL">-- Semua Blok/Line --</option>';
+
+      if (currentWarehouseMode === 'SMALL') {
+        smallBlocks.forEach(b => select.add(new Option(`Blok ${b}`, b)));
+      } else if (currentWarehouseMode === 'MEDIUM') {
+        allAZBlocks.forEach(b => select.add(new Option(`Blok ${b}`, b)));
+      } else if (currentWarehouseMode === 'UNTESTED') {
+        untestedLines.forEach(l => select.add(new Option(l.replace('LINE', 'Line '), l)));
+      }
+
+      select.value = currentVal;
+      if (select.selectedIndex === -1) select.value = 'ALL';
+    }
+
+    window.renderInventoryTable = function() {
+      populateFilterBlockDropdown();
+
+      const mode = currentWarehouseMode;
+      const search = document.getElementById('summarySearchInput').value.toLowerCase().trim();
+      const blockFilter = document.getElementById('summaryBlockFilter').value;
+
+      const thead = document.getElementById('inventoryTableHead');
+      const tbody = document.getElementById('inventoryTableBody');
+      tbody.innerHTML = '';
+
+      let grandTotalKg = 0;
+      let totalItemsCount = 0;
+
+      if (mode === 'SMALL') {
+        thead.innerHTML = `
+          <tr>
+            <th>Kode Lokasi</th>
+            <th>MCS</th>
+            <th>Warna</th>
+            <th>QTY S (Kg)</th>
+            <th>QTY L (Kg)</th>
+            <th>Total QTY</th>
+            <th>Keterangan</th>
+            <th>Aksi</th>
+          </tr>
+        `;
+
+        Object.keys(warehouseDataSmall).sort().forEach(code => {
+          const item = warehouseDataSmall[code];
+          const [blk] = code.split('-');
+
+          if (blockFilter !== 'ALL' && blk !== blockFilter) return;
+          if (activeMcsTab !== 'ALL' && item.mcs !== activeMcsTab) return;
+
+          // PERBAIKAN: Menggunakan parseFloat agar nilai dihitung sebagai ANGKA
+          const qS = parseFloat(item.qtyS) || 0;
+          const qL = parseFloat(item.qtyL) || 0;
+          const totalQty = qS + qL;
+
+          const notesText = item.notes || '-';
+          const matchSearch = code.toLowerCase().includes(search) || 
+                              (item.mcs && item.mcs.toLowerCase().includes(search)) || 
+                              (item.color && item.color.toLowerCase().includes(search)) ||
+                              notesText.toLowerCase().includes(search);
+
+          if (!matchSearch) return;
+
+          grandTotalKg += totalQty;
+          totalItemsCount++;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><span class="badge">${code}</span></td>
+            <td><strong>${item.mcs || '-'}</strong></td>
+            <td>${item.color || '-'}</td>
+            <td>${qS}</td>
+            <td>${qL}</td>
+            <td><strong style="color:var(--accent-green);">${totalQty} Kg</strong></td>
+            <td style="color:var(--text-muted); font-size:0.78rem;">${notesText}</td>
+            <td><button class="btn btn-sm btn-secondary" onclick="selectCell('SMALL', '${code.split('-')[0]}', '${code.split('-')[1]}', ${parseInt(code.split('-')[2])})">Pilih</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      } else if (mode === 'MEDIUM') {
+        thead.innerHTML = `
+          <tr>
+            <th>Kode Lokasi</th>
+            <th>Model</th>
+            <th>Warna</th>
+            <th>QTY Medium (Kg)</th>
+            <th>Keterangan</th>
+            <th>Aksi</th>
+          </tr>
+        `;
+
+        Object.keys(warehouseDataMedium).sort().forEach(code => {
+          const item = warehouseDataMedium[code];
+          const [blk] = code.split('-');
+
+          if (blockFilter !== 'ALL' && blk !== blockFilter) return;
+
+          const qty = parseFloat(item.qty) || 0;
+          const notesText = item.notes || '-';
+          const matchSearch = code.toLowerCase().includes(search) || 
+                              (item.model && item.model.toLowerCase().includes(search)) || 
+                              (item.color && item.color.toLowerCase().includes(search)) ||
+                              notesText.toLowerCase().includes(search);
+
+          if (!matchSearch) return;
+
+          grandTotalKg += qty;
+          totalItemsCount++;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><span class="badge">${code}</span></td>
+            <td><strong>${item.model || '-'}</strong></td>
+            <td>${item.color || '-'}</td>
+            <td><strong style="color:var(--accent-green);">${qty} Kg</strong></td>
+            <td style="color:var(--text-muted); font-size:0.78rem;">${notesText}</td>
+            <td><button class="btn btn-sm btn-secondary" onclick="selectCell('MEDIUM', '${code.split('-')[0]}', '${code.split('-')[1]}', ${parseInt(code.split('-')[2])})">Pilih</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+      } else if (mode === 'UNTESTED') {
+        thead.innerHTML = `
+          <tr>
+            <th>Kode Lokasi</th>
+            <th>Model / Barang</th>
+            <th>No. Batch / Lot</th>
+            <th>Warna</th>
+            <th>QTY (Kg)</th>
+            <th>Keterangan</th>
+            <th>Aksi</th>
+          </tr>
+        `;
+
+        Object.keys(warehouseDataUntested).sort().forEach(code => {
+          const item = warehouseDataUntested[code];
+          const [line] = code.split('-');
+
+          if (blockFilter !== 'ALL' && line !== blockFilter) return;
+
+          const qty = parseFloat(item.qty) || 0;
+          const notesText = item.notes || '-';
+          const matchSearch = code.toLowerCase().includes(search) || 
+                              (item.model && item.model.toLowerCase().includes(search)) || 
+                              (item.batch && item.batch.toLowerCase().includes(search)) || 
+                              (item.color && item.color.toLowerCase().includes(search)) ||
+                              notesText.toLowerCase().includes(search);
+
+          if (!matchSearch) return;
+
+          grandTotalKg += qty;
+          totalItemsCount++;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><span class="badge" style="background:var(--accent-red); color:#fff;">${code}</span></td>
+            <td><strong>${item.model || '-'}</strong></td>
+            <td>${item.batch || '-'}</td>
+            <td>${item.color || '-'}</td>
+            <td><strong style="color:var(--accent-red);">${qty} Kg</strong></td>
+            <td style="color:var(--text-muted); font-size:0.78rem;">${notesText}</td>
+            <td><button class="btn btn-sm btn-secondary" onclick="selectCell('UNTESTED', '${code.split('-')[0]}', '${code.split('-')[1]}', ${parseInt(code.split('-')[2])})">Pilih</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      if (totalItemsCount === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted); padding:16px;">Data tidak ditemukan atau stok kosong.</td></tr>`;
+      }
+
+      document.getElementById('totalSummaryBadge').textContent = `Terisi: ${totalItemsCount} Lokasi | Total: ${grandTotalKg.toLocaleString('id-ID')} Kg`;
+    };
+
+    // PWA Prompt Handler
     let deferredPrompt;
-    const installBtn = document.getElementById('pwaInstallBtn');
-
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      installBtn.style.display = 'flex';
+      const btn = document.getElementById('pwaInstallBtn');
+      if (btn) btn.style.display = 'flex';
     });
 
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        installBtn.style.display = 'none';
+    document.getElementById('pwaInstallBtn').addEventListener('click', () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+          document.getElementById('pwaInstallBtn').style.display = 'none';
+        });
       }
-      deferredPrompt = null;
     });
 
-    window.addEventListener('appinstalled', () => {
-      installBtn.style.display = 'none';
-    });
-
-    // Inline Service Worker Registrasi
-    if ('serviceWorker' in navigator) {
-      const swCode = `
-        self.addEventListener('install', (e) => self.skipWaiting());
-        self.addEventListener('activate', (e) => self.clients.claim());
-        self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));
-      `;
-      const blob = new Blob([swCode], { type: 'application/javascript' });
-      const swUrl = URL.createObjectURL(blob);
-      navigator.serviceWorker.register(swUrl).catch(() => {});
-    }
+    // App Initialize Execution
+    initMaps();
+    switchWarehouseView('SMALL');
   </script>
 </body>
 </html>
