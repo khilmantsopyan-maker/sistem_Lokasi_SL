@@ -34,7 +34,7 @@
     /* Layout Dashboard Utama */
     .zone-container { display: flex; flex-direction: column; gap: 16px; }
     
-    /* Search Box Global Halaman Utama */
+    /* Search Box Global */
     .home-search-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
     .home-search-box h3 { font-size: 0.95rem; color: var(--accent); }
 
@@ -53,7 +53,7 @@
     .panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
     .panel-header { font-size: 0.9rem; font-weight: 600; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Form Input Common */
+    /* Form Input */
     .input-group { display: flex; flex-direction: column; gap: 4px; }
     .input-group label { font-size: 0.75rem; color: var(--text-muted); }
     input, select, textarea { width: 100%; padding: 8px 10px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 6px; color: var(--text); font-size: 0.85rem; outline: none; }
@@ -63,32 +63,61 @@
     .btn { padding: 8px 12px; background: var(--accent); color: #0f172a; border: none; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
     .btn:hover { background: var(--accent-hover); color: #fff; }
     .btn-danger { background: var(--red); color: #fff; }
-    .btn-secondary { background: #475569; color: #fff; }
 
     /* Denah / Map Grid Area */
-    .map-box { background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; overflow-x: auto; max-height: 520px; overflow-y: auto; }
+    .map-box { background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; overflow-x: auto; max-height: 520px; overflow-y: auto; position: relative; }
     .simple-map { display: flex; gap: 16px; justify-content: center; }
     .block-column { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .block-title { font-weight: bold; font-size: 0.85rem; color: var(--accent); margin-bottom: 4px; }
     .rack-group { display: flex; gap: 4px; }
     .cell-col { display: flex; flex-direction: column; gap: 4px; }
 
-    /* Cell Box Denah */
-    .cell { width: 30px; height: 30px; background: #1e293b; border: 1px solid var(--card-border); border-radius: 4px; cursor: pointer; transition: all 0.15s; }
-    .cell:hover { border-color: var(--accent); transform: scale(1.15); z-index: 2; }
-    .cell.filled { background: var(--green) !important; }
-    .cell.problem { background: var(--red) !important; }
-    .cell.active { border-color: #fff; transform: scale(1.2); z-index: 3; box-shadow: 0 0 10px var(--yellow); }
+    /* Cell Box Denah + Nomor angka */
+    .cell { 
+      width: 32px; 
+      height: 32px; 
+      background: #1e293b; 
+      border: 1px solid var(--card-border); 
+      border-radius: 5px; 
+      cursor: pointer; 
+      transition: all 0.15s; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      user-select: none;
+    }
+
+    .cell:hover { border-color: var(--accent); transform: scale(1.15); z-index: 2; color: #fff; }
+    .cell.filled { background: var(--green) !important; color: #fff !important; }
+    .cell.problem { background: var(--red) !important; color: #fff !important; }
+
+    /* Animasi Kedip/Highlight saat memilih data dari tabel Summary */
+    .cell.highlight-blink {
+      border: 2px solid #fff !important;
+      background: var(--yellow) !important;
+      color: #000 !important;
+      box-shadow: 0 0 16px var(--yellow);
+      animation: pulseBlink 0.8s infinite alternate;
+      z-index: 10;
+    }
+
+    @keyframes pulseBlink {
+      0% { transform: scale(1); box-shadow: 0 0 4px var(--yellow); }
+      100% { transform: scale(1.35); box-shadow: 0 0 18px var(--yellow); }
+    }
 
     /* Layout Medium Grid A-Z */
-    .medium-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; width: 100%; align-items: start; }
+    .medium-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 10px; width: 100%; align-items: start; }
 
     /* Tabel Summary Data */
-    .table-box { max-height: 250px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 8px; }
+    .table-box { max-height: 200px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 8px; }
     table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; }
     th, td { padding: 8px 10px; border-bottom: 1px solid var(--card-border); }
     th { background: #0f172a; color: var(--accent); position: sticky; top: 0; }
-    tr:hover { background: rgba(56, 189, 248, 0.08); cursor: pointer; }
+    tr:hover { background: rgba(56, 189, 248, 0.15); cursor: pointer; }
     .badge { background: var(--accent); color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
 
     /* MODAL POP-UP FORM */
@@ -109,7 +138,7 @@
       <button class="nav-btn" id="btnHome" onclick="showZoneLayout()">Menu Utama</button>
     </div>
 
-    <!-- TAMPILAN 1: DASHBOARD ZONA SELEKSI + MENU PENCARIAN -->
+    <!-- TAMPILAN 1: DASHBOARD ZONA SELEKSI + MENU PENCARIAN GLOBAL -->
     <div id="zoneLayoutView" class="zone-container">
       
       <!-- PENCARIAN GLOBAL HALAMAN AWAL -->
@@ -138,17 +167,17 @@
       <!-- KARTU PILIHAN ZONA -->
       <div class="zone-card" style="border-left: 4px solid var(--green);" onclick="openZoneMode('MEDIUM')">
         <h3>Area Medium (Pass)</h3>
-        <p>Denah & Stok Blok A - J (4 Kotak) | Blok K - Z (7 Kotak)</p>
+        <p>Denah & Stok Blok A - J (Nomor 1-4) | Blok K - Z (Nomor 1-7)</p>
       </div>
 
       <div class="zone-grid">
         <div class="zone-card" style="border-left: 4px solid var(--accent);" onclick="openZoneMode('SMALL')">
           <h3>Area Small & Large (S/L)</h3>
-          <p>Denah Blok A, B, dan C</p>
+          <p>Denah Blok A, B, dan C (Nomor 1-15)</p>
         </div>
         <div class="zone-card" style="border-left: 4px solid var(--yellow);" onclick="openZoneMode('UNTESTED')">
           <h3>Medium Belum Test</h3>
-          <p>Area Line 1, Line 2, Line 3 (7 Kotak/Line)</p>
+          <p>Area Line 1, Line 2, Line 3 (Nomor 1-7)</p>
         </div>
       </div>
     </div>
@@ -163,7 +192,7 @@
         <button class="tab-btn" id="tabUntested" onclick="switchMode('UNTESTED')">Belum Test</button>
       </div>
 
-      <!-- PANEL PENCARIAN & SUMMARY AREA -->
+      <!-- PANEL PENCARIAN & SUMMARY DATA AREA -->
       <div class="panel">
         <div class="panel-header">
           <span>🔍 Cari Data Stok Area Ini</span>
@@ -171,13 +200,13 @@
         </div>
 
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
-          <input type="text" id="inpSearch" placeholder="Ketik untuk mencari lokasi, mcs, model, warna..." oninput="handleSearchInput()" />
+          <input type="text" id="inpSearch" placeholder="Ketik untuk mencari mcs, model, warna, lokasi..." oninput="handleSearchInput()" />
           <select id="selFilterBlock" onchange="handleSearchInput()">
             <option value="ALL">Semua Blok</option>
           </select>
         </div>
 
-        <!-- Tabel Summary -->
+        <!-- Tabel Summary Data Hasil Cari -->
         <div id="summaryContentBox" class="table-box" style="display: none; margin-top: 6px;">
           <table>
             <thead id="tblHead"></thead>
@@ -189,11 +218,11 @@
       <!-- PETA DENAH VISUAL FULL -->
       <div class="panel">
         <div class="panel-header">
-          <span>Denah Visual Area (Sentuh kotak untuk input/edit)</span>
-          <span style="font-size:0.75rem; color:var(--text-muted);">🟢 Terisi | 🔴 Bermasalah</span>
+          <span>Denah Visual Area (Nomor Kotak)</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);">🟢 Terisi | 🔴 Bermasalah | 🟡 Berkedip</span>
         </div>
 
-        <div class="map-box">
+        <div class="map-box" id="mapBoxContainer">
           <!-- Map S/L -->
           <div id="mapSmall" class="simple-map"></div>
 
@@ -344,10 +373,25 @@
       document.getElementById('modalForm').style.display = 'none';
     };
 
+    function clearBlinking() {
+      document.querySelectorAll('.cell.highlight-blink').forEach(c => c.classList.remove('highlight-blink'));
+    }
+
+    window.selectLocationFromSummary = function(code) {
+      clearBlinking();
+      const targetCell = document.getElementById(`cell-${activeMode}-${code}`);
+      if (targetCell) {
+        targetCell.classList.add('highlight-blink');
+        targetCell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }
+    };
+
     window.handleSearchInput = function() {
       const query = document.getElementById('inpSearch').value.trim();
       const filterBlk = document.getElementById('selFilterBlock').value;
       const box = document.getElementById('summaryContentBox');
+
+      clearBlinking();
 
       if (query.length > 0 || filterBlk !== 'ALL') {
         box.style.display = 'block';
@@ -358,8 +402,9 @@
       renderTable();
     };
 
+    /* PROSES MEMBANGUN KOTAK DENAH + NOMOR */
     function buildMaps() {
-      // Map Small (15 Kotak)
+      // Map Small (1-15)
       const mapS = document.getElementById('mapSmall');
       mapS.innerHTML = '';
       smallBlocks.forEach(blk => {
@@ -377,6 +422,7 @@
             const c = document.createElement('div');
             c.className = 'cell';
             c.id = `cell-SMALL-${code}`;
+            c.textContent = r; // MENAMPILKAN NOMOR KOTAK
             c.onclick = () => openModalForm('SMALL', code);
             col.appendChild(c);
           }
@@ -386,7 +432,7 @@
         mapS.appendChild(blkDiv);
       });
 
-      // Map Medium (A-J = 4 Kotak, K-Z = 7 Kotak)
+      // Map Medium (A-J: 1-4, K-Z: 1-7)
       const mapM = document.getElementById('mapMedium');
       mapM.innerHTML = '';
       azBlocks.forEach(blk => {
@@ -409,6 +455,7 @@
             const c = document.createElement('div');
             c.className = 'cell';
             c.id = `cell-MEDIUM-${code}`;
+            c.textContent = r; // MENAMPILKAN NOMOR KOTAK
             c.onclick = () => openModalForm('MEDIUM', code);
             col.appendChild(c);
           }
@@ -418,7 +465,7 @@
         mapM.appendChild(blkDiv);
       });
 
-      // Map Untested (Masing-masing Line 7 Kotak)
+      // Map Untested (1-7)
       const mapU = document.getElementById('mapUntested');
       mapU.innerHTML = '';
       untestedLines.forEach(line => {
@@ -436,6 +483,7 @@
             const c = document.createElement('div');
             c.className = 'cell';
             c.id = `cell-UNTESTED-${code}`;
+            c.textContent = r; // MENAMPILKAN NOMOR KOTAK
             c.onclick = () => openModalForm('UNTESTED', code);
             col.appendChild(c);
           }
@@ -459,6 +507,7 @@
 
       document.getElementById('inpSearch').value = '';
       document.getElementById('summaryContentBox').style.display = 'none';
+      clearBlinking();
 
       const filterBlk = document.getElementById('selFilterBlock');
       filterBlk.innerHTML = '<option value="ALL">Semua Blok</option>';
@@ -529,7 +578,10 @@
         if (code.toLowerCase().includes(q) || mcs.toLowerCase().includes(q) || color.toLowerCase().includes(q)) {
           count++;
           const tr = document.createElement('tr');
-          tr.onclick = () => openModalForm('SMALL', code);
+          tr.onclick = () => {
+            openZoneMode('SMALL');
+            selectLocationFromSummary(code);
+          };
           tr.innerHTML = `
             <td><span class="badge" style="background:var(--accent);">S/L</span></td>
             <td><strong>${code}</strong></td>
@@ -551,7 +603,10 @@
         if (code.toLowerCase().includes(q) || model.toLowerCase().includes(q) || color.toLowerCase().includes(q)) {
           count++;
           const tr = document.createElement('tr');
-          tr.onclick = () => openModalForm('MEDIUM', code);
+          tr.onclick = () => {
+            openZoneMode('MEDIUM');
+            selectLocationFromSummary(code);
+          };
           tr.innerHTML = `
             <td><span class="badge" style="background:var(--green); color:#fff;">Medium</span></td>
             <td><strong>${code}</strong></td>
@@ -573,7 +628,10 @@
         if (code.toLowerCase().includes(q) || model.toLowerCase().includes(q) || batch.toLowerCase().includes(q)) {
           count++;
           const tr = document.createElement('tr');
-          tr.onclick = () => openModalForm('UNTESTED', code);
+          tr.onclick = () => {
+            openZoneMode('UNTESTED');
+            selectLocationFromSummary(code);
+          };
           tr.innerHTML = `
             <td><span class="badge" style="background:var(--yellow); color:#000;">Untested</span></td>
             <td><strong>${code}</strong></td>
@@ -704,7 +762,7 @@
         thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
         Object.keys(dataset).sort().forEach(code => {
           const item = dataset[code];
-          const [blk, side, r] = code.split('-');
+          const [blk] = code.split('-');
           if (filterBlk !== 'ALL' && blk !== filterBlk) return;
           
           const qS = Number(item.qtyS) || 0;
@@ -720,7 +778,7 @@
           totalKg += sumQty;
 
           const tr = document.createElement('tr');
-          tr.onclick = () => openModalForm('SMALL', code);
+          tr.onclick = () => selectLocationFromSummary(code);
           tr.innerHTML = `
             <td><span class="badge">${code}</span></td>
             <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
@@ -735,7 +793,7 @@
         thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>Model</th><th>Warna</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
         Object.keys(dataset).sort().forEach(code => {
           const item = dataset[code];
-          const [blk, side, r] = code.split('-');
+          const [blk] = code.split('-');
           if (filterBlk !== 'ALL' && blk !== filterBlk) return;
 
           const qty = Number(item.qty) || 0;
@@ -748,7 +806,7 @@
           totalKg += qty;
 
           const tr = document.createElement('tr');
-          tr.onclick = () => openModalForm('MEDIUM', code);
+          tr.onclick = () => selectLocationFromSummary(code);
           tr.innerHTML = `
             <td><span class="badge">${code}</span></td>
             <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
@@ -763,7 +821,7 @@
         thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>Model</th><th>Batch</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
         Object.keys(dataset).sort().forEach(code => {
           const item = dataset[code];
-          const [blk, side, r] = code.split('-');
+          const [blk] = code.split('-');
           if (filterBlk !== 'ALL' && blk !== filterBlk) return;
 
           const qty = Number(item.qty) || 0;
@@ -776,7 +834,7 @@
           totalKg += qty;
 
           const tr = document.createElement('tr');
-          tr.onclick = () => openModalForm('UNTESTED', code);
+          tr.onclick = () => selectLocationFromSummary(code);
           tr.innerHTML = `
             <td><span class="badge">${code}</span></td>
             <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
