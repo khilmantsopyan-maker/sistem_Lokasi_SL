@@ -254,6 +254,7 @@
           <option value="FAIL">Fail / Bermasalah (Merah)</option>
           <option value="BUBBLE">Bubble (Merah)</option>
           <option value="BEDA_WARNA">Beda Warna (Merah)</option>
+          <option value="KONTAMINASI">Kontaminasi (Merah)</option>
         </select>
       </div>
 
@@ -729,7 +730,7 @@
         const item = dataset[code];
         const cell = document.getElementById(`cell-${mode}-${code}`);
         if (cell && item) {
-          const isProb = ['FAIL', 'BUBBLE', 'BEDA_WARNA'].includes(item.status);
+          const isProb = ['FAIL', 'BUBBLE', 'BEDA_WARNA', 'KONTAMINASI'].includes(item.status);
           cell.classList.add(isProb ? 'problem' : 'filled');
         }
       });
