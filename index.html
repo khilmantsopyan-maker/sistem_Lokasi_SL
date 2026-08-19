@@ -13,7 +13,879 @@
       --card-border: #334155;
       --accent: #38bdf8;
       --accent-hover: #0284c7;
+      --green: #22c55e;<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Gudang Compound System</title>
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
       --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); padding: 12px; min-height: 100vh; }
+    
+    .wrapper { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+    /* Header */
+    .header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--card-border); }
+    .header h1 { font-size: 1.1rem; color: var(--accent); }
+    .nav-btn { padding: 6px 12px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: none; }
+
+    /* Layout Dashboard Utama */
+    .zone-container { display: flex; flex-direction: column; gap: 16px; }
+    
+    /* Search Box Global */
+    .home-search-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .home-search-box h3 { font-size: 0.95rem; color: var(--accent); }
+
+    .zone-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
+    .zone-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .zone-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+    .zone-card p { font-size: 0.8rem; color: var(--text-muted); }
+    .zone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Navigasi Tab Denah */
+    .mode-tabs { display: flex; gap: 8px; justify-content: center; background: var(--card-bg); padding: 6px; border-radius: 10px; border: 1px solid var(--card-border); }
+    .tab-btn { flex: 1; padding: 8px; background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; border-radius: 6px; cursor: pointer; }
+    .tab-btn.active { background: var(--accent); color: #0f172a; }
+
+    /* Panel Base */
+    .panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .panel-header { font-size: 0.9rem; font-weight: 600; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* Form Input */
+    .input-group { display: flex; flex-direction: column; gap: 4px; }
+    .input-group label { font-size: 0.75rem; color: var(--text-muted); }
+    input, select, textarea { width: 100%; padding: 8px 10px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 6px; color: var(--text); font-size: 0.85rem; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    
+    .btn { padding: 8px 12px; background: var(--accent); color: #0f172a; border: none; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+    .btn:hover { background: var(--accent-hover); color: #fff; }
+    .btn-danger { background: var(--red); color: #fff; }
+
+    /* Denah / Map Grid Area */
+    .map-box { background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; overflow-x: auto; max-height: 520px; overflow-y: auto; position: relative; }
+    .simple-map { display: flex; gap: 16px; justify-content: center; }
+    .block-column { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .block-title { font-weight: bold; font-size: 0.85rem; color: var(--accent); margin-bottom: 4px; }
+    .rack-group { display: flex; gap: 4px; }
+    .cell-col { display: flex; flex-direction: column; gap: 4px; }
+
+    /* Cell Box Denah + Nomor angka */
+    .cell { 
+      width: 32px; 
+      height: 32px; 
+      background: #1e293b; 
+      border: 1px solid var(--card-border); 
+      border-radius: 5px; 
+      cursor: pointer; 
+      transition: all 0.15s; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.7);
+      user-select: none;
+    }
+
+    .cell:hover { border-color: var(--accent); transform: scale(1.15); z-index: 2; color: #fff; }
+    .cell.filled { background: var(--green) !important; color: #fff !important; }
+    .cell.problem { background: var(--red) !important; color: #fff !important; }
+
+    /* Animasi Kedip/Highlight saat memilih data dari tabel Summary */
+    .cell.highlight-blink {
+      border: 2px solid #fff !important;
+      background: var(--yellow) !important;
+      color: #000 !important;
+      box-shadow: 0 0 16px var(--yellow);
+      animation: pulseBlink 0.8s infinite alternate;
+      z-index: 10;
+    }
+
+    @keyframes pulseBlink {
+      0% { transform: scale(1); box-shadow: 0 0 4px var(--yellow); }
+      100% { transform: scale(1.35); box-shadow: 0 0 18px var(--yellow); }
+    }
+
+    /* Layout Medium Grid A-Z */
+    .medium-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 10px; width: 100%; align-items: start; }
+
+    /* Tabel Summary Data */
+    .table-box { max-height: 220px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--card-border); }
+    th { background: #0f172a; color: var(--accent); position: sticky; top: 0; }
+    tr:hover { background: rgba(56, 189, 248, 0.15); cursor: pointer; }
+    .badge { background: var(--accent); color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
+
+    /* MODAL POP-UP FORM */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; padding: 16px; }
+    .modal-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; width: 100%; max-width: 420px; padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 8px; }
+    .modal-header h3 { color: var(--accent); font-size: 1rem; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; font-weight: bold; }
+    .close-btn:hover { color: var(--red); }
+  </style>
+</head>
+<body>
+
+  <div class="wrapper">
+    <!-- Header Utama -->
+    <div class="header">
+      <h1>Gudang Compound System</h1>
+      <button class="nav-btn" id="btnHome" onclick="showZoneLayout()">Menu Utama</button>
+    </div>
+
+    <!-- TAMPILAN 1: DASHBOARD ZONA SELEKSI + MENU PENCARIAN GLOBAL -->
+    <div id="zoneLayoutView" class="zone-container">
+      
+      <!-- PENCARIAN GLOBAL HALAMAN AWAL -->
+      <div class="home-search-box">
+        <h3>🔍 Pencarian Cepat Barang</h3>
+        <input type="text" id="inpHomeSearch" placeholder="Ketik kode lokasi, mcs, model barang, atau warna..." oninput="searchGlobal()" />
+        
+        <!-- HASIL PENCARIAN GLOBAL -->
+        <div id="homeSearchResultBox" class="table-box" style="display: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Lokasi</th>
+                <th>Model / MCS</th>
+                <th>Warna</th>
+                <th>QTY S (Kg)</th>
+                <th>QTY L (Kg)</th>
+                <th>QTY M (Kg)</th>
+                <th>Kondisi</th>
+              </tr>
+            </thead>
+            <tbody id="tblHomeSearchBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- KARTU PILIHAN ZONA -->
+      <div class="zone-card" style="border-left: 4px solid var(--green);" onclick="openZoneMode('MEDIUM')">
+        <h3>Area Medium (Pass)</h3>
+        <p>Denah & Stok Blok A - J (Nomor 1-4) | Blok K - Z (Nomor 1-7)</p>
+      </div>
+
+      <div class="zone-grid">
+        <div class="zone-card" style="border-left: 4px solid var(--accent);" onclick="openZoneMode('SMALL')">
+          <h3>Area Small & Large (S/L)</h3>
+          <p>Denah Blok A, B, dan C (Nomor 1-15)</p>
+        </div>
+        <div class="zone-card" style="border-left: 4px solid var(--yellow);" onclick="openZoneMode('UNTESTED')">
+          <h3>Medium Belum Test</h3>
+          <p>Area Line 1, Line 2, Line 3 (Nomor 1-7)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAMPILAN 2: AREA DETAIL -->
+    <div id="detailView" style="display: none; flex-direction: column; gap: 12px;">
+      
+      <!-- Navigasi Cepat Tab -->
+      <div class="mode-tabs">
+        <button class="tab-btn" id="tabSmall" onclick="switchMode('SMALL')">Small / Large</button>
+        <button class="tab-btn" id="tabMedium" onclick="switchMode('MEDIUM')">Medium (Pass)</button>
+        <button class="tab-btn" id="tabUntested" onclick="switchMode('UNTESTED')">Belum Test</button>
+      </div>
+
+      <!-- PANEL PENCARIAN & SUMMARY DATA AREA -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>🔍 Cari Data Stok Area Ini</span>
+          <span id="lblSummaryTotal" style="color:var(--accent); font-size:0.8rem;">Total: 0 Kg</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+          <input type="text" id="inpSearch" placeholder="Ketik untuk mencari mcs, model, warna, lokasi..." oninput="handleSearchInput()" />
+          <select id="selFilterBlock" onchange="handleSearchInput()">
+            <option value="ALL">Semua Blok</option>
+          </select>
+        </div>
+
+        <!-- Tabel Summary Data Hasil Cari -->
+        <div id="summaryContentBox" class="table-box" style="display: none; margin-top: 6px;">
+          <table>
+            <thead id="tblHead"></thead>
+            <tbody id="tblBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PETA DENAH VISUAL FULL -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>Denah Visual Area (Nomor Kotak)</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);">🟢 Terisi | 🔴 Bermasalah | 🟡 Berkedip</span>
+        </div>
+
+        <div class="map-box" id="mapBoxContainer">
+          <!-- Map S/L -->
+          <div id="mapSmall" class="simple-map"></div>
+
+          <!-- Map Medium A-Z -->
+          <div id="mapMedium" class="medium-grid-container" style="display: none;"></div>
+
+          <!-- Map Untested -->
+          <div id="mapUntested" class="simple-map" style="display: none;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- POP-UP MODAL FORM EDIT / SIMPAN / KOSONGKAN DATA -->
+  <div class="modal-overlay" id="modalForm">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Lokasi: <span class="badge" id="lblCode">A-L-01</span></h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+
+      <div class="input-group">
+        <label>Status Kondisi</label>
+        <select id="selStatus">
+          <option value="PASS">Pass</option>
+          <option value="FAIL">Fail</option>
+          <option value="BUBBLE">Bubble</option>
+          <option value="BEDA_WARNA">Beda Warna</option>
+          <option value="KONTAMINASI">Kontaminasi</option>
+        </select>
+      </div>
+
+      <!-- Form Small/Large -->
+      <div id="formSmall">
+        <div class="input-group">
+          <label>MCS</label>
+          <select id="inpMcs">
+            <option value="">-- Pilih MCS --</option>
+            <option value="RIP-024">RIP-024</option>
+            <option value="LCIP-001">LCIP-001</option>
+            <option value="LCIP-003">LCIP-003</option>
+            <option value="LCIP-024">LCIP-024</option>
+            <option value="IU-007">IU-007</option>
+            <option value="IU-009">IU-009</option>
+            <option value="CMP-014">CMP-014</option>
+            <option value="CMP-001">CMP-001</option>
+          </select>
+        </div>
+        <div class="input-group" style="margin-top:6px;">
+          <label>Warna</label>
+          <input type="text" id="inpColorS" placeholder="Warna barang" />
+        </div>
+        <div class="form-row" style="margin-top:6px;">
+          <div class="input-group">
+            <label>QTY S (Kg)</label>
+            <input type="number" id="inpQtyS" placeholder="0" min="0" />
+          </div>
+          <div class="input-group">
+            <label>QTY L (Kg)</label>
+            <input type="number" id="inpQtyL" placeholder="0" min="0" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Medium -->
+      <div id="formMedium" style="display: none;">
+        <div class="input-group">
+          <label>Model Barang</label>
+          <input type="text" id="inpModelM" placeholder="Nama / Jenis Model" />
+        </div>
+        <div class="input-group" style="margin-top:6px;">
+          <label>Warna</label>
+          <input type="text" id="inpColorM" placeholder="Warna" />
+        </div>
+        <div class="input-group" style="margin-top:6px;">
+          <label>QTY M (Kg)</label>
+          <input type="number" id="inpQtyM" placeholder="0" min="0" />
+        </div>
+      </div>
+
+      <!-- Form Untested -->
+      <div id="formUntested" style="display: none;">
+        <div class="input-group">
+          <label>Model / Nama Barang</label>
+          <input type="text" id="inpModelU" placeholder="Model barang" />
+        </div>
+        <div class="input-group" style="margin-top:6px;">
+          <label>Warna</label>
+          <input type="text" id="inpBatchU" placeholder="White" />
+        </div>
+        <div class="input-group" style="margin-top:6px;">
+          <label>QTY (Kg)</label>
+          <input type="number" id="inpQtyU" placeholder="0" min="0" />
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>Catatan</label>
+        <textarea id="inpNotes" rows="2" placeholder="Catatan tambahan..."></textarea>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <button class="btn" style="flex:1;" onclick="saveData()">Simpan Data</button>
+        <button class="btn btn-danger" onclick="deleteData()">Kosongkan</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAC6hkXMsuB2wpYKbKBoYfuifdQVFykdHY",
+      authDomain: "lokasi-system.firebaseapp.com",
+      databaseURL: "https://lokasi-system-default-rtdb.firebaseio.com",
+      projectId: "lokasi-system",
+      storageBucket: "lokasi-system.firebasestorage.app",
+      messagingSenderId: "106677338807",
+      appId: "1:106677338807:web:dcbeb6f34a387d4dba0332"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    let activeMode = 'SMALL';
+    let selectedCode = '';
+    let dataSmall = {}, dataMedium = {}, dataUntested = {};
+
+    const smallBlocks = ['A', 'B', 'C'];
+    const azBlocks = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
+    const untestedLines = ['LINE1', 'LINE2', 'LINE3'];
+
+    window.showZoneLayout = function() {
+      document.getElementById('zoneLayoutView').style.display = 'flex';
+      document.getElementById('detailView').style.display = 'none';
+      document.getElementById('btnHome').style.display = 'none';
+    };
+
+    window.openZoneMode = function(mode) {
+      document.getElementById('zoneLayoutView').style.display = 'none';
+      document.getElementById('detailView').style.display = 'flex';
+      document.getElementById('btnHome').style.display = 'block';
+      switchMode(mode);
+    };
+
+    window.closeModal = function() {
+      document.getElementById('modalForm').style.display = 'none';
+    };
+
+    function clearBlinking() {
+      document.querySelectorAll('.cell.highlight-blink').forEach(c => c.classList.remove('highlight-blink'));
+    }
+
+    window.selectLocationFromSummary = function(code) {
+      clearBlinking();
+      const targetCell = document.getElementById(`cell-${activeMode}-${code}`);
+      if (targetCell) {
+        targetCell.classList.add('highlight-blink');
+        targetCell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }
+    };
+
+    window.handleSearchInput = function() {
+      const query = document.getElementById('inpSearch').value.trim();
+      const filterBlk = document.getElementById('selFilterBlock').value;
+      const box = document.getElementById('summaryContentBox');
+
+      clearBlinking();
+
+      if (query.length > 0 || filterBlk !== 'ALL') {
+        box.style.display = 'block';
+      } else {
+        box.style.display = 'none';
+      }
+
+      renderTable();
+    };
+
+    /* PROSES MEMBANGUN KOTAK DENAH + NOMOR */
+    function buildMaps() {
+      // Map Small (1-15)
+      const mapS = document.getElementById('mapSmall');
+      mapS.innerHTML = '';
+      smallBlocks.forEach(blk => {
+        const blkDiv = document.createElement('div');
+        blkDiv.className = 'block-column';
+        blkDiv.innerHTML = `<div class="block-title">Blok ${blk}</div>`;
+        const rackGroup = document.createElement('div');
+        rackGroup.className = 'rack-group';
+
+        ['L', 'R'].forEach(side => {
+          const col = document.createElement('div');
+          col.className = 'cell-col';
+          for (let r = 1; r <= 15; r++) {
+            const code = `${blk}-${side}-${String(r).padStart(2, '0')}`;
+            const c = document.createElement('div');
+            c.className = 'cell';
+            c.id = `cell-SMALL-${code}`;
+            c.textContent = r;
+            c.onclick = () => openModalForm('SMALL', code);
+            col.appendChild(c);
+          }
+          rackGroup.appendChild(col);
+        });
+        blkDiv.appendChild(rackGroup);
+        mapS.appendChild(blkDiv);
+      });
+
+      // Map Medium (A-J: 1-4, K-Z: 1-7)
+      const mapM = document.getElementById('mapMedium');
+      mapM.innerHTML = '';
+      azBlocks.forEach(blk => {
+        const blkDiv = document.createElement('div');
+        blkDiv.className = 'block-column';
+        blkDiv.style.background = '#1e293b';
+        blkDiv.style.padding = '6px';
+        blkDiv.style.borderRadius = '6px';
+        blkDiv.innerHTML = `<div class="block-title">${blk}</div>`;
+        
+        const maxRows = (blk >= 'A' && blk <= 'J') ? 4 : 7;
+
+        const rackGroup = document.createElement('div');
+        rackGroup.className = 'rack-group';
+        ['L', 'R'].forEach(side => {
+          const col = document.createElement('div');
+          col.className = 'cell-col';
+          for (let r = 1; r <= maxRows; r++) {
+            const code = `${blk}-${side}-${String(r).padStart(2, '0')}`;
+            const c = document.createElement('div');
+            c.className = 'cell';
+            c.id = `cell-MEDIUM-${code}`;
+            c.textContent = r;
+            c.onclick = () => openModalForm('MEDIUM', code);
+            col.appendChild(c);
+          }
+          rackGroup.appendChild(col);
+        });
+        blkDiv.appendChild(rackGroup);
+        mapM.appendChild(blkDiv);
+      });
+
+      // Map Untested (1-7)
+      const mapU = document.getElementById('mapUntested');
+      mapU.innerHTML = '';
+      untestedLines.forEach(line => {
+        const blkDiv = document.createElement('div');
+        blkDiv.className = 'block-column';
+        blkDiv.innerHTML = `<div class="block-title">${line.replace('LINE', 'Line ')}</div>`;
+        const rackGroup = document.createElement('div');
+        rackGroup.className = 'rack-group';
+
+        ['L', 'R'].forEach(side => {
+          const col = document.createElement('div');
+          col.className = 'cell-col';
+          for (let r = 1; r <= 7; r++) {
+            const code = `${line}-${side}-${String(r).padStart(2, '0')}`;
+            const c = document.createElement('div');
+            c.className = 'cell';
+            c.id = `cell-UNTESTED-${code}`;
+            c.textContent = r;
+            c.onclick = () => openModalForm('UNTESTED', code);
+            col.appendChild(c);
+          }
+          rackGroup.appendChild(col);
+        });
+        blkDiv.appendChild(rackGroup);
+        mapU.appendChild(blkDiv);
+      });
+    }
+
+    window.switchMode = function(mode) {
+      activeMode = mode;
+      
+      document.getElementById('tabSmall').classList.toggle('active', mode === 'SMALL');
+      document.getElementById('tabMedium').classList.toggle('active', mode === 'MEDIUM');
+      document.getElementById('tabUntested').classList.toggle('active', mode === 'UNTESTED');
+
+      document.getElementById('mapSmall').style.display = mode === 'SMALL' ? 'flex' : 'none';
+      document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'grid' : 'none';
+      document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
+
+      document.getElementById('inpSearch').value = '';
+      document.getElementById('summaryContentBox').style.display = 'none';
+      clearBlinking();
+
+      const filterBlk = document.getElementById('selFilterBlock');
+      filterBlk.innerHTML = '<option value="ALL">Semua Blok</option>';
+
+      let list = mode === 'SMALL' ? smallBlocks : (mode === 'MEDIUM' ? azBlocks : untestedLines);
+      list.forEach(b => {
+        filterBlk.add(new Option(b.replace('LINE', 'Line '), b));
+      });
+
+      renderTable();
+    };
+
+    window.openModalForm = function(mode, code) {
+      openZoneMode(mode);
+      selectedCode = code;
+
+      document.getElementById('lblCode').textContent = code;
+      
+      document.getElementById('formSmall').style.display = mode === 'SMALL' ? 'block' : 'none';
+      document.getElementById('formMedium').style.display = mode === 'MEDIUM' ? 'block' : 'none';
+      document.getElementById('formUntested').style.display = mode === 'UNTESTED' ? 'block' : 'none';
+
+      let item = {};
+      if (mode === 'SMALL') item = dataSmall[code] || {};
+      else if (mode === 'MEDIUM') item = dataMedium[code] || {};
+      else if (mode === 'UNTESTED') item = dataUntested[code] || {};
+
+      document.getElementById('selStatus').value = item.status || 'PASS';
+      document.getElementById('inpNotes').value = item.notes || '';
+
+      if (mode === 'SMALL') {
+        document.getElementById('inpMcs').value = item.mcs || '';
+        document.getElementById('inpColorS').value = item.color || '';
+        document.getElementById('inpQtyS').value = item.qtyS !== undefined ? item.qtyS : '';
+        document.getElementById('inpQtyL').value = item.qtyL !== undefined ? item.qtyL : '';
+      } else if (mode === 'MEDIUM') {
+        document.getElementById('inpModelM').value = item.model || '';
+        document.getElementById('inpColorM').value = item.color || '';
+        document.getElementById('inpQtyM').value = item.qty !== undefined ? item.qty : '';
+      } else if (mode === 'UNTESTED') {
+        document.getElementById('inpModelU').value = item.model || '';
+        document.getElementById('inpBatchU').value = item.batch || '';
+        document.getElementById('inpQtyU').value = item.qty !== undefined ? item.qty : '';
+      }
+
+      document.getElementById('modalForm').style.display = 'flex';
+    };
+
+    /* PENCARIAN GLOBAL TERPISAH QTY S, QTY L, DAN QTY M */
+    window.searchGlobal = function() {
+      const q = document.getElementById('inpHomeSearch').value.toLowerCase().trim();
+      const resultBox = document.getElementById('homeSearchResultBox');
+      const tbody = document.getElementById('tblHomeSearchBody');
+      tbody.innerHTML = '';
+
+      if (!q) {
+        resultBox.style.display = 'none';
+        return;
+      }
+
+      let count = 0;
+
+      // Search Area S/L
+      Object.keys(dataSmall).forEach(code => {
+        const item = dataSmall[code];
+        const mcs = item.mcs || '';
+        const color = item.color || '';
+        const qtyS = Number(item.qtyS) || 0;
+        const qtyL = Number(item.qtyL) || 0;
+
+        if (code.toLowerCase().includes(q) || mcs.toLowerCase().includes(q) || color.toLowerCase().includes(q)) {
+          count++;
+          const tr = document.createElement('tr');
+          tr.onclick = () => {
+            openZoneMode('SMALL');
+            selectLocationFromSummary(code);
+          };
+          tr.innerHTML = `
+            <td><span class="badge" style="background:var(--accent);">S/L</span></td>
+            <td><strong>${code}</strong></td>
+            <td>${mcs || '-'}</td>
+            <td>${color || '-'}</td>
+            <td><strong>${qtyS.toLocaleString('id-ID')} Kg</strong></td>
+            <td><strong>${qtyL.toLocaleString('id-ID')} Kg</strong></td>
+            <td>-</td>
+            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+
+      // Search Area Medium (Header: QTY M)
+      Object.keys(dataMedium).forEach(code => {
+        const item = dataMedium[code];
+        const model = item.model || '';
+        const color = item.color || '';
+        const qty = Number(item.qty) || 0;
+
+        if (code.toLowerCase().includes(q) || model.toLowerCase().includes(q) || color.toLowerCase().includes(q)) {
+          count++;
+          const tr = document.createElement('tr');
+          tr.onclick = () => {
+            openZoneMode('MEDIUM');
+            selectLocationFromSummary(code);
+          };
+          tr.innerHTML = `
+            <td><span class="badge" style="background:var(--green); color:#fff;">Medium</span></td>
+            <td><strong>${code}</strong></td>
+            <td>${model || '-'}</td>
+            <td>${color || '-'}</td>
+            <td>-</td>
+            <td>-</td>
+            <td><strong>${qty.toLocaleString('id-ID')} Kg</strong></td>
+            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+
+      // Search Area Untested
+      Object.keys(dataUntested).forEach(code => {
+        const item = dataUntested[code];
+        const model = item.model || '';
+        const batch = item.batch || '';
+        const qty = Number(item.qty) || 0;
+
+        if (code.toLowerCase().includes(q) || model.toLowerCase().includes(q) || batch.toLowerCase().includes(q)) {
+          count++;
+          const tr = document.createElement('tr');
+          tr.onclick = () => {
+            openZoneMode('UNTESTED');
+            selectLocationFromSummary(code);
+          };
+          tr.innerHTML = `
+            <td><span class="badge" style="background:var(--yellow); color:#000;">Untested</span></td>
+            <td><strong>${code}</strong></td>
+            <td>${model || '-'} ${batch ? '[Batch: ' + batch + ']' : ''}</td>
+            <td>-</td>
+            <td>-</td>
+            <td>-</td>
+            <td><strong>${qty.toLocaleString('id-ID')} Kg</strong></td>
+            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+
+      resultBox.style.display = count > 0 ? 'block' : 'none';
+    };
+
+    window.saveData = function() {
+      const code = selectedCode;
+      const status = document.getElementById('selStatus').value;
+      const notes = document.getElementById('inpNotes').value.trim();
+
+      if (activeMode === 'SMALL') {
+        const mcs = document.getElementById('inpMcs').value;
+        const color = document.getElementById('inpColorS').value.trim();
+        const rawS = document.getElementById('inpQtyS').value.trim();
+        const rawL = document.getElementById('inpQtyL').value.trim();
+
+        if (rawS === "" && rawL === "") {
+          alert("Harap isi QTY S atau QTY L terlebih dahulu!");
+          return;
+        }
+
+        const qtyS = rawS !== "" ? Number(rawS) : 0;
+        const qtyL = rawL !== "" ? Number(rawL) : 0;
+
+        set(ref(database, `warehouseStock/${code}`), { mcs, color, qtyS, qtyL, notes, status })
+          .then(() => {
+            alert(`Data lokasi ${code} berhasil disimpan!`);
+            closeModal();
+          });
+
+      } else if (activeMode === 'MEDIUM') {
+        const model = document.getElementById('inpModelM').value.trim();
+        const color = document.getElementById('inpColorM').value.trim();
+        const rawQty = document.getElementById('inpQtyM').value.trim();
+
+        if (rawQty === "") {
+          alert("Harap isi QTY Medium terlebih dahulu!");
+          return;
+        }
+
+        const qty = Number(rawQty);
+        set(ref(database, `warehouseStockMedium/${code}`), { model, color, qty, notes, status })
+          .then(() => {
+            alert(`Data lokasi ${code} berhasil disimpan!`);
+            closeModal();
+          });
+
+      } else if (activeMode === 'UNTESTED') {
+        const model = document.getElementById('inpModelU').value.trim();
+        const batch = document.getElementById('inpBatchU').value.trim();
+        const rawQty = document.getElementById('inpQtyU').value.trim();
+
+        if (rawQty === "") {
+          alert("Harap isi QTY Belum Test terlebih dahulu!");
+          return;
+        }
+
+        const qty = Number(rawQty);
+        set(ref(database, `warehouseStockUntested/${code}`), { model, batch, qty, notes, status })
+          .then(() => {
+            alert(`Data lokasi ${code} berhasil disimpan!`);
+            closeModal();
+          });
+      }
+    };
+
+    window.deleteData = function() {
+      const code = selectedCode;
+      if (confirm(`Kosongkan data lokasi ${code}?`)) {
+        if (activeMode === 'SMALL') remove(ref(database, `warehouseStock/${code}`));
+        else if (activeMode === 'MEDIUM') remove(ref(database, `warehouseStockMedium/${code}`));
+        else if (activeMode === 'UNTESTED') remove(ref(database, `warehouseStockUntested/${code}`));
+        closeModal();
+      }
+    };
+
+    function updateCells(mode, dataset) {
+      document.querySelectorAll(`[id^="cell-${mode}-"]`).forEach(c => c.classList.remove('filled', 'problem'));
+      Object.keys(dataset).forEach(code => {
+        const item = dataset[code];
+        const cell = document.getElementById(`cell-${mode}-${code}`);
+        if (cell && item) {
+          const isProb = ['FAIL', 'BUBBLE', 'BEDA_WARNA'].includes(item.status);
+          cell.classList.add(isProb ? 'problem' : 'filled');
+        }
+      });
+    }
+
+    onValue(ref(database, 'warehouseStock'), snap => {
+      dataSmall = snap.val() || {};
+      updateCells('SMALL', dataSmall);
+      if (activeMode === 'SMALL') { renderTable(); }
+    });
+
+    onValue(ref(database, 'warehouseStockMedium'), snap => {
+      dataMedium = snap.val() || {};
+      updateCells('MEDIUM', dataMedium);
+      if (activeMode === 'MEDIUM') { renderTable(); }
+    });
+
+    onValue(ref(database, 'warehouseStockUntested'), snap => {
+      dataUntested = snap.val() || {};
+      updateCells('UNTESTED', dataUntested);
+      if (activeMode === 'UNTESTED') { renderTable(); }
+    });
+
+    /* TABEL SUMMARY AREA DETAIL */
+    window.renderTable = function() {
+      const search = document.getElementById('inpSearch').value.toLowerCase();
+      const filterBlk = document.getElementById('selFilterBlock').value;
+      const thead = document.getElementById('tblHead');
+      const tbody = document.getElementById('tblBody');
+      tbody.innerHTML = '';
+
+      let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : dataUntested);
+      let totalKg = 0;
+
+      if (activeMode === 'SMALL') {
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>QTY S (Kg)</th><th>QTY L (Kg)</th><th>Notes</th></tr>`;
+        Object.keys(dataset).sort().forEach(code => {
+          const item = dataset[code];
+          const [blk] = code.split('-');
+          if (filterBlk !== 'ALL' && blk !== filterBlk) return;
+          
+          const qS = Number(item.qtyS) || 0;
+          const qL = Number(item.qtyL) || 0;
+          const sumQty = qS + qL;
+
+          const mcsMatch = item.mcs && item.mcs.toLowerCase().includes(search);
+          const colorMatch = item.color && item.color.toLowerCase().includes(search);
+          const codeMatch = code.toLowerCase().includes(search);
+
+          if (search && !codeMatch && !mcsMatch && !colorMatch) return;
+
+          totalKg += sumQty;
+
+          const tr = document.createElement('tr');
+          tr.onclick = () => selectLocationFromSummary(code);
+          tr.innerHTML = `
+            <td><span class="badge">${code}</span></td>
+            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+            <td>${item.mcs || '-'}</td>
+            <td>${item.color || '-'}</td>
+            <td><strong>${qS.toLocaleString('id-ID')}</strong></td>
+            <td><strong>${qL.toLocaleString('id-ID')}</strong></td>
+            <td style="color:var(--text-muted);">${item.notes || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else if (activeMode === 'MEDIUM') {
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>Model</th><th>Warna</th><th>QTY M (Kg)</th><th>Notes</th></tr>`;
+        Object.keys(dataset).sort().forEach(code => {
+          const item = dataset[code];
+          const [blk] = code.split('-');
+          if (filterBlk !== 'ALL' && blk !== filterBlk) return;
+
+          const qty = Number(item.qty) || 0;
+          const modelMatch = item.model && item.model.toLowerCase().includes(search);
+          const colorMatch = item.color && item.color.toLowerCase().includes(search);
+          const codeMatch = code.toLowerCase().includes(search);
+
+          if (search && !codeMatch && !modelMatch && !colorMatch) return;
+
+          totalKg += qty;
+
+          const tr = document.createElement('tr');
+          tr.onclick = () => selectLocationFromSummary(code);
+          tr.innerHTML = `
+            <td><span class="badge">${code}</span></td>
+            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+            <td>${item.model || '-'}</td>
+            <td>${item.color || '-'}</td>
+            <td><strong>${qty.toLocaleString('id-ID')}</strong></td>
+            <td style="color:var(--text-muted);">${item.notes || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else {
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>Model</th><th>Batch</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
+        Object.keys(dataset).sort().forEach(code => {
+          const item = dataset[code];
+          const [blk] = code.split('-');
+          if (filterBlk !== 'ALL' && blk !== filterBlk) return;
+
+          const qty = Number(item.qty) || 0;
+          const modelMatch = item.model && item.model.toLowerCase().includes(search);
+          const batchMatch = item.batch && item.batch.toLowerCase().includes(search);
+          const codeMatch = code.toLowerCase().includes(search);
+
+          if (search && !codeMatch && !modelMatch && !batchMatch) return;
+
+          totalKg += qty;
+
+          const tr = document.createElement('tr');
+          tr.onclick = () => selectLocationFromSummary(code);
+          tr.innerHTML = `
+            <td><span class="badge">${code}</span></td>
+            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+            <td>${item.model || '-'}</td>
+            <td>${item.batch || '-'}</td>
+            <td><strong>${qty.toLocaleString('id-ID')}</strong></td>
+            <td style="color:var(--text-muted);">${item.notes || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      document.getElementById('lblSummaryTotal').textContent = `Total: ${totalKg.toLocaleString('id-ID')} Kg`;
+    };
+
+    buildMaps();
+    switchMode('SMALL');
+  </script>
+</body>
+</html>
       --red: #ef4444;
       --yellow: #f59e0b;
       --text: #f8fafc;
