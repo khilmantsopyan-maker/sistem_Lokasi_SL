@@ -404,9 +404,7 @@
       renderTable();
     };
 
-    /* PROSES MEMBANGUN KOTAK DENAH + NOMOR */
     function buildMaps() {
-      // Map Small (1-15)
       const mapS = document.getElementById('mapSmall');
       mapS.innerHTML = '';
       smallBlocks.forEach(blk => {
@@ -434,7 +432,6 @@
         mapS.appendChild(blkDiv);
       });
 
-      // Map Medium (A-J: 1-4, K-Z: 1-7)
       const mapM = document.getElementById('mapMedium');
       mapM.innerHTML = '';
       azBlocks.forEach(blk => {
@@ -467,7 +464,6 @@
         mapM.appendChild(blkDiv);
       });
 
-      // Map Untested (1-7)
       const mapU = document.getElementById('mapUntested');
       mapU.innerHTML = '';
       untestedLines.forEach(line => {
@@ -558,7 +554,6 @@
       document.getElementById('modalForm').style.display = 'flex';
     };
 
-    /* PENCARIAN GLOBAL TERPISAH QTY S, QTY L, DAN QTY M */
     window.searchGlobal = function() {
       const q = document.getElementById('inpHomeSearch').value.toLowerCase().trim();
       const resultBox = document.getElementById('homeSearchResultBox');
@@ -572,7 +567,6 @@
 
       let count = 0;
 
-      // Search Area S/L
       Object.keys(dataSmall).forEach(code => {
         const item = dataSmall[code];
         const mcs = item.mcs || '';
@@ -601,7 +595,6 @@
         }
       });
 
-      // Search Area Medium (Header: QTY M)
       Object.keys(dataMedium).forEach(code => {
         const item = dataMedium[code];
         const model = item.model || '';
@@ -629,7 +622,6 @@
         }
       });
 
-      // Search Area Untested
       Object.keys(dataUntested).forEach(code => {
         const item = dataUntested[code];
         const model = item.model || '';
@@ -761,7 +753,6 @@
       if (activeMode === 'UNTESTED') { renderTable(); }
     });
 
-    /* TABEL SUMMARY AREA DETAIL */
     window.renderTable = function() {
       const search = document.getElementById('inpSearch').value.toLowerCase();
       const filterBlk = document.getElementById('selFilterBlock').value;
