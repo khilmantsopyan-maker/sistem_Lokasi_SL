@@ -221,9 +221,9 @@
           </select>
         </div>
 
-        <!-- Tombol Khusus Cek Barang Tersebar (Hanya muncul di Medium) -->
+        <!-- Tombol Cek Barang Tersebar (S/L atau Medium) -->
         <div id="boxDuplicateBtn" style="display:none; margin-top: 4px;">
-          <button class="btn btn-warning" style="width:100%; font-size:0.8rem;" onclick="checkDuplicatesMedium()">⚠️ Tampilkan Barang Medium yang Tersebar di Dua Tempat / Lebih</button>
+          <button class="btn btn-warning" style="width:100%; font-size:0.8rem;" onclick="checkDuplicatesArea()">⚠️ Tampilkan Barang Tersebar di Dua Tempat / Lebih</button>
         </div>
 
         <!-- Tabel Summary Data Hasil Cari / Cek Duplikat -->
@@ -266,7 +266,7 @@
       </div>
 
       <div class="input-group">
-        <label>Warna</label>
+        <label>Status Kondisi</label>
         <select id="selStatus">
           <option value="PASS">Pass / Normal (Hijau)</option>
           <option value="FAIL">Fail / Bermasalah (Merah)</option>
@@ -279,7 +279,7 @@
       <div id="formSmall">
         <div class="input-group">
           <label>MCS</label>
-          <select id="inpMcs">
+          <select id="inpMcs" onchange="checkDuplicateInModal()">
             <option value="">-- Pilih MCS --</option>
             <option value="RIP-024">RIP-024</option>
             <option value="LCIP-001">LCIP-001</option>
@@ -293,7 +293,7 @@
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
-          <input type="text" id="inpColorS" placeholder="Warna barang" />
+          <input type="text" id="inpColorS" placeholder="Warna barang" oninput="checkDuplicateInModal()" />
         </div>
         <div class="form-row" style="margin-top:6px;">
           <div class="input-group">
@@ -321,9 +321,6 @@
           <label>QTY M (Kg)</label>
           <input type="number" id="inpQtyM" placeholder="0" min="0" />
         </div>
-
-        <!-- Warning Alert Duplikat dalam modal -->
-        <div class="alert-box" id="alertModalDuplicate" style="margin-top:8px;"></div>
       </div>
 
       <!-- Form Untested -->
@@ -333,7 +330,7 @@
           <input type="text" id="inpModelU" placeholder="Model barang" />
         </div>
         <div class="input-group" style="margin-top:6px;">
-          <label>No. Batch / Lot</label>
+          <label>Warna</label>
           <input type="text" id="inpBatchU" placeholder=". . ." />
         </div>
         <div class="input-group" style="margin-top:6px;">
@@ -341,6 +338,9 @@
           <input type="number" id="inpQtyU" placeholder="0" min="0" />
         </div>
       </div>
+
+      <!-- Warning Alert Duplikat dalam modal (Universal S/L & Medium) -->
+      <div class="alert-box" id="alertModalDuplicate" style="margin-top:8px;"></div>
 
       <div class="input-group">
         <label>Catatan</label>
@@ -524,7 +524,8 @@
       document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'grid' : 'none';
       document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
 
-      document.getElementById('boxDuplicateBtn').style.display = mode === 'MEDIUM' ? 'block' : 'none';
+      // Tombol duplikat muncul di Small dan Medium
+      document.getElementById('boxDuplicateBtn').style.display = (mode === 'SMALL' || mode === 'MEDIUM') ? 'block' : 'none';
 
       document.getElementById('inpSearch').value = '';
       document.getElementById('summaryContentBox').style.display = 'none';
@@ -568,40 +569,66 @@
         document.getElementById('inpModelM').value = item.model || '';
         document.getElementById('inpColorM').value = item.color || '';
         document.getElementById('inpQtyM').value = item.qty !== undefined ? item.qty : '';
-        checkDuplicateInModal(); // Cek langsung saat buka
       } else if (mode === 'UNTESTED') {
         document.getElementById('inpModelU').value = item.model || '';
         document.getElementById('inpBatchU').value = item.batch || '';
         document.getElementById('inpQtyU').value = item.qty !== undefined ? item.qty : '';
       }
 
+      checkDuplicateInModal(); // Cek langsung saat buka modal
       document.getElementById('modalForm').style.display = 'flex';
     };
 
-    /* CEK DUPLIKAT OTOMATIS SAAT USER MENGETIK DI MODAL FORM MEDIUM */
+    /* CEK DUPLIKAT OTOMATIS SAAT USER MENGETIK DI MODAL FORM (S/L DAN MEDIUM) */
     window.checkDuplicateInModal = function() {
-      if (activeMode !== 'MEDIUM') return;
-      
-      const model = document.getElementById('inpModelM').value.trim().toLowerCase();
-      const color = document.getElementById('inpColorM').value.trim().toLowerCase();
       const alertBox = document.getElementById('alertModalDuplicate');
+      let matches = [];
 
-      if (!model) {
+      if (activeMode === 'SMALL') {
+        const mcs = document.getElementById('inpMcs').value.trim().toLowerCase();
+        const color = document.getElementById('inpColorS').value.trim().toLowerCase();
+
+        if (!mcs) {
+          alertBox.style.display = 'none';
+          return;
+        }
+
+        Object.keys(dataSmall).forEach(code => {
+          if (code === selectedCode) return;
+          const item = dataSmall[code];
+          const m = (item.mcs || '').toLowerCase();
+          const c = (item.color || '').toLowerCase();
+
+          if (m === mcs && (!color || c === color)) {
+            const qS = item.qtyS || 0;
+            const qL = item.qtyL || 0;
+            matches.push(`<b>${code}</b> (S: ${qS} Kg, L: ${qL} Kg)`);
+          }
+        });
+
+      } else if (activeMode === 'MEDIUM') {
+        const model = document.getElementById('inpModelM').value.trim().toLowerCase();
+        const color = document.getElementById('inpColorM').value.trim().toLowerCase();
+
+        if (!model) {
+          alertBox.style.display = 'none';
+          return;
+        }
+
+        Object.keys(dataMedium).forEach(code => {
+          if (code === selectedCode) return;
+          const item = dataMedium[code];
+          const m = (item.model || '').toLowerCase();
+          const c = (item.color || '').toLowerCase();
+
+          if (m === model && (!color || c === color)) {
+            matches.push(`<b>${code}</b> (Qty: ${item.qty || 0} Kg)`);
+          }
+        });
+      } else {
         alertBox.style.display = 'none';
         return;
       }
-
-      let matches = [];
-      Object.keys(dataMedium).forEach(code => {
-        if (code === selectedCode) return; // Lewati lokasi yang sedang di-edit
-        const item = dataMedium[code];
-        const m = (item.model || '').toLowerCase();
-        const c = (item.color || '').toLowerCase();
-
-        if (m === model && (!color || c === color)) {
-          matches.push(`<b>${code}</b> (Qty: ${item.qty || 0} Kg)`);
-        }
-      });
 
       if (matches.length > 0) {
         alertBox.style.display = 'block';
@@ -611,8 +638,8 @@
       }
     };
 
-    /* CEK SEMUA BARANG DUPLIKAT DI AREA MEDIUM (TAMPILKAN DI TABEL) */
-    window.checkDuplicatesMedium = function() {
+    /* CEK BARANG TERSEBAR DI TABEL SUMMARY (S/L DAN MEDIUM) */
+    window.checkDuplicatesArea = function() {
       const box = document.getElementById('summaryContentBox');
       const thead = document.getElementById('tblHead');
       const tbody = document.getElementById('tblBody');
@@ -620,41 +647,80 @@
       
       let groups = {};
 
-      // Kelompokkan data berdasarkan Model + Warna
-      Object.keys(dataMedium).forEach(code => {
-        const item = dataMedium[code];
-        const model = (item.model || '').trim();
-        const color = (item.color || '').trim();
-        
-        if (!model) return;
+      if (activeMode === 'SMALL') {
+        Object.keys(dataSmall).forEach(code => {
+          const item = dataSmall[code];
+          const mcs = (item.mcs || '').trim();
+          const color = (item.color || '').trim();
+          
+          if (!mcs) return;
 
-        const key = `${model.toUpperCase()} | ${color ? color.toUpperCase() : 'NO COLOR'}`;
-        if (!groups[key]) groups[key] = [];
-        groups[key].push({ code, qty: Number(item.qty) || 0 });
-      });
+          const key = `${mcs.toUpperCase()} | ${color ? color.toUpperCase() : 'NO COLOR'}`;
+          if (!groups[key]) groups[key] = [];
+          groups[key].push({ code, qtyS: Number(item.qtyS) || 0, qtyL: Number(item.qtyL) || 0 });
+        });
 
-      thead.innerHTML = `<tr><th>Model & Warna</th><th>Lokasi Tersebar</th><th>Total Qty (Kg)</th><th>Aksi</th></tr>`;
+        thead.innerHTML = `<tr><th>MCS & Warna</th><th>Lokasi Tersebar</th><th>Total Qty S/L (Kg)</th><th>Aksi</th></tr>`;
 
-      let count = 0;
-      Object.keys(groups).forEach(key => {
-        if (groups[key].length > 1) { // Hanya jika ada lebih dari 1 lokasi
-          count++;
-          const locs = groups[key].map(g => `${g.code} (${g.qty} Kg)`).join(', ');
-          const totalQty = groups[key].reduce((sum, g) => sum + g.qty, 0);
+        let count = 0;
+        Object.keys(groups).forEach(key => {
+          if (groups[key].length > 1) {
+            count++;
+            const locs = groups[key].map(g => `${g.code} (S:${g.qtyS}, L:${g.qtyL})`).join(', ');
+            const totalS = groups[key].reduce((sum, g) => sum + g.qtyS, 0);
+            const totalL = groups[key].reduce((sum, g) => sum + g.qtyL, 0);
 
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td><strong>${key}</strong></td>
-            <td style="color:var(--yellow); font-weight:600;">${locs}</td>
-            <td><strong>${totalQty.toLocaleString('id-ID')} Kg</strong></td>
-            <td><button class="btn btn-warning" style="padding:2px 8px; font-size:0.7rem;" onclick="highlightMultipleLocs('${groups[key].map(g => g.code).join(',')}')">Sorot Lokasi</button></td>
-          `;
-          tbody.appendChild(tr);
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><strong>${key}</strong></td>
+              <td style="color:var(--yellow); font-weight:600;">${locs}</td>
+              <td><strong>S: ${totalS} Kg | L: ${totalL} Kg</strong></td>
+              <td><button class="btn btn-warning" style="padding:2px 8px; font-size:0.7rem;" onclick="highlightMultipleLocs('${groups[key].map(g => g.code).join(',')}')">Sorot Lokasi</button></td>
+            `;
+            tbody.appendChild(tr);
+          }
+        });
+
+        if (count === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--green);">✅ Bagus! Tidak ada barang S/L yang tersebar di beberapa lokasi.</td></tr>`;
         }
-      });
 
-      if (count === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--green);">✅ Bagus! Tidak ada barang Medium yang tersebar di beberapa tempat.</td></tr>`;
+      } else if (activeMode === 'MEDIUM') {
+        Object.keys(dataMedium).forEach(code => {
+          const item = dataMedium[code];
+          const model = (item.model || '').trim();
+          const color = (item.color || '').trim();
+          
+          if (!model) return;
+
+          const key = `${model.toUpperCase()} | ${color ? color.toUpperCase() : 'NO COLOR'}`;
+          if (!groups[key]) groups[key] = [];
+          groups[key].push({ code, qty: Number(item.qty) || 0 });
+        });
+
+        thead.innerHTML = `<tr><th>Model & Warna</th><th>Lokasi Tersebar</th><th>Total Qty (Kg)</th><th>Aksi</th></tr>`;
+
+        let count = 0;
+        Object.keys(groups).forEach(key => {
+          if (groups[key].length > 1) {
+            count++;
+            const locs = groups[key].map(g => `${g.code} (${g.qty} Kg)`).join(', ');
+            const totalQty = groups[key].reduce((sum, g) => sum + g.qty, 0);
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><strong>${key}</strong></td>
+              <td style="color:var(--yellow); font-weight:600;">${locs}</td>
+              <td><strong>${totalQty.toLocaleString('id-ID')} Kg</strong></td>
+              <td><button class="btn btn-warning" style="padding:2px 8px; font-size:0.7rem;" onclick="highlightMultipleLocs('${groups[key].map(g => g.code).join(',')}')">Sorot Lokasi</button></td>
+            `;
+            tbody.appendChild(tr);
+          }
+        });
+
+        if (count === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--green);">✅ Bagus! Tidak ada barang Medium yang tersebar di beberapa lokasi.</td></tr>`;
+        }
       }
 
       box.style.display = 'block';
@@ -664,7 +730,7 @@
       clearBlinking();
       const codes = codesStr.split(',');
       codes.forEach(code => {
-        const targetCell = document.getElementById(`cell-MEDIUM-${code}`);
+        const targetCell = document.getElementById(`cell-${activeMode}-${code}`);
         if (targetCell) targetCell.classList.add('highlight-blink');
       });
       alert(`Lokasi tersebar [${codes.join(', ')}] sekarang berkedip warna kuning di denah!`);
