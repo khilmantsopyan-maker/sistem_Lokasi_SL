@@ -63,6 +63,7 @@
     .btn { padding: 8px 12px; background: var(--accent); color: #0f172a; border: none; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
     .btn:hover { background: var(--accent-hover); color: #fff; }
     .btn-danger { background: var(--red); color: #fff; }
+    .btn-warning { background: var(--yellow); color: #000; }
 
     /* Denah / Map Grid Area */
     .map-box { background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; overflow-x: auto; max-height: 520px; overflow-y: auto; position: relative; }
@@ -94,7 +95,7 @@
     .cell.filled { background: var(--green) !important; color: #fff !important; }
     .cell.problem { background: var(--red) !important; color: #fff !important; }
 
-    /* Animasi Kedip/Highlight saat memilih data dari tabel Summary */
+    /* Animasi Kedip/Highlight */
     .cell.highlight-blink {
       border: 2px solid #fff !important;
       background: var(--yellow) !important;
@@ -119,6 +120,18 @@
     th { background: #0f172a; color: var(--accent); position: sticky; top: 0; }
     tr:hover { background: rgba(56, 189, 248, 0.15); cursor: pointer; }
     .badge { background: var(--accent); color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
+
+    /* Warning Box Pop-up Modal */
+    .alert-box {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--yellow);
+      color: #fef08a;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      display: none;
+      line-height: 1.3;
+    }
 
     /* MODAL POP-UP FORM */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; padding: 16px; }
@@ -208,7 +221,12 @@
           </select>
         </div>
 
-        <!-- Tabel Summary Data Hasil Cari -->
+        <!-- Tombol Khusus Cek Barang Tersebar (Hanya muncul di Medium) -->
+        <div id="boxDuplicateBtn" style="display:none; margin-top: 4px;">
+          <button class="btn btn-warning" style="width:100%; font-size:0.8rem;" onclick="checkDuplicatesMedium()">⚠️ Tampilkan Barang Medium yang Tersebar di Dua Tempat / Lebih</button>
+        </div>
+
+        <!-- Tabel Summary Data Hasil Cari / Cek Duplikat -->
         <div id="summaryContentBox" class="table-box" style="display: none; margin-top: 6px;">
           <table>
             <thead id="tblHead"></thead>
@@ -248,13 +266,12 @@
       </div>
 
       <div class="input-group">
-        <label>Status Kondisi</label>
+        <label>Warna</label>
         <select id="selStatus">
           <option value="PASS">Pass / Normal (Hijau)</option>
           <option value="FAIL">Fail / Bermasalah (Merah)</option>
           <option value="BUBBLE">Bubble (Merah)</option>
           <option value="BEDA_WARNA">Beda Warna (Merah)</option>
-          <option value="KONTAMINASI">Kontaminasi (Merah)</option>
         </select>
       </div>
 
@@ -294,16 +311,19 @@
       <div id="formMedium" style="display: none;">
         <div class="input-group">
           <label>Model Barang</label>
-          <input type="text" id="inpModelM" placeholder="Nama / Jenis Model" />
+          <input type="text" id="inpModelM" placeholder="Nama / Jenis Model" oninput="checkDuplicateInModal()" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
-          <input type="text" id="inpColorM" placeholder="Warna" />
+          <input type="text" id="inpColorM" placeholder="Warna" oninput="checkDuplicateInModal()" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>QTY M (Kg)</label>
           <input type="number" id="inpQtyM" placeholder="0" min="0" />
         </div>
+
+        <!-- Warning Alert Duplikat dalam modal -->
+        <div class="alert-box" id="alertModalDuplicate" style="margin-top:8px;"></div>
       </div>
 
       <!-- Form Untested -->
@@ -313,8 +333,8 @@
           <input type="text" id="inpModelU" placeholder="Model barang" />
         </div>
         <div class="input-group" style="margin-top:6px;">
-          <label>Warna</label>
-          <input type="text" id="inpBatchU" placeholder="Contoh: BATCH-01" />
+          <label>No. Batch / Lot</label>
+          <input type="text" id="inpBatchU" placeholder=". . ." />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>QTY (Kg)</label>
@@ -504,6 +524,8 @@
       document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'grid' : 'none';
       document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
 
+      document.getElementById('boxDuplicateBtn').style.display = mode === 'MEDIUM' ? 'block' : 'none';
+
       document.getElementById('inpSearch').value = '';
       document.getElementById('summaryContentBox').style.display = 'none';
       clearBlinking();
@@ -546,6 +568,7 @@
         document.getElementById('inpModelM').value = item.model || '';
         document.getElementById('inpColorM').value = item.color || '';
         document.getElementById('inpQtyM').value = item.qty !== undefined ? item.qty : '';
+        checkDuplicateInModal(); // Cek langsung saat buka
       } else if (mode === 'UNTESTED') {
         document.getElementById('inpModelU').value = item.model || '';
         document.getElementById('inpBatchU').value = item.batch || '';
@@ -553,6 +576,98 @@
       }
 
       document.getElementById('modalForm').style.display = 'flex';
+    };
+
+    /* CEK DUPLIKAT OTOMATIS SAAT USER MENGETIK DI MODAL FORM MEDIUM */
+    window.checkDuplicateInModal = function() {
+      if (activeMode !== 'MEDIUM') return;
+      
+      const model = document.getElementById('inpModelM').value.trim().toLowerCase();
+      const color = document.getElementById('inpColorM').value.trim().toLowerCase();
+      const alertBox = document.getElementById('alertModalDuplicate');
+
+      if (!model) {
+        alertBox.style.display = 'none';
+        return;
+      }
+
+      let matches = [];
+      Object.keys(dataMedium).forEach(code => {
+        if (code === selectedCode) return; // Lewati lokasi yang sedang di-edit
+        const item = dataMedium[code];
+        const m = (item.model || '').toLowerCase();
+        const c = (item.color || '').toLowerCase();
+
+        if (m === model && (!color || c === color)) {
+          matches.push(`<b>${code}</b> (Qty: ${item.qty || 0} Kg)`);
+        }
+      });
+
+      if (matches.length > 0) {
+        alertBox.style.display = 'block';
+        alertBox.innerHTML = `⚠️ <b>Perhatian Operator:</b> Barang serupa sudah ada di lokasi ${matches.join(', ')}. Pertimbangkan untuk menyatukan barang ke lokasi tersebut!`;
+      } else {
+        alertBox.style.display = 'none';
+      }
+    };
+
+    /* CEK SEMUA BARANG DUPLIKAT DI AREA MEDIUM (TAMPILKAN DI TABEL) */
+    window.checkDuplicatesMedium = function() {
+      const box = document.getElementById('summaryContentBox');
+      const thead = document.getElementById('tblHead');
+      const tbody = document.getElementById('tblBody');
+      tbody.innerHTML = '';
+      
+      let groups = {};
+
+      // Kelompokkan data berdasarkan Model + Warna
+      Object.keys(dataMedium).forEach(code => {
+        const item = dataMedium[code];
+        const model = (item.model || '').trim();
+        const color = (item.color || '').trim();
+        
+        if (!model) return;
+
+        const key = `${model.toUpperCase()} | ${color ? color.toUpperCase() : 'NO COLOR'}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push({ code, qty: Number(item.qty) || 0 });
+      });
+
+      thead.innerHTML = `<tr><th>Model & Warna</th><th>Lokasi Tersebar</th><th>Total Qty (Kg)</th><th>Aksi</th></tr>`;
+
+      let count = 0;
+      Object.keys(groups).forEach(key => {
+        if (groups[key].length > 1) { // Hanya jika ada lebih dari 1 lokasi
+          count++;
+          const locs = groups[key].map(g => `${g.code} (${g.qty} Kg)`).join(', ');
+          const totalQty = groups[key].reduce((sum, g) => sum + g.qty, 0);
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong>${key}</strong></td>
+            <td style="color:var(--yellow); font-weight:600;">${locs}</td>
+            <td><strong>${totalQty.toLocaleString('id-ID')} Kg</strong></td>
+            <td><button class="btn btn-warning" style="padding:2px 8px; font-size:0.7rem;" onclick="highlightMultipleLocs('${groups[key].map(g => g.code).join(',')}')">Sorot Lokasi</button></td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+
+      if (count === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--green);">✅ Bagus! Tidak ada barang Medium yang tersebar di beberapa tempat.</td></tr>`;
+      }
+
+      box.style.display = 'block';
+    };
+
+    window.highlightMultipleLocs = function(codesStr) {
+      clearBlinking();
+      const codes = codesStr.split(',');
+      codes.forEach(code => {
+        const targetCell = document.getElementById(`cell-MEDIUM-${code}`);
+        if (targetCell) targetCell.classList.add('highlight-blink');
+      });
+      alert(`Lokasi tersebar [${codes.join(', ')}] sekarang berkedip warna kuning di denah!`);
     };
 
     window.searchGlobal = function() {
@@ -730,7 +845,7 @@
         const item = dataset[code];
         const cell = document.getElementById(`cell-${mode}-${code}`);
         if (cell && item) {
-          const isProb = ['FAIL', 'BUBBLE', 'BEDA_WARNA', 'KONTAMINASI'].includes(item.status);
+          const isProb = ['FAIL', 'BUBBLE', 'BEDA_WARNA'].includes(item.status);
           cell.classList.add(isProb ? 'problem' : 'filled');
         }
       });
