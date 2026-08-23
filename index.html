@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0f172a" />
   <title>Gudang Compound System</title>
 
   <style>
@@ -21,7 +20,6 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); padding: 12px; min-height: 100vh; }
     
     .wrapper { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
@@ -73,7 +71,7 @@
     .rack-group { display: flex; gap: 4px; }
     .cell-col { display: flex; flex-direction: column; gap: 4px; }
 
-    /* Cell Box Denah + Nomor angka */
+    /* Cell Box Denah */
     .cell { 
       width: 32px; 
       height: 32px; 
@@ -95,7 +93,6 @@
     .cell.filled { background: var(--green) !important; color: #fff !important; }
     .cell.problem { background: var(--red) !important; color: #fff !important; }
 
-    /* Animasi Kedip/Highlight */
     .cell.highlight-blink {
       border: 2px solid #fff !important;
       background: var(--yellow) !important;
@@ -110,7 +107,6 @@
       100% { transform: scale(1.35); box-shadow: 0 0 18px var(--yellow); }
     }
 
-    /* Layout Medium Grid A-Z */
     .medium-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 10px; width: 100%; align-items: start; }
 
     /* Tabel Summary Data */
@@ -121,7 +117,6 @@
     tr:hover { background: rgba(56, 189, 248, 0.15); cursor: pointer; }
     .badge { background: var(--accent); color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
 
-    /* Warning Box Pop-up Modal */
     .alert-box {
       background: rgba(245, 158, 11, 0.15);
       border: 1px solid var(--yellow);
@@ -140,6 +135,31 @@
     .modal-header h3 { color: var(--accent); font-size: 1rem; }
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; font-weight: bold; }
     .close-btn:hover { color: var(--red); }
+
+    /* STYLING LAPORAN (EXCEL STYLE) */
+    .report-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; color: #000; overflow: auto; display: none; z-index: 1000; padding: 12px; }
+    .report-paper { width: 100%; max-width: 1100px; margin: 0 auto; background: #fff; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 11px; }
+
+    .report-header-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; text-align: center; font-weight: bold; }
+    .report-header-table td { border: 1.5px solid #000; padding: 4px; font-size: 12px; }
+
+    .report-grid { display: flex; gap: 12px; align-items: flex-start; }
+    .report-col-med { flex: 1.4; }
+    .report-col-sl { flex: 1; }
+
+    .report-table { width: 100%; border-collapse: collapse; text-align: center; }
+    .report-table th, .report-table td { border: 1px solid #000; padding: 2px 4px; font-size: 10px; height: 18px; color: #000; }
+    .report-table th { background: #d9e1f2; font-weight: bold; text-transform: uppercase; }
+    .report-table .bg-gray { background: #d9e1f2; font-weight: bold; }
+    .report-table .text-left { text-align: left; }
+    .report-table .total-row { font-weight: bold; background: #f2f2f2; }
+
+    @media print {
+      body * { visibility: hidden; }
+      .report-overlay, .report-overlay * { visibility: visible; }
+      .report-overlay { position: absolute; left: 0; top: 0; width: 100%; height: auto; background: #fff; padding: 0; }
+      .no-print { display: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -151,15 +171,19 @@
       <button class="nav-btn" id="btnHome" onclick="showZoneLayout()">Menu Utama</button>
     </div>
 
-    <!-- TAMPILAN 1: DASHBOARD ZONA SELEKSI + MENU PENCARIAN GLOBAL -->
+    <!-- DASHBOARD ZONA SELEKSI + MENU PENCARIAN GLOBAL -->
     <div id="zoneLayoutView" class="zone-container">
       
-      <!-- PENCARIAN GLOBAL HALAMAN AWAL -->
+      <!-- TOMBOL BUKA LAPORAN -->
+      <button class="btn btn-warning" onclick="openReportModal()" style="padding: 12px; font-size: 0.95rem;">
+        📊 Buka Laporan Summary Stock
+      </button>
+
+      <!-- PENCARIAN GLOBAL -->
       <div class="home-search-box">
         <h3>🔍 Pencarian Cepat Barang</h3>
         <input type="text" id="inpHomeSearch" placeholder="Ketik kode lokasi, mcs, model barang, atau warna..." oninput="searchGlobal()" />
         
-        <!-- HASIL PENCARIAN GLOBAL -->
         <div id="homeSearchResultBox" class="table-box" style="display: none;">
           <table>
             <thead>
@@ -191,23 +215,22 @@
           <p>Denah Blok A, B, dan C (Nomor 1-15)</p>
         </div>
         <div class="zone-card" style="border-left: 4px solid var(--yellow);" onclick="openZoneMode('UNTESTED')">
-          <h3>Medium Belum Test</h3>
+          <h3>Medium Belum Test (Belum Slab)</h3>
           <p>Area Line 1, Line 2, Line 3 (Nomor 1-7)</p>
         </div>
       </div>
     </div>
 
-    <!-- TAMPILAN 2: AREA DETAIL -->
+    <!-- AREA DETAIL -->
     <div id="detailView" style="display: none; flex-direction: column; gap: 12px;">
       
-      <!-- Navigasi Cepat Tab -->
       <div class="mode-tabs">
         <button class="tab-btn" id="tabSmall" onclick="switchMode('SMALL')">Small / Large</button>
         <button class="tab-btn" id="tabMedium" onclick="switchMode('MEDIUM')">Medium (Pass)</button>
-        <button class="tab-btn" id="tabUntested" onclick="switchMode('UNTESTED')">Belum Test</button>
+        <button class="tab-btn" id="tabUntested" onclick="switchMode('UNTESTED')">Belum Test (Belum Slab)</button>
       </div>
 
-      <!-- PANEL PENCARIAN & SUMMARY DATA AREA -->
+      <!-- PANEL PENCARIAN & SUMMARY DATA -->
       <div class="panel">
         <div class="panel-header">
           <span>🔍 Cari Data Stok Area Ini</span>
@@ -221,12 +244,6 @@
           </select>
         </div>
 
-        <!-- Tombol Cek Barang Tersebar (S/L atau Medium) -->
-        <div id="boxDuplicateBtn" style="display:none; margin-top: 4px;">
-          <button class="btn btn-warning" style="width:100%; font-size:0.8rem;" onclick="checkDuplicatesArea()">⚠️ Tampilkan Barang Tersebar di Dua Tempat / Lebih</button>
-        </div>
-
-        <!-- Tabel Summary Data Hasil Cari / Cek Duplikat -->
         <div id="summaryContentBox" class="table-box" style="display: none; margin-top: 6px;">
           <table>
             <thead id="tblHead"></thead>
@@ -235,7 +252,7 @@
         </div>
       </div>
 
-      <!-- PETA DENAH VISUAL FULL -->
+      <!-- PETA DENAH VISUAL -->
       <div class="panel">
         <div class="panel-header">
           <span>Denah Visual Area (Nomor Kotak)</span>
@@ -243,13 +260,8 @@
         </div>
 
         <div class="map-box" id="mapBoxContainer">
-          <!-- Map S/L -->
           <div id="mapSmall" class="simple-map"></div>
-
-          <!-- Map Medium A-Z -->
           <div id="mapMedium" class="medium-grid-container" style="display: none;"></div>
-
-          <!-- Map Untested -->
           <div id="mapUntested" class="simple-map" style="display: none;"></div>
         </div>
       </div>
@@ -257,7 +269,7 @@
     </div>
   </div>
 
-  <!-- POP-UP MODAL FORM EDIT / SIMPAN / KOSONGKAN DATA -->
+  <!-- POP-UP MODAL FORM EDIT DATA -->
   <div class="modal-overlay" id="modalForm">
     <div class="modal-card">
       <div class="modal-header">
@@ -288,12 +300,11 @@
             <option value="IU-007">IU-007</option>
             <option value="IU-009">IU-009</option>
             <option value="CMP-014">CMP-014</option>
-            <option value="CMP-001">CMP-001</option>
           </select>
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
-          <input type="text" id="inpColorS" placeholder="Warna barang" oninput="checkDuplicateInModal()" />
+          <input type="text" id="inpColorS" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="form-row" style="margin-top:6px;">
           <div class="input-group">
@@ -310,12 +321,25 @@
       <!-- Form Medium -->
       <div id="formMedium" style="display: none;">
         <div class="input-group">
+          <label>MCS</label>
+          <select id="inpMcsM" onchange="checkDuplicateInModal()">
+            <option value="">-- Pilih MCS --</option>
+            <option value="RIP-024">RIP-024</option>
+            <option value="LCIP-001">LCIP-001</option>
+            <option value="LCIP-003">LCIP-003</option>
+            <option value="LCIP-024">LCIP-024</option>
+            <option value="IU-007">IU-007</option>
+            <option value="IU-009">IU-009</option>
+            <option value="CMP-014">CMP-014</option>
+          </select>
+        </div>
+        <div class="input-group" style="margin-top:6px;">
           <label>Model Barang</label>
-          <input type="text" id="inpModelM" placeholder="Nama / Jenis Model" oninput="checkDuplicateInModal()" />
+          <input type="text" id="inpModelM" list="modelOptions" placeholder="Ketik model (misal: Quest 7, Reax Base...)" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
-          <input type="text" id="inpColorM" placeholder="Warna" oninput="checkDuplicateInModal()" />
+          <input type="text" id="inpColorM" placeholder="Warna" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>QTY M (Kg)</label>
@@ -326,12 +350,25 @@
       <!-- Form Untested -->
       <div id="formUntested" style="display: none;">
         <div class="input-group">
-          <label>Model / Nama Barang</label>
-          <input type="text" id="inpModelU" placeholder="Model barang" />
+          <label>MCS</label>
+          <select id="inpMcsU">
+            <option value="">-- Pilih MCS --</option>
+            <option value="RIP-024">RIP-024</option>
+            <option value="LCIP-001">LCIP-001</option>
+            <option value="LCIP-003">LCIP-003</option>
+            <option value="LCIP-024">LCIP-024</option>
+            <option value="IU-007">IU-007</option>
+            <option value="IU-009">IU-009</option>
+            <option value="CMP-014">CMP-014</option>
+          </select>
+        </div>
+        <div class="input-group" style="margin-top:6px;">
+          <label>Model Barang</label>
+          <input type="text" id="inpModelU" list="modelOptions" placeholder="Ketik model (misal: Quest 7, Mc Trainer...)" oninput="autoCapitalize(this);" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
-          <input type="text" id="inpBatchU" placeholder=". . ." />
+          <input type="text" id="inpColorU" placeholder="Warna barang" oninput="autoCapitalize(this);" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>QTY (Kg)</label>
@@ -339,7 +376,9 @@
         </div>
       </div>
 
-      <!-- Warning Alert Duplikat dalam modal (Universal S/L & Medium) -->
+      <!-- DATALIST SARAN OTOMATIS -->
+      <datalist id="modelOptions"></datalist>
+
       <div class="alert-box" id="alertModalDuplicate" style="margin-top:8px;"></div>
 
       <div class="input-group">
@@ -350,6 +389,68 @@
       <div style="display:flex; gap:8px; margin-top:8px;">
         <button class="btn" style="flex:1;" onclick="saveData()">Simpan Data</button>
         <button class="btn btn-danger" onclick="deleteData()">Kosongkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAMPILAN FULLSCREEN LAPORAN TABEL (EXCEL STYLE) -->
+  <div class="report-overlay" id="reportView">
+    <div class="no-print" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 12px auto;">
+      <div>
+        <button class="btn btn-warning" onclick="window.print()">🖨️ Cetak / Simpan Gambar PDF</button>
+      </div>
+      <button class="btn btn-danger" onclick="closeReportModal()">✕ Tutup Laporan</button>
+    </div>
+
+    <div class="report-paper">
+      <!-- HEADER LAPORAN -->
+      <table class="report-header-table">
+        <tr>
+          <td style="width: 25%; font-size: 11px;" id="rptDateStr">Sunday, August 23, 2026</td>
+          <td style="width: 50%; font-size: 14px;">STOCK COMPOUND<br><span style="font-size: 11px;">SHIFT III</span></td>
+          <td style="width: 25%; font-size: 11px;" id="rptTimeStr">06.30</td>
+        </tr>
+      </table>
+
+      <!-- LAYOUT 2 KOLOM (MEDIUM DI KIRI, S/L DI KANAN) -->
+      <div class="report-grid">
+        
+        <!-- KOLOM KIRI: MEDIUM (PASS + FAIL + BB/BW + BELUM SLAB) -->
+        <div class="report-col-med">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th rowspan="2" style="width: 15%;">MCS</th>
+                <th rowspan="2" style="width: 35%;">MODEL</th>
+                <th rowspan="2" style="width: 25%;">COLOR</th>
+                <th colspan="4">DAILY STOCK COMPOUND (KG)<br>MEDIUM</th>
+              </tr>
+              <tr>
+                <th style="width: 6%;">PASS</th>
+                <th style="width: 6%;">FAIL</th>
+                <th style="width: 6%;">BB/BW</th>
+                <th style="width: 7%;">BELUM SLAB</th>
+              </tr>
+            </thead>
+            <tbody id="rptBodyMed"></tbody>
+          </table>
+        </div>
+
+        <!-- KOLOM KANAN: SMALL & LARGE -->
+        <div class="report-col-sl">
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th style="width: 20%;">MCS</th>
+                <th style="width: 50%;">COLOR</th>
+                <th style="width: 15%;">S</th>
+                <th style="width: 15%;">L</th>
+              </tr>
+            </thead>
+            <tbody id="rptBodySL"></tbody>
+          </table>
+        </div>
+
       </div>
     </div>
   </div>
@@ -379,6 +480,18 @@
     const azBlocks = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
     const untestedLines = ['LINE1', 'LINE2', 'LINE3'];
 
+    // FUNGSI UNTUK MERUBAH TEKS MENJADI KAPITAL DI SETIAP AWAL KATA OTOMATIS
+    window.autoCapitalize = function(input) {
+      let start = input.selectionStart;
+      let end = input.selectionEnd;
+      
+      input.value = input.value.replace(/\w\S*/g, function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      });
+      
+      input.setSelectionRange(start, end);
+    };
+
     window.showZoneLayout = function() {
       document.getElementById('zoneLayoutView').style.display = 'flex';
       document.getElementById('detailView').style.display = 'none';
@@ -394,6 +507,201 @@
 
     window.closeModal = function() {
       document.getElementById('modalForm').style.display = 'none';
+    };
+
+    window.closeReportModal = function() {
+      document.getElementById('reportView').style.display = 'none';
+    };
+
+    /* FUNGSI KELOLA DATALIST UNTUK SARAN OTOMATIS MODEL */
+    function updateDatalistOptions() {
+      const datalist = document.getElementById('modelOptions');
+      
+      // Menggunakan format Title Case secara langsung
+      const modelsSet = new Set([
+        "Quest 7", 
+        "Reax Base", 
+        "Reax Wedge", 
+        "Mc Trainer", 
+        "Revolution 6", 
+        "Revolution 7", 
+        "Pegasus", 
+        "Air Max", 
+        "Downshifter", 
+        "Vomero", 
+        "Structure", 
+        "Winflo"
+      ]);
+
+      // Ambil seluruh model dari Medium
+      Object.keys(dataMedium).forEach(code => {
+        if (dataMedium[code].model) {
+          const formatted = dataMedium[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+          modelsSet.add(formatted);
+        }
+      });
+
+      // Ambil seluruh model dari Untested
+      Object.keys(dataUntested).forEach(code => {
+        if (dataUntested[code].model) {
+          const formatted = dataUntested[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+          modelsSet.add(formatted);
+        }
+      });
+
+      // Render ulang option ke dalam datalist
+      datalist.innerHTML = '';
+      Array.from(modelsSet).sort().forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        datalist.appendChild(option);
+      });
+    }
+
+    /* GENERATE LAPORAN DENGAN INTEGRASI BELUM SLAB */
+    window.openReportModal = function() {
+      const now = new Date();
+      document.getElementById('rptDateStr').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+      document.getElementById('rptTimeStr').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+      const tbodyMed = document.getElementById('rptBodyMed');
+      tbodyMed.innerHTML = '';
+
+      let medGroup = {};
+
+      Object.keys(dataMedium).forEach(code => {
+        const item = dataMedium[code];
+        const mcs = (item.mcs || 'LAINNYA').toUpperCase();
+        const model = (item.model || '-').toUpperCase();
+        const color = (item.color || '-').toUpperCase();
+        const qty = Number(item.qty) || 0;
+        const status = item.status || 'PASS';
+
+        if (!medGroup[mcs]) medGroup[mcs] = {};
+        const key = `${model}_${color}`;
+        if (!medGroup[mcs][key]) medGroup[mcs][key] = { model, color, pass: 0, fail: 0, bb: 0, belum: 0 };
+
+        if (status === 'PASS') medGroup[mcs][key].pass += qty;
+        else if (status === 'FAIL') medGroup[mcs][key].fail += qty;
+        else if (status === 'BUBBLE' || status === 'BEDA_WARNA') medGroup[mcs][key].bb += qty;
+      });
+
+      Object.keys(dataUntested).forEach(code => {
+        const item = dataUntested[code];
+        const mcs = (item.mcs || 'LAINNYA').toUpperCase();
+        const model = (item.model || '-').toUpperCase();
+        const color = (item.color || '-').toUpperCase();
+        const qty = Number(item.qty) || 0;
+
+        if (!medGroup[mcs]) medGroup[mcs] = {};
+        const key = `${model}_${color}`;
+        if (!medGroup[mcs][key]) medGroup[mcs][key] = { model, color, pass: 0, fail: 0, bb: 0, belum: 0 };
+
+        medGroup[mcs][key].belum += qty;
+      });
+
+      let grandMedPass = 0, grandMedFail = 0, grandMedBB = 0, grandMedBelum = 0;
+
+      Object.keys(medGroup).sort().forEach(mcs => {
+        let subPass = 0, subFail = 0, subBB = 0, subBelum = 0;
+        const keys = Object.keys(medGroup[mcs]);
+
+        keys.forEach((k, idx) => {
+          const r = medGroup[mcs][k];
+          subPass += r.pass; subFail += r.fail; subBB += r.bb; subBelum += r.belum;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            ${idx === 0 ? `<td rowspan="${keys.length}" class="bg-gray">${mcs}</td>` : ''}
+            <td class="text-left">${r.model}</td>
+            <td class="text-left">${r.color}</td>
+            <td>${r.pass ? r.pass.toLocaleString('id-ID') : '-'}</td>
+            <td>${r.fail ? r.fail.toLocaleString('id-ID') : '-'}</td>
+            <td>${r.bb ? r.bb.toLocaleString('id-ID') : '-'}</td>
+            <td>${r.belum ? r.belum.toLocaleString('id-ID') : '-'}</td>
+          `;
+          tbodyMed.appendChild(tr);
+        });
+
+        grandMedPass += subPass; grandMedFail += subFail; grandMedBB += subBB; grandMedBelum += subBelum;
+        const trTot = document.createElement('tr');
+        trTot.className = 'total-row';
+        trTot.innerHTML = `
+          <td colspan="3" style="text-align:right;">TOTAL</td>
+          <td>${subPass ? subPass.toLocaleString('id-ID') : '-'}</td>
+          <td>${subFail ? subFail.toLocaleString('id-ID') : '-'}</td>
+          <td>${subBB ? subBB.toLocaleString('id-ID') : '-'}</td>
+          <td>${subBelum ? subBelum.toLocaleString('id-ID') : '-'}</td>
+        `;
+        tbodyMed.appendChild(trTot);
+      });
+
+      const trGrandMed = document.createElement('tr');
+      trGrandMed.className = 'bg-gray';
+      trGrandMed.innerHTML = `
+        <td colspan="3" style="text-align:right;">GRAND TOTAL</td>
+        <td>${grandMedPass.toLocaleString('id-ID')}</td>
+        <td>${grandMedFail.toLocaleString('id-ID')}</td>
+        <td>${grandMedBB.toLocaleString('id-ID')}</td>
+        <td>${grandMedBelum.toLocaleString('id-ID')}</td>
+      `;
+      tbodyMed.appendChild(trGrandMed);
+
+      const tbodySL = document.getElementById('rptBodySL');
+      tbodySL.innerHTML = '';
+
+      let slGroup = {};
+      Object.keys(dataSmall).forEach(code => {
+        const item = dataSmall[code];
+        const mcs = (item.mcs || 'LAINNYA').toUpperCase();
+        const color = (item.color || '-').toUpperCase();
+        const qtyS = Number(item.qtyS) || 0;
+        const qtyL = Number(item.qtyL) || 0;
+
+        if (!slGroup[mcs]) slGroup[mcs] = [];
+        slGroup[mcs].push({ color, qtyS, qtyL });
+      });
+
+      let grandS = 0, grandL = 0;
+
+      Object.keys(slGroup).sort().forEach(mcs => {
+        let subS = 0, subL = 0;
+        const rows = slGroup[mcs];
+
+        rows.forEach((r, idx) => {
+          subS += r.qtyS; subL += r.qtyL;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            ${idx === 0 ? `<td rowspan="${rows.length}" class="bg-gray">${mcs}</td>` : ''}
+            <td class="text-left">${r.color}</td>
+            <td>${r.qtyS ? r.qtyS.toLocaleString('id-ID') : '-'}</td>
+            <td>${r.qtyL ? r.qtyL.toLocaleString('id-ID') : '-'}</td>
+          `;
+          tbodySL.appendChild(tr);
+        });
+
+        grandS += subS; grandL += subL;
+        const trTot = document.createElement('tr');
+        trTot.className = 'total-row';
+        trTot.innerHTML = `
+          <td colspan="2" style="text-align:right;">TOTAL</td>
+          <td>${subS ? subS.toLocaleString('id-ID') : '-'}</td>
+          <td>${subL ? subL.toLocaleString('id-ID') : '-'}</td>
+        `;
+        tbodySL.appendChild(trTot);
+      });
+
+      const trGrandSL = document.createElement('tr');
+      trGrandSL.className = 'bg-gray';
+      trGrandSL.innerHTML = `
+        <td colspan="2" style="text-align:right;">GRAND TOTAL</td>
+        <td>${grandS.toLocaleString('id-ID')}</td>
+        <td>${grandL.toLocaleString('id-ID')}</td>
+      `;
+      tbodySL.appendChild(trGrandSL);
+
+      document.getElementById('reportView').style.display = 'block';
     };
 
     function clearBlinking() {
@@ -415,13 +723,7 @@
       const box = document.getElementById('summaryContentBox');
 
       clearBlinking();
-
-      if (query.length > 0 || filterBlk !== 'ALL') {
-        box.style.display = 'block';
-      } else {
-        box.style.display = 'none';
-      }
-
+      box.style.display = (query.length > 0 || filterBlk !== 'ALL') ? 'block' : 'none';
       renderTable();
     };
 
@@ -524,9 +826,6 @@
       document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'grid' : 'none';
       document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
 
-      // Tombol duplikat muncul di Small dan Medium
-      document.getElementById('boxDuplicateBtn').style.display = (mode === 'SMALL' || mode === 'MEDIUM') ? 'block' : 'none';
-
       document.getElementById('inpSearch').value = '';
       document.getElementById('summaryContentBox').style.display = 'none';
       clearBlinking();
@@ -535,9 +834,7 @@
       filterBlk.innerHTML = '<option value="ALL">Semua Blok</option>';
 
       let list = mode === 'SMALL' ? smallBlocks : (mode === 'MEDIUM' ? azBlocks : untestedLines);
-      list.forEach(b => {
-        filterBlk.add(new Option(b.replace('LINE', 'Line '), b));
-      });
+      list.forEach(b => filterBlk.add(new Option(b.replace('LINE', 'Line '), b)));
 
       renderTable();
     };
@@ -566,20 +863,21 @@
         document.getElementById('inpQtyS').value = item.qtyS !== undefined ? item.qtyS : '';
         document.getElementById('inpQtyL').value = item.qtyL !== undefined ? item.qtyL : '';
       } else if (mode === 'MEDIUM') {
+        document.getElementById('inpMcsM').value = item.mcs || '';
         document.getElementById('inpModelM').value = item.model || '';
         document.getElementById('inpColorM').value = item.color || '';
         document.getElementById('inpQtyM').value = item.qty !== undefined ? item.qty : '';
       } else if (mode === 'UNTESTED') {
+        document.getElementById('inpMcsU').value = item.mcs || '';
         document.getElementById('inpModelU').value = item.model || '';
-        document.getElementById('inpBatchU').value = item.batch || '';
+        document.getElementById('inpColorU').value = item.color || '';
         document.getElementById('inpQtyU').value = item.qty !== undefined ? item.qty : '';
       }
 
-      checkDuplicateInModal(); // Cek langsung saat buka modal
+      checkDuplicateInModal();
       document.getElementById('modalForm').style.display = 'flex';
     };
 
-    /* CEK DUPLIKAT OTOMATIS SAAT USER MENGETIK DI MODAL FORM (S/L DAN MEDIUM) */
     window.checkDuplicateInModal = function() {
       const alertBox = document.getElementById('alertModalDuplicate');
       let matches = [];
@@ -588,40 +886,27 @@
         const mcs = document.getElementById('inpMcs').value.trim().toLowerCase();
         const color = document.getElementById('inpColorS').value.trim().toLowerCase();
 
-        if (!mcs) {
-          alertBox.style.display = 'none';
-          return;
-        }
+        if (!mcs) { alertBox.style.display = 'none'; return; }
 
         Object.keys(dataSmall).forEach(code => {
           if (code === selectedCode) return;
           const item = dataSmall[code];
-          const m = (item.mcs || '').toLowerCase();
-          const c = (item.color || '').toLowerCase();
-
-          if (m === mcs && (!color || c === color)) {
-            const qS = item.qtyS || 0;
-            const qL = item.qtyL || 0;
-            matches.push(`<b>${code}</b> (S: ${qS} Kg, L: ${qL} Kg)`);
+          if ((item.mcs || '').toLowerCase() === mcs && (!color || (item.color || '').toLowerCase() === color)) {
+            matches.push(`<b>${code}</b> (S: ${item.qtyS || 0} Kg, L: ${item.qtyL || 0} Kg)`);
           }
         });
 
       } else if (activeMode === 'MEDIUM') {
+        const mcs = document.getElementById('inpMcsM').value.trim().toLowerCase();
         const model = document.getElementById('inpModelM').value.trim().toLowerCase();
         const color = document.getElementById('inpColorM').value.trim().toLowerCase();
 
-        if (!model) {
-          alertBox.style.display = 'none';
-          return;
-        }
+        if (!model) { alertBox.style.display = 'none'; return; }
 
         Object.keys(dataMedium).forEach(code => {
           if (code === selectedCode) return;
           const item = dataMedium[code];
-          const m = (item.model || '').toLowerCase();
-          const c = (item.color || '').toLowerCase();
-
-          if (m === model && (!color || c === color)) {
+          if ((item.model || '').toLowerCase() === model && (!color || (item.color || '').toLowerCase() === color)) {
             matches.push(`<b>${code}</b> (Qty: ${item.qty || 0} Kg)`);
           }
         });
@@ -632,108 +917,10 @@
 
       if (matches.length > 0) {
         alertBox.style.display = 'block';
-        alertBox.innerHTML = `⚠️ <b>Perhatian Operator:</b> Barang serupa sudah ada di lokasi ${matches.join(', ')}. Pertimbangkan untuk menyatukan barang ke lokasi tersebut!`;
+        alertBox.innerHTML = `⚠️ <b>Perhatian Operator:</b> Barang serupa sudah ada di lokasi ${matches.join(', ')}. Pertimbangkan untuk menyatukannya!`;
       } else {
         alertBox.style.display = 'none';
       }
-    };
-
-    /* CEK BARANG TERSEBAR DI TABEL SUMMARY (S/L DAN MEDIUM) */
-    window.checkDuplicatesArea = function() {
-      const box = document.getElementById('summaryContentBox');
-      const thead = document.getElementById('tblHead');
-      const tbody = document.getElementById('tblBody');
-      tbody.innerHTML = '';
-      
-      let groups = {};
-
-      if (activeMode === 'SMALL') {
-        Object.keys(dataSmall).forEach(code => {
-          const item = dataSmall[code];
-          const mcs = (item.mcs || '').trim();
-          const color = (item.color || '').trim();
-          
-          if (!mcs) return;
-
-          const key = `${mcs.toUpperCase()} | ${color ? color.toUpperCase() : 'NO COLOR'}`;
-          if (!groups[key]) groups[key] = [];
-          groups[key].push({ code, qtyS: Number(item.qtyS) || 0, qtyL: Number(item.qtyL) || 0 });
-        });
-
-        thead.innerHTML = `<tr><th>MCS & Warna</th><th>Lokasi Tersebar</th><th>Total Qty S/L (Kg)</th><th>Aksi</th></tr>`;
-
-        let count = 0;
-        Object.keys(groups).forEach(key => {
-          if (groups[key].length > 1) {
-            count++;
-            const locs = groups[key].map(g => `${g.code} (S:${g.qtyS}, L:${g.qtyL})`).join(', ');
-            const totalS = groups[key].reduce((sum, g) => sum + g.qtyS, 0);
-            const totalL = groups[key].reduce((sum, g) => sum + g.qtyL, 0);
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td><strong>${key}</strong></td>
-              <td style="color:var(--yellow); font-weight:600;">${locs}</td>
-              <td><strong>S: ${totalS} Kg | L: ${totalL} Kg</strong></td>
-              <td><button class="btn btn-warning" style="padding:2px 8px; font-size:0.7rem;" onclick="highlightMultipleLocs('${groups[key].map(g => g.code).join(',')}')">Sorot Lokasi</button></td>
-            `;
-            tbody.appendChild(tr);
-          }
-        });
-
-        if (count === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--green);">✅ Bagus! Tidak ada barang S/L yang tersebar di beberapa lokasi.</td></tr>`;
-        }
-
-      } else if (activeMode === 'MEDIUM') {
-        Object.keys(dataMedium).forEach(code => {
-          const item = dataMedium[code];
-          const model = (item.model || '').trim();
-          const color = (item.color || '').trim();
-          
-          if (!model) return;
-
-          const key = `${model.toUpperCase()} | ${color ? color.toUpperCase() : 'NO COLOR'}`;
-          if (!groups[key]) groups[key] = [];
-          groups[key].push({ code, qty: Number(item.qty) || 0 });
-        });
-
-        thead.innerHTML = `<tr><th>Model & Warna</th><th>Lokasi Tersebar</th><th>Total Qty (Kg)</th><th>Aksi</th></tr>`;
-
-        let count = 0;
-        Object.keys(groups).forEach(key => {
-          if (groups[key].length > 1) {
-            count++;
-            const locs = groups[key].map(g => `${g.code} (${g.qty} Kg)`).join(', ');
-            const totalQty = groups[key].reduce((sum, g) => sum + g.qty, 0);
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td><strong>${key}</strong></td>
-              <td style="color:var(--yellow); font-weight:600;">${locs}</td>
-              <td><strong>${totalQty.toLocaleString('id-ID')} Kg</strong></td>
-              <td><button class="btn btn-warning" style="padding:2px 8px; font-size:0.7rem;" onclick="highlightMultipleLocs('${groups[key].map(g => g.code).join(',')}')">Sorot Lokasi</button></td>
-            `;
-            tbody.appendChild(tr);
-          }
-        });
-
-        if (count === 0) {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--green);">✅ Bagus! Tidak ada barang Medium yang tersebar di beberapa lokasi.</td></tr>`;
-        }
-      }
-
-      box.style.display = 'block';
-    };
-
-    window.highlightMultipleLocs = function(codesStr) {
-      clearBlinking();
-      const codes = codesStr.split(',');
-      codes.forEach(code => {
-        const targetCell = document.getElementById(`cell-${activeMode}-${code}`);
-        if (targetCell) targetCell.classList.add('highlight-blink');
-      });
-      alert(`Lokasi tersebar [${codes.join(', ')}] sekarang berkedip warna kuning di denah!`);
     };
 
     window.searchGlobal = function() {
@@ -742,34 +929,23 @@
       const tbody = document.getElementById('tblHomeSearchBody');
       tbody.innerHTML = '';
 
-      if (!q) {
-        resultBox.style.display = 'none';
-        return;
-      }
+      if (!q) { resultBox.style.display = 'none'; return; }
 
       let count = 0;
 
       Object.keys(dataSmall).forEach(code => {
         const item = dataSmall[code];
-        const mcs = item.mcs || '';
-        const color = item.color || '';
-        const qtyS = Number(item.qtyS) || 0;
-        const qtyL = Number(item.qtyL) || 0;
-
-        if (code.toLowerCase().includes(q) || mcs.toLowerCase().includes(q) || color.toLowerCase().includes(q)) {
+        if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
           count++;
           const tr = document.createElement('tr');
-          tr.onclick = () => {
-            openZoneMode('SMALL');
-            selectLocationFromSummary(code);
-          };
+          tr.onclick = () => { openZoneMode('SMALL'); selectLocationFromSummary(code); };
           tr.innerHTML = `
             <td><span class="badge" style="background:var(--accent);">S/L</span></td>
             <td><strong>${code}</strong></td>
-            <td>${mcs || '-'}</td>
-            <td>${color || '-'}</td>
-            <td><strong>${qtyS.toLocaleString('id-ID')} Kg</strong></td>
-            <td><strong>${qtyL.toLocaleString('id-ID')} Kg</strong></td>
+            <td>${item.mcs || '-'}</td>
+            <td>${item.color || '-'}</td>
+            <td><strong>${(item.qtyS || 0).toLocaleString('id-ID')} Kg</strong></td>
+            <td><strong>${(item.qtyL || 0).toLocaleString('id-ID')} Kg</strong></td>
             <td>-</td>
             <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
           `;
@@ -779,25 +955,18 @@
 
       Object.keys(dataMedium).forEach(code => {
         const item = dataMedium[code];
-        const model = item.model || '';
-        const color = item.color || '';
-        const qty = Number(item.qty) || 0;
-
-        if (code.toLowerCase().includes(q) || model.toLowerCase().includes(q) || color.toLowerCase().includes(q)) {
+        if (code.toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
           count++;
           const tr = document.createElement('tr');
-          tr.onclick = () => {
-            openZoneMode('MEDIUM');
-            selectLocationFromSummary(code);
-          };
+          tr.onclick = () => { openZoneMode('MEDIUM'); selectLocationFromSummary(code); };
           tr.innerHTML = `
             <td><span class="badge" style="background:var(--green); color:#fff;">Medium</span></td>
             <td><strong>${code}</strong></td>
-            <td>${model || '-'}</td>
-            <td>${color || '-'}</td>
+            <td>${item.model || '-'}</td>
+            <td>${item.color || '-'}</td>
             <td>-</td>
             <td>-</td>
-            <td><strong>${qty.toLocaleString('id-ID')} Kg</strong></td>
+            <td><strong>${(item.qty || 0).toLocaleString('id-ID')} Kg</strong></td>
             <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
           `;
           tbody.appendChild(tr);
@@ -806,26 +975,19 @@
 
       Object.keys(dataUntested).forEach(code => {
         const item = dataUntested[code];
-        const model = item.model || '';
-        const batch = item.batch || '';
-        const qty = Number(item.qty) || 0;
-
-        if (code.toLowerCase().includes(q) || model.toLowerCase().includes(q) || batch.toLowerCase().includes(q)) {
+        if (code.toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
           count++;
           const tr = document.createElement('tr');
-          tr.onclick = () => {
-            openZoneMode('UNTESTED');
-            selectLocationFromSummary(code);
-          };
+          tr.onclick = () => { openZoneMode('UNTESTED'); selectLocationFromSummary(code); };
           tr.innerHTML = `
-            <td><span class="badge" style="background:var(--yellow); color:#000;">Untested</span></td>
+            <td><span class="badge" style="background:var(--yellow); color:#000;">Belum Slab</span></td>
             <td><strong>${code}</strong></td>
-            <td>${model || '-'} ${batch ? '[Batch: ' + batch + ']' : ''}</td>
+            <td>${item.model || '-'}</td>
+            <td>${item.color || '-'}</td>
             <td>-</td>
             <td>-</td>
-            <td>-</td>
-            <td><strong>${qty.toLocaleString('id-ID')} Kg</strong></td>
-            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+            <td><strong>${(item.qty || 0).toLocaleString('id-ID')} Kg</strong></td>
+            <td>Belum Test</td>
           `;
           tbody.appendChild(tr);
         }
@@ -842,56 +1004,32 @@
       if (activeMode === 'SMALL') {
         const mcs = document.getElementById('inpMcs').value;
         const color = document.getElementById('inpColorS').value.trim();
-        const rawS = document.getElementById('inpQtyS').value.trim();
-        const rawL = document.getElementById('inpQtyL').value.trim();
+        const qtyS = Number(document.getElementById('inpQtyS').value) || 0;
+        const qtyL = Number(document.getElementById('inpQtyL').value) || 0;
 
-        if (rawS === "" && rawL === "") {
-          alert("Harap isi QTY S atau QTY L terlebih dahulu!");
-          return;
-        }
-
-        const qtyS = rawS !== "" ? Number(rawS) : 0;
-        const qtyL = rawL !== "" ? Number(rawL) : 0;
-
-        set(ref(database, `warehouseStock/${code}`), { mcs, color, qtyS, qtyL, notes, status })
-          .then(() => {
-            alert(`Data lokasi ${code} berhasil disimpan!`);
-            closeModal();
-          });
+        set(ref(database, `warehouseStock/${code}`), { mcs, color, qtyS, qtyL, notes, status }).then(() => {
+          alert(`Data lokasi ${code} berhasil disimpan!`); closeModal();
+        });
 
       } else if (activeMode === 'MEDIUM') {
+        const mcs = document.getElementById('inpMcsM').value;
         const model = document.getElementById('inpModelM').value.trim();
         const color = document.getElementById('inpColorM').value.trim();
-        const rawQty = document.getElementById('inpQtyM').value.trim();
+        const qty = Number(document.getElementById('inpQtyM').value) || 0;
 
-        if (rawQty === "") {
-          alert("Harap isi QTY Medium terlebih dahulu!");
-          return;
-        }
-
-        const qty = Number(rawQty);
-        set(ref(database, `warehouseStockMedium/${code}`), { model, color, qty, notes, status })
-          .then(() => {
-            alert(`Data lokasi ${code} berhasil disimpan!`);
-            closeModal();
-          });
+        set(ref(database, `warehouseStockMedium/${code}`), { mcs, model, color, qty, notes, status }).then(() => {
+          alert(`Data lokasi ${code} berhasil disimpan!`); closeModal();
+        });
 
       } else if (activeMode === 'UNTESTED') {
+        const mcs = document.getElementById('inpMcsU').value;
         const model = document.getElementById('inpModelU').value.trim();
-        const batch = document.getElementById('inpBatchU').value.trim();
-        const rawQty = document.getElementById('inpQtyU').value.trim();
+        const color = document.getElementById('inpColorU').value.trim();
+        const qty = Number(document.getElementById('inpQtyU').value) || 0;
 
-        if (rawQty === "") {
-          alert("Harap isi QTY Belum Test terlebih dahulu!");
-          return;
-        }
-
-        const qty = Number(rawQty);
-        set(ref(database, `warehouseStockUntested/${code}`), { model, batch, qty, notes, status })
-          .then(() => {
-            alert(`Data lokasi ${code} berhasil disimpan!`);
-            closeModal();
-          });
+        set(ref(database, `warehouseStockUntested/${code}`), { mcs, model, color, qty, notes, status }).then(() => {
+          alert(`Data lokasi ${code} berhasil disimpan!`); closeModal();
+        });
       }
     };
 
@@ -920,19 +1058,21 @@
     onValue(ref(database, 'warehouseStock'), snap => {
       dataSmall = snap.val() || {};
       updateCells('SMALL', dataSmall);
-      if (activeMode === 'SMALL') { renderTable(); }
+      if (activeMode === 'SMALL') renderTable();
     });
 
     onValue(ref(database, 'warehouseStockMedium'), snap => {
       dataMedium = snap.val() || {};
       updateCells('MEDIUM', dataMedium);
-      if (activeMode === 'MEDIUM') { renderTable(); }
+      updateDatalistOptions();
+      if (activeMode === 'MEDIUM') renderTable();
     });
 
     onValue(ref(database, 'warehouseStockUntested'), snap => {
       dataUntested = snap.val() || {};
       updateCells('UNTESTED', dataUntested);
-      if (activeMode === 'UNTESTED') { renderTable(); }
+      updateDatalistOptions();
+      if (activeMode === 'UNTESTED') renderTable();
     });
 
     window.renderTable = function() {
@@ -954,16 +1094,10 @@
           
           const qS = Number(item.qtyS) || 0;
           const qL = Number(item.qtyL) || 0;
-          const sumQty = qS + qL;
 
-          const mcsMatch = item.mcs && item.mcs.toLowerCase().includes(search);
-          const colorMatch = item.color && item.color.toLowerCase().includes(search);
-          const codeMatch = code.toLowerCase().includes(search);
+          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
 
-          if (search && !codeMatch && !mcsMatch && !colorMatch) return;
-
-          totalKg += sumQty;
-
+          totalKg += (qS + qL);
           const tr = document.createElement('tr');
           tr.onclick = () => selectLocationFromSummary(code);
           tr.innerHTML = `
@@ -978,26 +1112,22 @@
           tbody.appendChild(tr);
         });
       } else if (activeMode === 'MEDIUM') {
-        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>Model</th><th>Warna</th><th>QTY M (Kg)</th><th>Notes</th></tr>`;
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Model</th><th>Warna</th><th>QTY M (Kg)</th><th>Notes</th></tr>`;
         Object.keys(dataset).sort().forEach(code => {
           const item = dataset[code];
           const [blk] = code.split('-');
           if (filterBlk !== 'ALL' && blk !== filterBlk) return;
 
           const qty = Number(item.qty) || 0;
-          const modelMatch = item.model && item.model.toLowerCase().includes(search);
-          const colorMatch = item.color && item.color.toLowerCase().includes(search);
-          const codeMatch = code.toLowerCase().includes(search);
-
-          if (search && !codeMatch && !modelMatch && !colorMatch) return;
+          if (search && !code.toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
 
           totalKg += qty;
-
           const tr = document.createElement('tr');
           tr.onclick = () => selectLocationFromSummary(code);
           tr.innerHTML = `
             <td><span class="badge">${code}</span></td>
             <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+            <td>${item.mcs || '-'}</td>
             <td>${item.model || '-'}</td>
             <td>${item.color || '-'}</td>
             <td><strong>${qty.toLocaleString('id-ID')}</strong></td>
@@ -1005,29 +1135,24 @@
           `;
           tbody.appendChild(tr);
         });
-      } else {
-        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>Model</th><th>Batch</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
+      } else if (activeMode === 'UNTESTED') {
+        thead.innerHTML = `<tr><th>Lokasi</th><th>MCS</th><th>Model</th><th>Warna</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
         Object.keys(dataset).sort().forEach(code => {
           const item = dataset[code];
           const [blk] = code.split('-');
           if (filterBlk !== 'ALL' && blk !== filterBlk) return;
 
           const qty = Number(item.qty) || 0;
-          const modelMatch = item.model && item.model.toLowerCase().includes(search);
-          const batchMatch = item.batch && item.batch.toLowerCase().includes(search);
-          const codeMatch = code.toLowerCase().includes(search);
-
-          if (search && !codeMatch && !modelMatch && !batchMatch) return;
+          if (search && !code.toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
 
           totalKg += qty;
-
           const tr = document.createElement('tr');
           tr.onclick = () => selectLocationFromSummary(code);
           tr.innerHTML = `
-            <td><span class="badge">${code}</span></td>
-            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+            <td><span class="badge" style="background:var(--yellow); color:#000;">${code}</span></td>
+            <td>${item.mcs || '-'}</td>
             <td>${item.model || '-'}</td>
-            <td>${item.batch || '-'}</td>
+            <td>${item.color || '-'}</td>
             <td><strong>${qty.toLocaleString('id-ID')}</strong></td>
             <td style="color:var(--text-muted);">${item.notes || '-'}</td>
           `;
