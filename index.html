@@ -93,6 +93,7 @@
     .cell.filled { background: var(--green) !important; color: #fff !important; }
     .cell.problem { background: var(--red) !important; color: #fff !important; }
 
+    /* Efek Berkedip Semua Lokasi Duplikat */
     .cell.highlight-blink {
       border: 2px solid #fff !important;
       background: var(--yellow) !important;
@@ -117,15 +118,28 @@
     tr:hover { background: rgba(56, 189, 248, 0.15); cursor: pointer; }
     .badge { background: var(--accent); color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
 
+    /* KOTAK PERINGATAN KUNING */
     .alert-box {
       background: rgba(245, 158, 11, 0.15);
       border: 1px solid var(--yellow);
       color: #fef08a;
-      padding: 8px 10px;
-      border-radius: 6px;
-      font-size: 0.78rem;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
       display: none;
-      line-height: 1.3;
+      line-height: 1.6;
+    }
+
+    .alert-item {
+      padding: 6px 8px;
+      margin-top: 4px;
+      border-radius: 6px;
+      background: rgba(245, 158, 11, 0.2);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .alert-item:hover {
+      background: rgba(245, 158, 11, 0.4);
     }
 
     /* MODAL POP-UP FORM */
@@ -244,6 +258,9 @@
           </select>
         </div>
 
+        <!-- KOTAK PERINGATAN DUPLIKAT KUNING DI BAWAH BOX PENCARIAN -->
+        <div class="alert-box" id="alertDuplicate"></div>
+
         <div id="summaryContentBox" class="table-box" style="display: none; margin-top: 6px;">
           <table>
             <thead id="tblHead"></thead>
@@ -351,7 +368,7 @@
       <div id="formUntested" style="display: none;">
         <div class="input-group">
           <label>MCS</label>
-          <select id="inpMcsU">
+          <select id="inpMcsU" onchange="checkDuplicateInModal()">
             <option value="">-- Pilih MCS --</option>
             <option value="RIP-024">RIP-024</option>
             <option value="LCIP-001">LCIP-001</option>
@@ -364,11 +381,11 @@
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Model Barang</label>
-          <input type="text" id="inpModelU" list="modelOptions" placeholder="Ketik model (misal: Quest 7, Mc Trainer...)" oninput="autoCapitalize(this);" />
+          <input type="text" id="inpModelU" list="modelOptions" placeholder="Ketik model (misal: Quest 7, Mc Trainer...)" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
-          <input type="text" id="inpColorU" placeholder="Warna barang" oninput="autoCapitalize(this);" />
+          <input type="text" id="inpColorU" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>QTY (Kg)</label>
@@ -379,6 +396,7 @@
       <!-- DATALIST SARAN OTOMATIS -->
       <datalist id="modelOptions"></datalist>
 
+      <!-- ALERT DUPLIKASI BARANG DALAM MODAL -->
       <div class="alert-box" id="alertModalDuplicate" style="margin-top:8px;"></div>
 
       <div class="input-group">
@@ -480,7 +498,7 @@
     const azBlocks = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
     const untestedLines = ['LINE1', 'LINE2', 'LINE3'];
 
-    // FUNGSI UNTUK MERUBAH TEKS MENJADI KAPITAL DI SETIAP AWAL KATA OTOMATIS
+    /* FUNGSI AUTO-CAPITALIZE */
     window.autoCapitalize = function(input) {
       let start = input.selectionStart;
       let end = input.selectionEnd;
@@ -513,11 +531,10 @@
       document.getElementById('reportView').style.display = 'none';
     };
 
-    /* FUNGSI KELOLA DATALIST UNTUK SARAN OTOMATIS MODEL */
+    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS */
     function updateDatalistOptions() {
       const datalist = document.getElementById('modelOptions');
       
-      // Menggunakan format Title Case secara langsung
       const modelsSet = new Set([
         "Quest 7", 
         "Reax Base", 
@@ -533,7 +550,6 @@
         "Winflo"
       ]);
 
-      // Ambil seluruh model dari Medium
       Object.keys(dataMedium).forEach(code => {
         if (dataMedium[code].model) {
           const formatted = dataMedium[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -541,7 +557,6 @@
         }
       });
 
-      // Ambil seluruh model dari Untested
       Object.keys(dataUntested).forEach(code => {
         if (dataUntested[code].model) {
           const formatted = dataUntested[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -549,7 +564,6 @@
         }
       });
 
-      // Render ulang option ke dalam datalist
       datalist.innerHTML = '';
       Array.from(modelsSet).sort().forEach(model => {
         const option = document.createElement('option');
@@ -558,7 +572,151 @@
       });
     }
 
-    /* GENERATE LAPORAN DENGAN INTEGRASI BELUM SLAB */
+    /* FUNGSI PENGECEKAN DUPLIKAT GLOBAL */
+    function checkDuplicateGlobal() {
+      const alertBox = document.getElementById('alertDuplicate');
+      let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : dataUntested);
+
+      let groupMap = {};
+
+      Object.keys(dataset).forEach(code => {
+        const item = dataset[code];
+        let key = '';
+
+        if (activeMode === 'SMALL') {
+          const mcs = (item.mcs || '').trim().toLowerCase();
+          const color = (item.color || '').trim().toLowerCase();
+          if (mcs && color) key = `${mcs}|${color}`;
+        } else {
+          const mcs = (item.mcs || '').trim().toLowerCase();
+          const model = (item.model || '').trim().toLowerCase();
+          const color = (item.color || '').trim().toLowerCase();
+          if (mcs && model && color) key = `${mcs}|${model}|${color}`;
+        }
+
+        if (key) {
+          if (!groupMap[key]) groupMap[key] = [];
+          groupMap[key].push(code);
+        }
+      });
+
+      let alertHTML = '';
+      let duplicateKeys = Object.keys(groupMap).filter(k => groupMap[k].length > 1);
+
+      if (duplicateKeys.length > 0) {
+        alertHTML += `⚠️ <b>Perhatian:</b> Terdapat barang persis sama tersimpan di beberapa lokasi (Sentuh untuk membuat semua lokasi berkedip):<br>`;
+        
+        duplicateKeys.forEach(key => {
+          const parts = key.split('|');
+          const desc = activeMode === 'SMALL' 
+            ? `${parts[0].toUpperCase()} / ${parts[1].toUpperCase()}` 
+            : `${parts[0].toUpperCase()} | ${parts[1].toUpperCase()} | ${parts[2].toUpperCase()}`;
+          
+          const codesArr = groupMap[key];
+          const codesStr = JSON.stringify(codesArr).replace(/"/g, '&quot;');
+          const locationBadges = codesArr.map(c => `<span class="badge" style="background:var(--yellow); color:#000;">${c}</span>`).join(', ');
+
+          alertHTML += `
+            <div class="alert-item" onclick="highlightMultipleLocations(${codesStr})">
+              • <b>${desc}</b> di lokasi: ${locationBadges}
+            </div>`;
+        });
+
+        alertBox.style.display = 'block';
+        alertBox.innerHTML = alertHTML;
+      } else {
+        alertBox.style.display = 'none';
+      }
+    }
+
+    /* FUNGSI MEMBUAT BEBERAPA LOKASI BERKEDIP BERSAMAAN */
+    window.highlightMultipleLocations = function(codesArray) {
+      clearBlinking();
+      let firstCell = null;
+
+      codesArray.forEach(code => {
+        const cell = document.getElementById(`cell-${activeMode}-${code}`);
+        if (cell) {
+          cell.classList.add('highlight-blink');
+          if (!firstCell) firstCell = cell;
+        }
+      });
+
+      if (firstCell) {
+        firstCell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }
+    };
+
+    /* FUNGSI PENGECEKAN DUPLIKAT DALAM POP-UP MODAL */
+    window.checkDuplicateInModal = function() {
+      const alertBox = document.getElementById('alertModalDuplicate');
+      let matches = [];
+
+      if (activeMode === 'SMALL') {
+        const mcs = document.getElementById('inpMcs').value.trim().toLowerCase();
+        const color = document.getElementById('inpColorS').value.trim().toLowerCase();
+
+        if (!mcs || !color) { alertBox.style.display = 'none'; return; }
+
+        Object.keys(dataSmall).forEach(code => {
+          if (code === selectedCode) return;
+          const item = dataSmall[code];
+          const itemMcs = (item.mcs || '').toLowerCase();
+          const itemColor = (item.color || '').toLowerCase();
+
+          if (itemMcs === mcs && itemColor === color) {
+            matches.push(`<b>${code}</b> (${item.mcs || '-'} / ${item.color || '-'})`);
+          }
+        });
+
+      } else if (activeMode === 'MEDIUM') {
+        const mcs = document.getElementById('inpMcsM').value.trim().toLowerCase();
+        const model = document.getElementById('inpModelM').value.trim().toLowerCase();
+        const color = document.getElementById('inpColorM').value.trim().toLowerCase();
+
+        if (!mcs || !model || !color) { alertBox.style.display = 'none'; return; }
+
+        Object.keys(dataMedium).forEach(code => {
+          if (code === selectedCode) return;
+          const item = dataMedium[code];
+          const itemMcs = (item.mcs || '').toLowerCase();
+          const itemModel = (item.model || '').toLowerCase();
+          const itemColor = (item.color || '').toLowerCase();
+
+          if (itemMcs === mcs && itemModel === model && itemColor === color) {
+            matches.push(`<b>${code}</b> (${item.mcs || '-'} | ${item.model || '-'} | ${item.color || '-'})`);
+          }
+        });
+
+      } else if (activeMode === 'UNTESTED') {
+        const mcs = document.getElementById('inpMcsU').value.trim().toLowerCase();
+        const model = document.getElementById('inpModelU').value.trim().toLowerCase();
+        const color = document.getElementById('inpColorU').value.trim().toLowerCase();
+
+        if (!mcs || !model || !color) { alertBox.style.display = 'none'; return; }
+
+        Object.keys(dataUntested).forEach(code => {
+          if (code === selectedCode) return;
+          const item = dataUntested[code];
+          const itemMcs = (item.mcs || '').toLowerCase();
+          const itemModel = (item.model || '').toLowerCase();
+          const itemColor = (item.color || '').toLowerCase();
+
+          if (itemMcs === mcs && itemModel === model && itemColor === color) {
+            matches.push(`<b>${code}</b> (${item.mcs || '-'} | ${item.model || '-'} | ${item.color || '-'})`);
+          }
+        });
+      }
+
+      if (matches.length > 0) {
+        alertBox.style.display = 'block';
+        alertBox.innerHTML = `⚠️ <b>Perhatian Operator:</b> Barang dengan MCS, Model, dan Warna yang sama persis sudah ada di lokasi: ${matches.join(', ')}. Harap periksa kembali agar stok tidak terpisah!`;
+      } else {
+        alertBox.style.display = 'none';
+      }
+    };
+
+    /* LAPORAN REKAP STOCK */
     window.openReportModal = function() {
       const now = new Date();
       document.getElementById('rptDateStr').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
@@ -837,6 +995,7 @@
       list.forEach(b => filterBlk.add(new Option(b.replace('LINE', 'Line '), b)));
 
       renderTable();
+      checkDuplicateGlobal();
     };
 
     window.openModalForm = function(mode, code) {
@@ -878,51 +1037,6 @@
       document.getElementById('modalForm').style.display = 'flex';
     };
 
-    window.checkDuplicateInModal = function() {
-      const alertBox = document.getElementById('alertModalDuplicate');
-      let matches = [];
-
-      if (activeMode === 'SMALL') {
-        const mcs = document.getElementById('inpMcs').value.trim().toLowerCase();
-        const color = document.getElementById('inpColorS').value.trim().toLowerCase();
-
-        if (!mcs) { alertBox.style.display = 'none'; return; }
-
-        Object.keys(dataSmall).forEach(code => {
-          if (code === selectedCode) return;
-          const item = dataSmall[code];
-          if ((item.mcs || '').toLowerCase() === mcs && (!color || (item.color || '').toLowerCase() === color)) {
-            matches.push(`<b>${code}</b> (S: ${item.qtyS || 0} Kg, L: ${item.qtyL || 0} Kg)`);
-          }
-        });
-
-      } else if (activeMode === 'MEDIUM') {
-        const mcs = document.getElementById('inpMcsM').value.trim().toLowerCase();
-        const model = document.getElementById('inpModelM').value.trim().toLowerCase();
-        const color = document.getElementById('inpColorM').value.trim().toLowerCase();
-
-        if (!model) { alertBox.style.display = 'none'; return; }
-
-        Object.keys(dataMedium).forEach(code => {
-          if (code === selectedCode) return;
-          const item = dataMedium[code];
-          if ((item.model || '').toLowerCase() === model && (!color || (item.color || '').toLowerCase() === color)) {
-            matches.push(`<b>${code}</b> (Qty: ${item.qty || 0} Kg)`);
-          }
-        });
-      } else {
-        alertBox.style.display = 'none';
-        return;
-      }
-
-      if (matches.length > 0) {
-        alertBox.style.display = 'block';
-        alertBox.innerHTML = `⚠️ <b>Perhatian Operator:</b> Barang serupa sudah ada di lokasi ${matches.join(', ')}. Pertimbangkan untuk menyatukannya!`;
-      } else {
-        alertBox.style.display = 'none';
-      }
-    };
-
     window.searchGlobal = function() {
       const q = document.getElementById('inpHomeSearch').value.toLowerCase().trim();
       const resultBox = document.getElementById('homeSearchResultBox');
@@ -955,14 +1069,14 @@
 
       Object.keys(dataMedium).forEach(code => {
         const item = dataMedium[code];
-        if (code.toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
+        if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
           count++;
           const tr = document.createElement('tr');
           tr.onclick = () => { openZoneMode('MEDIUM'); selectLocationFromSummary(code); };
           tr.innerHTML = `
             <td><span class="badge" style="background:var(--green); color:#fff;">Medium</span></td>
             <td><strong>${code}</strong></td>
-            <td>${item.model || '-'}</td>
+            <td>${item.model || '-'} (${item.mcs || '-'})</td>
             <td>${item.color || '-'}</td>
             <td>-</td>
             <td>-</td>
@@ -975,14 +1089,14 @@
 
       Object.keys(dataUntested).forEach(code => {
         const item = dataUntested[code];
-        if (code.toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
+        if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
           count++;
           const tr = document.createElement('tr');
           tr.onclick = () => { openZoneMode('UNTESTED'); selectLocationFromSummary(code); };
           tr.innerHTML = `
             <td><span class="badge" style="background:var(--yellow); color:#000;">Belum Slab</span></td>
             <td><strong>${code}</strong></td>
-            <td>${item.model || '-'}</td>
+            <td>${item.model || '-'} (${item.mcs || '-'})</td>
             <td>${item.color || '-'}</td>
             <td>-</td>
             <td>-</td>
@@ -1058,21 +1172,21 @@
     onValue(ref(database, 'warehouseStock'), snap => {
       dataSmall = snap.val() || {};
       updateCells('SMALL', dataSmall);
-      if (activeMode === 'SMALL') renderTable();
+      if (activeMode === 'SMALL') { renderTable(); checkDuplicateGlobal(); }
     });
 
     onValue(ref(database, 'warehouseStockMedium'), snap => {
       dataMedium = snap.val() || {};
       updateCells('MEDIUM', dataMedium);
       updateDatalistOptions();
-      if (activeMode === 'MEDIUM') renderTable();
+      if (activeMode === 'MEDIUM') { renderTable(); checkDuplicateGlobal(); }
     });
 
     onValue(ref(database, 'warehouseStockUntested'), snap => {
       dataUntested = snap.val() || {};
       updateCells('UNTESTED', dataUntested);
       updateDatalistOptions();
-      if (activeMode === 'UNTESTED') renderTable();
+      if (activeMode === 'UNTESTED') { renderTable(); checkDuplicateGlobal(); }
     });
 
     window.renderTable = function() {
@@ -1119,7 +1233,7 @@
           if (filterBlk !== 'ALL' && blk !== filterBlk) return;
 
           const qty = Number(item.qty) || 0;
-          if (search && !code.toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
+          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
 
           totalKg += qty;
           const tr = document.createElement('tr');
@@ -1143,7 +1257,7 @@
           if (filterBlk !== 'ALL' && blk !== filterBlk) return;
 
           const qty = Number(item.qty) || 0;
-          if (search && !code.toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
+          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
 
           totalKg += qty;
           const tr = document.createElement('tr');
