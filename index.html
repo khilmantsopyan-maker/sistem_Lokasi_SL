@@ -111,12 +111,12 @@
     .medium-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 10px; width: 100%; align-items: start; }
 
     /* Tabel Summary Data */
-    .table-box { max-height: 400px; overflow-y: auto; border: 1px solid var(--card-border); border-radius: 8px; }
+    .table-box { max-height: 400px; overflow-y: auto; overflow-x: auto; border: 1px solid var(--card-border); border-radius: 8px; }
     table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; }
     th, td { padding: 8px 10px; border-bottom: 1px solid var(--card-border); }
-    th { background: #0f172a; color: var(--accent); position: sticky; top: 0; }
+    th { background: #0f172a; color: var(--accent); position: sticky; top: 0; z-index: 5; }
     tr:hover { background: rgba(56, 189, 248, 0.15); cursor: pointer; }
-    .badge { background: var(--accent); color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; }
+    .badge { background: var(--accent); color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; display: inline-block; }
 
     /* KOTAK PERINGATAN KUNING */
     .alert-box {
@@ -168,6 +168,35 @@
     .report-table .text-left { text-align: left; }
     .report-table .total-row { font-weight: bold; background: #f2f2f2; }
 
+    /* LAYAR HP RESPONSIF */
+    @media (max-width: 600px) {
+      th, td {
+        padding: 6px 4px !important;
+        font-size: 0.73rem !important;
+      }
+
+      .table-box td {
+        white-space: nowrap !important;
+      }
+
+      .table-box td:nth-child(3),
+      .table-box td:nth-child(4) {
+        max-width: 85px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .table-box td:nth-child(7) {
+        max-width: 70px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .zone-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media print {
       body * { visibility: hidden; }
       .report-overlay, .report-overlay * { visibility: visible; }
@@ -179,16 +208,14 @@
 <body>
 
   <div class="wrapper">
-    <!-- Header Utama -->
     <div class="header">
       <h1>Gudang Compound System</h1>
       <button class="nav-btn" id="btnHome" onclick="showZoneLayout()">Menu Utama</button>
     </div>
 
-    <!-- DASHBOARD ZONA SELEKSI + MENU PENCARIAN GLOBAL -->
+    <!-- DASHBOARD UTAMA -->
     <div id="zoneLayoutView" class="zone-container">
       
-      <!-- TOMBOL BUKA LAPORAN -->
       <button class="btn btn-warning" id="btnReportMain" onclick="openReportModal()" style="padding: 12px; font-size: 0.95rem;">
         📊 Buka Laporan Summary Stock
       </button>
@@ -217,7 +244,7 @@
         </div>
       </div>
 
-      <!-- KARTU PILIHAN ZONA -->
+      <!-- KARTU ZONA -->
       <div id="zoneCardsContainer">
         <div class="zone-card" style="border-left: 4px solid var(--green); margin-bottom: 12px;" onclick="openZoneMode('MEDIUM')">
           <h3>Area Medium (Pass)</h3>
@@ -247,7 +274,7 @@
         <button class="tab-btn" id="tabUntested" onclick="switchMode('UNTESTED')">Belum Test (Belum Slab)</button>
       </div>
 
-      <!-- PANEL PENCARIAN & SUMMARY DATA -->
+      <!-- PANEL PENCARIAN & SUMMARY -->
       <div class="panel">
         <div class="panel-header">
           <span>🔍 Cari Data Stok Area Ini</span>
@@ -255,13 +282,12 @@
         </div>
 
         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
-          <input type="text" id="inpSearch" placeholder="Ketik untuk mencari mcs, model, warna, lokasi..." oninput="handleSearchInput()" />
+          <input type="text" id="inpSearch" placeholder="Ketik mcs, model, warna, lokasi..." oninput="handleSearchInput()" />
           <select id="selFilterBlock" onchange="handleSearchInput()">
             <option value="ALL">Semua Blok</option>
           </select>
         </div>
 
-        <!-- KOTAK PERINGATAN DUPLIKAT KUNING DI BAWAH BOX PENCARIAN -->
         <div class="alert-box" id="alertDuplicate"></div>
 
         <div id="summaryContentBox" class="table-box" style="display: none; margin-top: 6px;">
@@ -272,7 +298,7 @@
         </div>
       </div>
 
-      <!-- PETA DENAH VISUAL -->
+      <!-- DENAH VISUAL -->
       <div class="panel">
         <div class="panel-header">
           <span>Denah Visual Area (Nomor Kotak)</span>
@@ -289,7 +315,7 @@
     </div>
   </div>
 
-  <!-- POP-UP MODAL FORM EDIT DATA -->
+  <!-- MODAL POP-UP FORM -->
   <div class="modal-overlay" id="modalForm">
     <div class="modal-card">
       <div class="modal-header">
@@ -355,7 +381,7 @@
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Model Barang</label>
-          <input type="text" id="inpModelM" list="modelOptions" placeholder="Ketik model (misal: Quest 7, Reax Base...)" oninput="autoCapitalize(this); checkDuplicateInModal();" />
+          <input type="text" id="inpModelM" list="modelOptions" placeholder="Ketik model..." oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
@@ -384,7 +410,7 @@
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Model Barang</label>
-          <input type="text" id="inpModelU" list="modelOptions" placeholder="Ketik model (misal: Quest 7, Mc Trainer...)" oninput="autoCapitalize(this); checkDuplicateInModal();" />
+          <input type="text" id="inpModelU" list="modelOptions" placeholder="Ketik model..." oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
@@ -396,10 +422,9 @@
         </div>
       </div>
 
-      <!-- DATALIST SARAN OTOMATIS -->
+      <!-- DATALIST SARAN OTOMATIS (TERURUT A-Z) -->
       <datalist id="modelOptions"></datalist>
 
-      <!-- ALERT DUPLIKASI BARANG DALAM MODAL -->
       <div class="alert-box" id="alertModalDuplicate" style="margin-top:8px;"></div>
 
       <div class="input-group">
@@ -414,7 +439,7 @@
     </div>
   </div>
 
-  <!-- TAMPILAN FULLSCREEN LAPORAN TABEL (EXCEL STYLE) -->
+  <!-- LAPORAN SUMMARY STOCK -->
   <div class="report-overlay" id="reportView">
     <div class="no-print" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 12px auto;">
       <div>
@@ -424,19 +449,15 @@
     </div>
 
     <div class="report-paper">
-      <!-- HEADER LAPORAN -->
       <table class="report-header-table">
         <tr>
           <td style="width: 25%; font-size: 11px;" id="rptDateStr">Sunday, August 23, 2026</td>
-          <td style="width: 50%; font-size: 14px;">STOCK COMPOUND<br><span style="font-size: 11px;">SHIFT III</span></td>
+          <td style="width: 50%; font-size: 14px;">STOCK COMPOUND</td>
           <td style="width: 25%; font-size: 11px;" id="rptTimeStr">06.30</td>
         </tr>
       </table>
 
-      <!-- LAYOUT 2 KOLOM (MEDIUM DI KIRI, S/L DI KANAN) -->
       <div class="report-grid">
-        
-        <!-- KOLOM KIRI: MEDIUM (PASS + FAIL + BB/BW + BELUM SLAB) -->
         <div class="report-col-med">
           <table class="report-table">
             <thead>
@@ -457,7 +478,6 @@
           </table>
         </div>
 
-        <!-- KOLOM KANAN: SMALL & LARGE -->
         <div class="report-col-sl">
           <table class="report-table">
             <thead>
@@ -471,7 +491,6 @@
             <tbody id="rptBodySL"></tbody>
           </table>
         </div>
-
       </div>
     </div>
   </div>
@@ -501,7 +520,6 @@
     const azBlocks = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
     const untestedLines = ['LINE1', 'LINE2', 'LINE3'];
 
-    /* FUNGSI AUTO-CAPITALIZE */
     window.autoCapitalize = function(input) {
       let start = input.selectionStart;
       let end = input.selectionEnd;
@@ -534,23 +552,13 @@
       document.getElementById('reportView').style.display = 'none';
     };
 
-    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS */
+    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS (TERURUT A-Z) */
     function updateDatalistOptions() {
       const datalist = document.getElementById('modelOptions');
-      
       const modelsSet = new Set([
-        "Quest 7", 
-        "Reax Base", 
-        "Reax Wedge", 
-        "Mc Trainer", 
-        "Revolution 6", 
-        "Revolution 7", 
-        "Pegasus", 
-        "Air Max", 
-        "Downshifter", 
-        "Vomero", 
-        "Structure", 
-        "Winflo"
+        "Air Max", "Downshifter", "Mc Trainer", "Pegasus", 
+        "Quest 7", "Reax Base", "Reax Wedge", "Revolution 6", 
+        "Revolution 7", "Structure", "Vomero", "Winflo"
       ]);
 
       Object.keys(dataMedium).forEach(code => {
@@ -568,14 +576,14 @@
       });
 
       datalist.innerHTML = '';
-      Array.from(modelsSet).sort().forEach(model => {
+      Array.from(modelsSet).sort((a, b) => a.localeCompare(b)).forEach(model => {
         const option = document.createElement('option');
         option.value = model;
         datalist.appendChild(option);
       });
     }
 
-    /* FUNGSI PENGECEKAN DUPLIKAT GLOBAL */
+    /* MENAMPILKAN DETIL PERINGATAN DUPLIKAT TERMASUK QTY DAN TOTALNYA */
     function checkDuplicateGlobal() {
       const alertBox = document.getElementById('alertDuplicate');
       let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : dataUntested);
@@ -599,7 +607,7 @@
 
         if (key) {
           if (!groupMap[key]) groupMap[key] = [];
-          groupMap[key].push(code);
+          groupMap[key].push({ code, item });
         }
       });
 
@@ -607,21 +615,39 @@
       let duplicateKeys = Object.keys(groupMap).filter(k => groupMap[k].length > 1);
 
       if (duplicateKeys.length > 0) {
-        alertHTML += `⚠️ <b>Perhatian:</b> Terdapat barang persis sama tersimpan di beberapa lokasi (Sentuh untuk membuat semua lokasi berkedip):<br>`;
+        alertHTML += `⚠️ <b>Perhatian:</b> Terdapat barang persis sama tersimpan di beberapa lokasi (Sentuh untuk membuat lokasi berkedip):<br>`;
         
         duplicateKeys.forEach(key => {
           const parts = key.split('|');
           const desc = activeMode === 'SMALL' 
-            ? `${parts[0].toUpperCase()} / ${parts[1].toUpperCase()}` 
+            ? `${parts[0].toUpperCase()} | ${parts[1].toUpperCase()}` 
             : `${parts[0].toUpperCase()} | ${parts[1].toUpperCase()} | ${parts[2].toUpperCase()}`;
           
-          const codesArr = groupMap[key];
+          const itemsArr = groupMap[key];
+          const codesArr = itemsArr.map(x => x.code);
           const codesStr = JSON.stringify(codesArr).replace(/"/g, '&quot;');
-          const locationBadges = codesArr.map(c => `<span class="badge" style="background:var(--yellow); color:#000;">${c}</span>`).join(', ');
+          
+          let totalQtyCombined = 0;
+          const locationBadges = itemsArr.map(x => {
+            let qtyDisplay = '';
+            if (activeMode === 'SMALL') {
+              const qS = Number(x.item.qtyS) || 0;
+              const qL = Number(x.item.qtyL) || 0;
+              const sumSL = qS + qL;
+              totalQtyCombined += sumSL;
+              qtyDisplay = ` (S:${qS} / L:${qL} Kg)`;
+            } else {
+              const qM = Number(x.item.qty) || 0;
+              totalQtyCombined += qM;
+              qtyDisplay = ` (${qM} Kg)`;
+            }
+            return `<span class="badge" style="background:var(--yellow); color:#000;">${x.code}${qtyDisplay}</span>`;
+          }).join(' ');
 
           alertHTML += `
             <div class="alert-item" onclick="highlightMultipleLocations(${codesStr})">
-              • <b>${desc}</b> di lokasi: ${locationBadges}
+              • <b>${desc}</b> &nbsp;➔&nbsp; <b>Total Gabungan: <span style="color:#22c55e;">${totalQtyCombined.toLocaleString('id-ID')} Kg</span></b><br>
+              &nbsp;&nbsp;Lokasi: ${locationBadges}
             </div>`;
         });
 
@@ -632,7 +658,6 @@
       }
     }
 
-    /* FUNGSI MEMBUAT BEBERAPA LOKASI BERKEDIP BERSAMAAN */
     window.highlightMultipleLocations = function(codesArray) {
       clearBlinking();
       let firstCell = null;
@@ -650,7 +675,6 @@
       }
     };
 
-    /* FUNGSI PENGECEKAN DUPLIKAT DALAM POP-UP MODAL */
     window.checkDuplicateInModal = function() {
       const alertBox = document.getElementById('alertModalDuplicate');
       let matches = [];
@@ -668,7 +692,9 @@
           const itemColor = (item.color || '').toLowerCase();
 
           if (itemMcs === mcs && itemColor === color) {
-            matches.push(`<b>${code}</b> (${item.mcs || '-'} / ${item.color || '-'})`);
+            const qS = Number(item.qtyS) || 0;
+            const qL = Number(item.qtyL) || 0;
+            matches.push(`<b>${code}</b> [S:${qS} / L:${qL} Kg]`);
           }
         });
 
@@ -687,7 +713,8 @@
           const itemColor = (item.color || '').toLowerCase();
 
           if (itemMcs === mcs && itemModel === model && itemColor === color) {
-            matches.push(`<b>${code}</b> (${item.mcs || '-'} | ${item.model || '-'} | ${item.color || '-'})`);
+            const qM = Number(item.qty) || 0;
+            matches.push(`<b>${code}</b> [${qM} Kg]`);
           }
         });
 
@@ -706,7 +733,8 @@
           const itemColor = (item.color || '').toLowerCase();
 
           if (itemMcs === mcs && itemModel === model && itemColor === color) {
-            matches.push(`<b>${code}</b> (${item.mcs || '-'} | ${item.model || '-'} | ${item.color || '-'})`);
+            const qU = Number(item.qty) || 0;
+            matches.push(`<b>${code}</b> [${qU} Kg]`);
           }
         });
       }
@@ -719,7 +747,7 @@
       }
     };
 
-    /* LAPORAN REKAP STOCK */
+    /* PROSES URUTAN LAPORAN TERURUT A-Z (MODEL & WARNA) */
     window.openReportModal = function() {
       const now = new Date();
       document.getElementById('rptDateStr').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
@@ -765,15 +793,21 @@
 
       Object.keys(medGroup).sort().forEach(mcs => {
         let subPass = 0, subFail = 0, subBB = 0, subBelum = 0;
-        const keys = Object.keys(medGroup[mcs]);
+        
+        const sortedKeys = Object.keys(medGroup[mcs]).sort((a, b) => {
+          const itemA = medGroup[mcs][a];
+          const itemB = medGroup[mcs][b];
+          if (itemA.model !== itemB.model) return itemA.model.localeCompare(itemB.model);
+          return itemA.color.localeCompare(itemB.color);
+        });
 
-        keys.forEach((k, idx) => {
+        sortedKeys.forEach((k, idx) => {
           const r = medGroup[mcs][k];
           subPass += r.pass; subFail += r.fail; subBB += r.bb; subBelum += r.belum;
 
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            ${idx === 0 ? `<td rowspan="${keys.length}" class="bg-gray">${mcs}</td>` : ''}
+            ${idx === 0 ? `<td rowspan="${sortedKeys.length}" class="bg-gray">${mcs}</td>` : ''}
             <td class="text-left">${r.model}</td>
             <td class="text-left">${r.color}</td>
             <td>${r.pass ? r.pass.toLocaleString('id-ID') : '-'}</td>
@@ -827,7 +861,8 @@
 
       Object.keys(slGroup).sort().forEach(mcs => {
         let subS = 0, subL = 0;
-        const rows = slGroup[mcs];
+        
+        const rows = slGroup[mcs].sort((a, b) => a.color.localeCompare(b.color));
 
         rows.forEach((r, idx) => {
           subS += r.qtyS; subL += r.qtyL;
@@ -886,7 +921,6 @@
 
       clearBlinking();
 
-      // Sembunyikan kotak peringatan duplikat jika user mengetik di pencarian
       if (query.length > 0) {
         alertBox.style.display = 'none';
       } else {
@@ -1049,7 +1083,7 @@
       document.getElementById('modalForm').style.display = 'flex';
     };
 
-    /* FUNGSI PENCARIAN GLOBAL TERUPDATE KHUSUS LAYAR HP */
+    /* PENCARIAN GLOBAL TERURUT A-Z */
     window.searchGlobal = function() {
       const q = document.getElementById('inpHomeSearch').value.toLowerCase().trim();
       const resultBox = document.getElementById('homeSearchResultBox');
@@ -1062,14 +1096,44 @@
         zoneCards.style.display = 'none';
         btnReport.style.display = 'none';
 
-        let count = 0;
+        let results = [];
 
         Object.keys(dataSmall).forEach(code => {
           const item = dataSmall[code];
           if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
-            count++;
-            const tr = document.createElement('tr');
-            tr.onclick = () => { openZoneMode('SMALL'); selectLocationFromSummary(code); };
+            results.push({ zone: 'SMALL', code, item });
+          }
+        });
+
+        Object.keys(dataMedium).forEach(code => {
+          const item = dataMedium[code];
+          if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
+            results.push({ zone: 'MEDIUM', code, item });
+          }
+        });
+
+        Object.keys(dataUntested).forEach(code => {
+          const item = dataUntested[code];
+          if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
+            results.push({ zone: 'UNTESTED', code, item });
+          }
+        });
+
+        results.sort((a, b) => {
+          const modelA = (a.item.model || a.item.mcs || '').toLowerCase();
+          const modelB = (b.item.model || b.item.mcs || '').toLowerCase();
+          if (modelA !== modelB) return modelA.localeCompare(modelB);
+          const colorA = (a.item.color || '').toLowerCase();
+          const colorB = (b.item.color || '').toLowerCase();
+          return colorA.localeCompare(colorB);
+        });
+
+        results.forEach(res => {
+          const { zone, code, item } = res;
+          const tr = document.createElement('tr');
+          tr.onclick = () => { openZoneMode(zone); selectLocationFromSummary(code); };
+
+          if (zone === 'SMALL') {
             tr.innerHTML = `
               <td><span class="badge" style="background:var(--accent);">S/L</span></td>
               <td><strong>${code}</strong></td>
@@ -1080,16 +1144,7 @@
               <td>-</td>
               <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
             `;
-            tbody.appendChild(tr);
-          }
-        });
-
-        Object.keys(dataMedium).forEach(code => {
-          const item = dataMedium[code];
-          if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
-            count++;
-            const tr = document.createElement('tr');
-            tr.onclick = () => { openZoneMode('MEDIUM'); selectLocationFromSummary(code); };
+          } else if (zone === 'MEDIUM') {
             tr.innerHTML = `
               <td><span class="badge" style="background:var(--green); color:#fff;">Medium</span></td>
               <td><strong>${code}</strong></td>
@@ -1100,16 +1155,7 @@
               <td><strong>${(item.qty || 0).toLocaleString('id-ID')} Kg</strong></td>
               <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
             `;
-            tbody.appendChild(tr);
-          }
-        });
-
-        Object.keys(dataUntested).forEach(code => {
-          const item = dataUntested[code];
-          if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
-            count++;
-            const tr = document.createElement('tr');
-            tr.onclick = () => { openZoneMode('UNTESTED'); selectLocationFromSummary(code); };
+          } else if (zone === 'UNTESTED') {
             tr.innerHTML = `
               <td><span class="badge" style="background:var(--yellow); color:#000;">Belum Slab</span></td>
               <td><strong>${code}</strong></td>
@@ -1120,11 +1166,11 @@
               <td><strong>${(item.qty || 0).toLocaleString('id-ID')} Kg</strong></td>
               <td>Belum Test</td>
             `;
-            tbody.appendChild(tr);
           }
+          tbody.appendChild(tr);
         });
 
-        resultBox.style.display = count > 0 ? 'block' : 'none';
+        resultBox.style.display = results.length > 0 ? 'block' : 'none';
 
       } else {
         zoneCards.style.display = 'block';
@@ -1212,6 +1258,7 @@
       if (activeMode === 'UNTESTED') { renderTable(); checkDuplicateGlobal(); }
     });
 
+    /* RENDER TABEL SUMMARY (TERURUT A-Z MODEL & WARNA) */
     window.renderTable = function() {
       const search = document.getElementById('inpSearch').value.toLowerCase();
       const filterBlk = document.getElementById('selFilterBlock').value;
@@ -1221,77 +1268,86 @@
 
       let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : dataUntested);
       let totalKg = 0;
+      let itemList = [];
+
+      Object.keys(dataset).forEach(code => {
+        const item = dataset[code];
+        const [blk] = code.split('-');
+        if (filterBlk !== 'ALL' && blk !== filterBlk) return;
+
+        if (activeMode === 'SMALL') {
+          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
+          itemList.push({ code, item });
+        } else {
+          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
+          itemList.push({ code, item });
+        }
+      });
+
+      itemList.sort((a, b) => {
+        const modelA = (a.item.model || a.item.mcs || '').toLowerCase();
+        const modelB = (b.item.model || b.item.mcs || '').toLowerCase();
+        if (modelA !== modelB) return modelA.localeCompare(modelB);
+
+        const colorA = (a.item.color || '').toLowerCase();
+        const colorB = (b.item.color || '').toLowerCase();
+        return colorA.localeCompare(colorB);
+      });
 
       if (activeMode === 'SMALL') {
         thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>QTY S (Kg)</th><th>QTY L (Kg)</th><th>Notes</th></tr>`;
-        Object.keys(dataset).sort().forEach(code => {
-          const item = dataset[code];
-          const [blk] = code.split('-');
-          if (filterBlk !== 'ALL' && blk !== filterBlk) return;
-          
+        itemList.forEach(({ code, item }) => {
           const qS = Number(item.qtyS) || 0;
           const qL = Number(item.qtyL) || 0;
-
-          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
-
           totalKg += (qS + qL);
+
           const tr = document.createElement('tr');
           tr.onclick = () => selectLocationFromSummary(code);
           tr.innerHTML = `
             <td><span class="badge">${code}</span></td>
             <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
             <td>${item.mcs || '-'}</td>
-            <td>${item.color || '-'}</td>
+            <td title="${item.color || ''}">${item.color || '-'}</td>
             <td><strong>${qS.toLocaleString('id-ID')}</strong></td>
             <td><strong>${qL.toLocaleString('id-ID')}</strong></td>
-            <td style="color:var(--text-muted);">${item.notes || '-'}</td>
+            <td title="${item.notes || ''}" style="color:var(--text-muted);">${item.notes || '-'}</td>
           `;
           tbody.appendChild(tr);
         });
       } else if (activeMode === 'MEDIUM') {
         thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Model</th><th>Warna</th><th>QTY M (Kg)</th><th>Notes</th></tr>`;
-        Object.keys(dataset).sort().forEach(code => {
-          const item = dataset[code];
-          const [blk] = code.split('-');
-          if (filterBlk !== 'ALL' && blk !== filterBlk) return;
-
+        itemList.forEach(({ code, item }) => {
           const qty = Number(item.qty) || 0;
-          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
-
           totalKg += qty;
+
           const tr = document.createElement('tr');
           tr.onclick = () => selectLocationFromSummary(code);
           tr.innerHTML = `
             <td><span class="badge">${code}</span></td>
             <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
             <td>${item.mcs || '-'}</td>
-            <td>${item.model || '-'}</td>
-            <td>${item.color || '-'}</td>
+            <td title="${item.model || ''}">${item.model || '-'}</td>
+            <td title="${item.color || ''}">${item.color || '-'}</td>
             <td><strong>${qty.toLocaleString('id-ID')}</strong></td>
-            <td style="color:var(--text-muted);">${item.notes || '-'}</td>
+            <td title="${item.notes || ''}" style="color:var(--text-muted);">${item.notes || '-'}</td>
           `;
           tbody.appendChild(tr);
         });
       } else if (activeMode === 'UNTESTED') {
         thead.innerHTML = `<tr><th>Lokasi</th><th>MCS</th><th>Model</th><th>Warna</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
-        Object.keys(dataset).sort().forEach(code => {
-          const item = dataset[code];
-          const [blk] = code.split('-');
-          if (filterBlk !== 'ALL' && blk !== filterBlk) return;
-
+        itemList.forEach(({ code, item }) => {
           const qty = Number(item.qty) || 0;
-          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
-
           totalKg += qty;
+
           const tr = document.createElement('tr');
           tr.onclick = () => selectLocationFromSummary(code);
           tr.innerHTML = `
             <td><span class="badge" style="background:var(--yellow); color:#000;">${code}</span></td>
             <td>${item.mcs || '-'}</td>
-            <td>${item.model || '-'}</td>
-            <td>${item.color || '-'}</td>
+            <td title="${item.model || ''}">${item.model || '-'}</td>
+            <td title="${item.color || ''}">${item.color || '-'}</td>
             <td><strong>${qty.toLocaleString('id-ID')}</strong></td>
-            <td style="color:var(--text-muted);">${item.notes || '-'}</td>
+            <td title="${item.notes || ''}" style="color:var(--text-muted);">${item.notes || '-'}</td>
           `;
           tbody.appendChild(tr);
         });
