@@ -4,6 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gudang Compound System</title>
+  
+  <!-- Tailwind CSS CDN (Khusus komponen Hopper IP) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Library html2canvas untuk konversi laporan ke gambar PNG utuh -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
     :root {
@@ -26,7 +35,7 @@
 
     /* Header */
     .header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--card-border); }
-    .header h1 { font-size: 1.1rem; color: var(--accent); }
+    .header h1 { font-size: 1.1rem; color: var(--accent); font-weight: bold; }
     .nav-btn { padding: 6px 12px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: none; }
 
     /* Layout Dashboard Utama */
@@ -34,11 +43,11 @@
     
     /* Search Box Global */
     .home-search-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-    .home-search-box h3 { font-size: 0.95rem; color: var(--accent); }
+    .home-search-box h3 { font-size: 0.95rem; color: var(--accent); font-weight: bold; }
 
     .zone-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
     .zone-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .zone-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+    .zone-card h3 { font-size: 1.1rem; margin-bottom: 4px; font-weight: bold; }
     .zone-card p { font-size: 0.8rem; color: var(--text-muted); }
     .zone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
@@ -62,6 +71,7 @@
     .btn:hover { background: var(--accent-hover); color: #fff; }
     .btn-danger { background: var(--red); color: #fff; }
     .btn-warning { background: var(--yellow); color: #000; }
+    .btn-success { background: var(--green); color: #fff; }
 
     /* Denah / Map Grid Area */
     .map-box { background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; overflow-x: auto; max-height: 520px; overflow-y: auto; position: relative; }
@@ -152,7 +162,7 @@
 
     /* STYLING LAPORAN (EXCEL STYLE) */
     .report-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; color: #000; overflow: auto; display: none; z-index: 1000; padding: 12px; }
-    .report-paper { width: 100%; max-width: 1100px; margin: 0 auto; background: #fff; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 11px; }
+    .report-paper { width: 1100px; margin: 0 auto; background: #fff; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 11px; padding: 16px; }
 
     .report-header-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; text-align: center; font-weight: bold; }
     .report-header-table td { border: 1.5px solid #000; padding: 4px; font-size: 12px; }
@@ -168,33 +178,17 @@
     .report-table .text-left { text-align: left; }
     .report-table .total-row { font-weight: bold; background: #f2f2f2; }
 
+    /* STYLING KHUSUS TAMPILAN HOPPER IP */
+    .input-dark-border { border: 1.5px solid #1e293b !important; }
+    .input-dark-border:focus { border-color: #059669 !important; }
+
     /* LAYAR HP RESPONSIF */
     @media (max-width: 600px) {
-      th, td {
-        padding: 6px 4px !important;
-        font-size: 0.73rem !important;
-      }
-
-      .table-box td {
-        white-space: nowrap !important;
-      }
-
-      .table-box td:nth-child(3),
-      .table-box td:nth-child(4) {
-        max-width: 85px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .table-box td:nth-child(7) {
-        max-width: 70px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .zone-grid {
-        grid-template-columns: 1fr;
-      }
+      th, td { padding: 6px 4px !important; font-size: 0.73rem !important; }
+      .table-box td { white-space: nowrap !important; }
+      .table-box td:nth-child(3), .table-box td:nth-child(4) { max-width: 85px; overflow: hidden; text-overflow: ellipsis; }
+      .table-box td:nth-child(7) { max-width: 70px; overflow: hidden; text-overflow: ellipsis; }
+      .zone-grid { grid-template-columns: 1fr; }
     }
 
     @media print {
@@ -244,8 +238,19 @@
         </div>
       </div>
 
-      <!-- KARTU ZONA -->
+      <!-- KARTU ZONA / MENU -->
       <div id="zoneCardsContainer">
+        <!-- TOMBOL MENU HOPPER IP -->
+        <div class="zone-card" style="border-left: 4px solid #059669; margin-bottom: 12px; background: linear-gradient(135deg, #064e3b 0%, #1e293b 100%);" onclick="openHopperView()">
+          <div class="flex items-center justify-between">
+            <div class="text-left">
+              <h3 style="color: #34d399;">🏭 Laporan Stock Hopper IP</h3>
+              <p style="color: #a7f3d0;">Form Laporan Stock Hopper Mesin & Kirim ke WhatsApp</p>
+            </div>
+            <i class="fa-solid fa-arrow-right-long text-emerald-400 text-xl"></i>
+          </div>
+        </div>
+
         <div class="zone-card" style="border-left: 4px solid var(--green); margin-bottom: 12px;" onclick="openZoneMode('MEDIUM')">
           <h3>Area Medium (Pass)</h3>
           <p>Denah & Stok Blok A - J (Nomor 1-4) | Blok K - Z (Nomor 1-7)</p>
@@ -265,7 +270,101 @@
 
     </div>
 
-    <!-- AREA DETAIL -->
+    <!-- VIEW LAPORAN STOCK HOPPER IP -->
+    <div id="hopperView" style="display: none; flex-direction: column; gap: 16px;">
+      
+      <!-- Header Hopper IP -->
+      <div class="bg-[#0f172a] text-white p-4 rounded-2xl shadow-md border border-slate-700">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-[#059669] rounded-xl flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-emerald-900/40">
+              <i class="fa-solid fa-industry"></i>
+            </div>
+            <div>
+              <h2 class="font-bold text-base md:text-lg leading-tight text-emerald-400">Laporan Stock Hopper IP</h2>
+              <p id="date-text-hopper" class="text-xs text-slate-400">Loading tanggal...</p>
+            </div>
+          </div>
+          <button onclick="konfirmasiResetHopper()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-3.5 py-2 rounded-lg border border-slate-700 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-rotate-right"></i> Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Card Informasi Operator & Shift -->
+      <div class="bg-white rounded-2xl p-4 md:p-5 shadow-sm border-2 border-slate-900 text-slate-900">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-200 pb-3">
+          <div class="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <i class="fa-regular fa-id-card text-emerald-600"></i> INFORMASI OPERATOR & SHIFT
+          </div>
+          <span class="bg-emerald-50 text-emerald-700 text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-emerald-300">
+            <i class="fa-solid fa-circle-check"></i> Tersimpan
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Shift Kerja</label>
+            <div class="relative">
+              <i class="fa-regular fa-clock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600 text-sm"></i>
+              <input type="text" id="inp-shift" placeholder="..." oninput="simpanDataLokalHopper()" 
+                class="w-full pl-10 pr-3.5 py-2.5 bg-white input-dark-border rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium outline-none transition">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Nama Operator / Pengisi</label>
+            <div class="relative">
+              <i class="fa-regular fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600 text-sm"></i>
+              <input type="text" id="inp-nama" placeholder="..." oninput="simpanDataLokalHopper()" 
+                class="w-full pl-10 pr-3.5 py-2.5 bg-white input-dark-border rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium outline-none transition">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Banner Total Hasil Stock -->
+      <div class="bg-[#059669] text-white rounded-2xl p-4 shadow-lg shadow-emerald-700/20 flex items-center justify-between border-2 border-emerald-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white text-lg">
+            <i class="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <div>
+            <p class="text-xs text-emerald-100 font-medium">Total Hasil Stock Hopper</p>
+            <p class="text-2xl font-bold tracking-tight"><span id="total-qty-val">0</span> <span class="text-xs font-normal text-emerald-200">Kg</span></p>
+          </div>
+        </div>
+        <div id="count-mesin" class="bg-white/20 text-white text-xs font-medium px-3 py-1.5 rounded-lg border border-white/20">
+          0 Mesin Input
+        </div>
+      </div>
+
+      <!-- Section Rincian Data Mesin -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between px-1">
+          <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-gears text-emerald-400"></i> Rincian Data Mesin
+          </h2>
+          <span class="text-xs text-slate-400 font-medium">Isi data tiap mesin</span>
+        </div>
+
+        <div id="containerMesin" class="space-y-4 text-slate-900">
+          <!-- Card Mesin dimasukkan via JS -->
+        </div>
+      </div>
+
+      <!-- Tombol Tambah Mesin -->
+      <button type="button" onclick="tambahBarisHopper()" class="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm rounded-xl border-2 border-slate-900 shadow-sm transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-circle-plus text-emerald-600 text-lg"></i> Tambah Mesin Lain
+      </button>
+
+      <!-- Tombol Kirim WhatsApp -->
+      <button type="button" onclick="kirimWhatsAppHopper()" class="w-full py-4 bg-[#059669] hover:bg-[#047857] active:bg-[#065f46] text-white font-bold text-base rounded-2xl shadow-lg shadow-emerald-700/30 transition flex items-center justify-center gap-2.5 border-2 border-emerald-800">
+        <i class="fa-brands fa-whatsapp text-2xl"></i> Kirim Semua Data ke WhatsApp
+      </button>
+
+    </div>
+
+    <!-- AREA DETAIL DENAH GUDANG -->
     <div id="detailView" style="display: none; flex-direction: column; gap: 12px;">
       
       <div class="mode-tabs">
@@ -315,7 +414,7 @@
     </div>
   </div>
 
-  <!-- MODAL POP-UP FORM -->
+  <!-- MODAL POP-UP FORM GUDANG -->
   <div class="modal-overlay" id="modalForm">
     <div class="modal-card">
       <div class="modal-header">
@@ -350,7 +449,7 @@
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
-          <input type="text" id="inpColorS" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
+          <input type="text" id="inpColorS" list="colorOptions" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="form-row" style="margin-top:6px;">
           <div class="input-group">
@@ -385,7 +484,7 @@
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
-          <input type="text" id="inpColorM" placeholder="Warna" oninput="autoCapitalize(this); checkDuplicateInModal();" />
+          <input type="text" id="inpColorM" list="colorOptions" placeholder="Warna" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>QTY M (Kg)</label>
@@ -414,7 +513,7 @@
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
-          <input type="text" id="inpColorU" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
+          <input type="text" id="inpColorU" list="colorOptions" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
         <div class="input-group" style="margin-top:6px;">
           <label>QTY (Kg)</label>
@@ -422,8 +521,9 @@
         </div>
       </div>
 
-      <!-- DATALIST SARAN OTOMATIS (TERURUT A-Z) -->
+      <!-- DATALIST SARAN OTOMATIS (MODEL & WARNA) -->
       <datalist id="modelOptions"></datalist>
+      <datalist id="colorOptions"></datalist>
 
       <div class="alert-box" id="alertModalDuplicate" style="margin-top:8px;"></div>
 
@@ -441,14 +541,16 @@
 
   <!-- LAPORAN SUMMARY STOCK -->
   <div class="report-overlay" id="reportView">
-    <div class="no-print" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 12px auto;">
-      <div>
-        <button class="btn btn-warning" onclick="window.print()">🖨️ Cetak / Simpan Gambar PDF</button>
+    <div class="no-print" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 12px auto; gap: 8px; flex-wrap: wrap;">
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-success" onclick="downloadReportImage()" id="btnDownloadImg">📸 Download Gambar Utuh (PNG)</button>
+        <button class="btn btn-warning" onclick="window.print()">🖨️ Cetak / PDF</button>
       </div>
       <button class="btn btn-danger" onclick="closeReportModal()">✕ Tutup Laporan</button>
     </div>
 
-    <div class="report-paper">
+    <!-- WRAAPPER KERTAS LAPORAN -->
+    <div class="report-paper" id="reportPaperContent">
       <table class="report-header-table">
         <tr>
           <td style="width: 25%; font-size: 11px;" id="rptDateStr">Sunday, August 23, 2026</td>
@@ -495,6 +597,7 @@
     </div>
   </div>
 
+  <!-- SCRIPT UTAMA & LOGIKA SISTEM -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -520,6 +623,426 @@
     const azBlocks = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
     const untestedLines = ['LINE1', 'LINE2', 'LINE3'];
 
+    /* ========================================================
+       FUNGSI DOWNLOAD LAPORAN LENGKAP SEBAGAI GAMBAR PNG
+    ======================================================== */
+    window.downloadReportImage = function() {
+      const btn = document.getElementById('btnDownloadImg');
+      const originalText = btn.innerText;
+      btn.innerText = "⏳ Memproses Gambar...";
+      btn.disabled = true;
+
+      const element = document.getElementById('reportPaperContent');
+
+      // Gunakan html2canvas untuk menangkap seluruh elemen dengan lebar asli
+      html2canvas(element, {
+        scale: 2, // Kualitas HD
+        useCORS: true,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: 1200
+      }).then(canvas => {
+        const link = document.createElement('a');
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0,10);
+        
+        link.download = `Laporan_Stock_Compound_${dateStr}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }).catch(err => {
+        alert("Gagal mengunduh gambar: " + err);
+        btn.innerText = originalText;
+        btn.disabled = false;
+      });
+    };
+
+    /* ========================================================
+       LOGIKA KRITIS: CEK MEDIUM -> CEK FALLBACK S & L BERDASARKAN MCS
+    ======================================================== */
+    function cariStokKritisLaporan(model, warna) {
+      let totM = 0;
+      let totS = 0, totL = 0;
+      let mcsFound = '';
+
+      const mTarget = (model || '').trim().toLowerCase();
+      const wTarget = (warna || '').trim().toLowerCase();
+
+      // LANGKAH 1: Cari stok M berdasarkan Model & Warna di dataMedium
+      Object.keys(dataMedium).forEach(code => {
+        const item = dataMedium[code];
+        const m = (item.model || '').trim().toLowerCase();
+        const w = (item.color || '').trim().toLowerCase();
+
+        if (mTarget && wTarget && (m === mTarget || m.includes(mTarget) || mTarget.includes(m)) && w === wTarget) {
+          totM += Number(item.qty) || 0;
+          if (item.mcs) mcsFound = item.mcs;
+        }
+      });
+
+      // LANGKAH 2: Jika Medium kosong (0 Kg), Cari stok S & L berdasarkan MCS & Warna di dataSmall
+      if (totM === 0) {
+        const searchMcs = (mcsFound || mTarget).trim().toLowerCase();
+        Object.keys(dataSmall).forEach(code => {
+          const item = dataSmall[code];
+          const mcs = (item.mcs || '').trim().toLowerCase();
+          const w = (item.color || '').trim().toLowerCase();
+
+          if (wTarget && w === wTarget && searchMcs && (mcs === searchMcs || mcs.includes(searchMcs) || searchMcs.includes(mcs))) {
+            totS += Number(item.qtyS) || 0;
+            totL += Number(item.qtyL) || 0;
+          }
+        });
+      }
+
+      return { M: totM, S: totS, L: totL, isMediumEmpty: totM === 0 };
+    }
+
+    /* ========================================================
+       LOGIKA KHUSUS LAPORAN STOCK HOPPER IP
+    ======================================================== */
+    let dataMesin = [];
+
+    window.openHopperView = function() {
+      document.getElementById('zoneLayoutView').style.display = 'none';
+      document.getElementById('detailView').style.display = 'none';
+      document.getElementById('hopperView').style.display = 'flex';
+      document.getElementById('btnHome').style.display = 'block';
+      inisialisasiDataHopper();
+    };
+
+    function updateTanggalHopper() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+      document.getElementById('date-text-hopper').innerText = now.toLocaleDateString('id-ID', options);
+    }
+
+    function inisialisasiDataHopper() {
+      updateTanggalHopper();
+      const simpananShift = localStorage.getItem('laprod_shift_v12');
+      const simpananNama = localStorage.getItem('laprod_nama_v12');
+      const simpananMesin = localStorage.getItem('laprod_mesin_v12');
+
+      if (simpananShift) document.getElementById('inp-shift').value = simpananShift;
+      if (simpananNama) document.getElementById('inp-nama').value = simpananNama;
+
+      if (simpananMesin) {
+        try { dataMesin = JSON.parse(simpananMesin); } catch(e) { dataMesin = []; }
+      }
+
+      if (!dataMesin || dataMesin.length === 0) {
+        dataMesin = [buatStrukturMesinBaru()];
+      }
+
+      renderTampilanHopper();
+    }
+
+    function buatStrukturMesinBaru() {
+      return {
+        noMesin: '',
+        isSameInjector: true,
+        inj1: { model: '', warna: '', qty: '' },
+        inj2: { model: '', warna: '', qty: '' }
+      };
+    }
+
+    function renderTampilanHopper() {
+      const container = document.getElementById('containerMesin');
+      container.innerHTML = '';
+
+      dataMesin.forEach((item, index) => {
+        const isSame = item.isSameInjector !== false;
+
+        const card = document.createElement('div');
+        card.className = "bg-white p-4 md:p-5 rounded-2xl border-2 border-slate-900 shadow-sm space-y-4";
+        
+        let inj2HTML = '';
+        if (!isSame) {
+          inj2HTML = `
+          <div class="bg-slate-50 p-3 rounded-xl border-2 border-slate-300 space-y-2">
+            <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle text-[8px] text-emerald-600"></i> Injector 2 (B)
+            </span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+              <div>
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Model / MCS</label>
+                <input type="text" value="${item.inj2.model || ''}" list="modelOptions" placeholder="Ketik model..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj2', 'model', this.value)" 
+                  class="w-full px-3 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none transition">
+              </div>
+              <div>
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Warna</label>
+                <input type="text" value="${item.inj2.warna || ''}" list="colorOptions" placeholder="Ketik warna..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj2', 'warna', this.value)" 
+                  class="w-full px-3 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none transition">
+              </div>
+              <div>
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Qty (Kg)</label>
+                <input type="number" value="${item.inj2.qty || ''}" placeholder="..." oninput="updateInjectorHopper(${index}, 'inj2', 'qty', this.value)" 
+                  class="w-full px-3 py-1.5 bg-emerald-50/80 input-dark-border text-emerald-950 font-bold rounded-lg text-xs outline-none transition">
+              </div>
+            </div>
+          </div>`;
+        }
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between pb-3 border-b-2 border-slate-200">
+            <div class="flex items-center gap-2 w-full max-w-xs">
+              <span class="w-6 h-6 bg-slate-900 text-white rounded-full text-xs font-bold flex items-center justify-center shrink-0">${index + 1}</span>
+              <span class="text-xs font-bold text-slate-900 shrink-0">No. Mesin:</span>
+              <input type="text" value="${item.noMesin || ''}" placeholder="..." oninput="updateMesinHopper(${index}, 'noMesin', this.value)" 
+                class="w-full px-2.5 py-1 bg-white input-dark-border rounded-lg text-xs font-bold text-slate-900 outline-none transition">
+            </div>
+            ${dataMesin.length > 1 ? `
+              <button type="button" onclick="hapusBarisHopper(${index})" class="text-rose-600 hover:text-rose-800 text-xs font-bold bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-300 transition shrink-0">
+                <i class="fa-solid fa-trash-can"></i> Hapus
+              </button>
+            ` : ''}
+          </div>
+
+          <div class="bg-emerald-50 border-2 border-emerald-300 p-2.5 rounded-xl flex items-center justify-between">
+            <label class="text-xs font-bold text-emerald-950 flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" ${isSame ? 'checked' : ''} onchange="toggleSameInjectorHopper(${index}, this.checked)" class="w-4 h-4 accent-emerald-600 rounded">
+              <span>Injector A & B Sama (1 Model & Warna)</span>
+            </label>
+          </div>
+
+          <div class="bg-slate-50 p-3 rounded-xl border-2 border-slate-300 space-y-2">
+            <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle text-[8px] text-emerald-600"></i> ${isSame ? 'Injector A & B (Stock Gabungan)' : 'Injector 1 (A)'}
+            </span>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+              <div>
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Model / MCS</label>
+                <input type="text" value="${item.inj1.model || ''}" list="modelOptions" placeholder="Ketik model..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj1', 'model', this.value)" 
+                  class="w-full px-3 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none transition">
+              </div>
+              <div>
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Warna</label>
+                <input type="text" value="${item.inj1.warna || ''}" list="colorOptions" placeholder="Ketik warna..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj1', 'warna', this.value)" 
+                  class="w-full px-3 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none transition">
+              </div>
+              <div>
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Total Qty Stock (Kg)</label>
+                <input type="number" value="${item.inj1.qty || ''}" placeholder="..." oninput="updateInjectorHopper(${index}, 'inj1', 'qty', this.value)" 
+                  class="w-full px-3 py-1.5 bg-emerald-50/80 input-dark-border text-emerald-950 font-bold rounded-lg text-xs outline-none transition">
+              </div>
+            </div>
+          </div>
+
+          ${inj2HTML}
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('count-mesin').innerText = `${dataMesin.length} Mesin Input`;
+      hitungTotalQtyHopper();
+    }
+
+    window.toggleSameInjectorHopper = function(index, isChecked) {
+      dataMesin[index].isSameInjector = isChecked;
+      renderTampilanHopper();
+      simpanDataLokalHopper();
+    };
+
+    window.updateMesinHopper = function(index, field, value) {
+      dataMesin[index][field] = value;
+      simpanDataLokalHopper();
+    };
+
+    window.updateInjectorHopper = function(index, injKey, field, value) {
+      dataMesin[index][injKey][field] = value;
+      if (field === 'qty') hitungTotalQtyHopper();
+      simpanDataLokalHopper();
+    };
+
+    function hitungTotalQtyHopper() {
+      let total = 0;
+      dataMesin.forEach(item => {
+        total += (parseFloat(item.inj1.qty) || 0);
+        if (item.isSameInjector === false) {
+          total += (parseFloat(item.inj2.qty) || 0);
+        }
+      });
+      document.getElementById('total-qty-val').innerText = total.toLocaleString('id-ID');
+    }
+
+    window.tambahBarisHopper = function() {
+      dataMesin.push(buatStrukturMesinBaru());
+      renderTampilanHopper();
+      simpanDataLokalHopper();
+    };
+
+    window.hapusBarisHopper = function(index) {
+      if (dataMesin.length <= 1) return;
+      dataMesin.splice(index, 1);
+      renderTampilanHopper();
+      simpanDataLokalHopper();
+    };
+
+    window.simpanDataLokalHopper = function() {
+      const shift = document.getElementById('inp-shift').value;
+      const nama = document.getElementById('inp-nama').value;
+
+      localStorage.setItem('laprod_shift_v12', shift);
+      localStorage.setItem('laprod_nama_v12', nama);
+      localStorage.setItem('laprod_mesin_v12', JSON.stringify(dataMesin));
+    };
+
+    window.konfirmasiResetHopper = function() {
+      if (confirm("Reset semua isi form ini?")) {
+        document.getElementById('inp-shift').value = '';
+        document.getElementById('inp-nama').value = '';
+        dataMesin = [buatStrukturMesinBaru()];
+        localStorage.removeItem('laprod_shift_v12');
+        localStorage.removeItem('laprod_nama_v12');
+        localStorage.removeItem('laprod_mesin_v12');
+        renderTampilanHopper();
+      }
+    };
+
+    window.kirimWhatsAppHopper = function() {
+      const shift = document.getElementById('inp-shift').value.trim();
+      const nama = document.getElementById('inp-nama').value.trim();
+
+      if (!shift || !nama) {
+        alert('Harap lengkapi Shift dan Nama Operator!');
+        return;
+      }
+
+      const tgl = document.getElementById('date-text-hopper').innerText;
+      
+      let totalQty = 0;
+      let adaIsi = false;
+      let daftarWarning = [];
+
+      let lineGroups = {};
+
+      dataMesin.forEach((item) => {
+        const noMesinRaw = item.noMesin.trim();
+        const numOnly = parseInt(noMesinRaw.replace(/\D/g, ''), 10);
+        
+        const isSame = item.isSameInjector !== false;
+
+        const m1 = (item.inj1.model || '').trim();
+        const w1 = (item.inj1.warna || '').trim();
+        const q1 = parseFloat(item.inj1.qty) || 0;
+
+        const m2 = (item.inj2.model || '').trim();
+        const w2 = (item.inj2.warna || '').trim();
+        const q2 = parseFloat(item.inj2.qty) || 0;
+
+        const inj1Isi = m1 || w1 || q1 > 0;
+        const inj2Isi = !isSame && (m2 || w2 || q2 > 0);
+
+        if (inj1Isi || inj2Isi) {
+          adaIsi = true;
+
+          let lineNum = 999;
+          if (!isNaN(numOnly) && numOnly > 0) {
+            lineNum = Math.ceil(numOnly / 2);
+          }
+
+          if (!lineGroups[lineNum]) {
+            lineGroups[lineNum] = [];
+          }
+
+          const displayMesin = noMesinRaw ? `Mesin ${noMesinRaw}` : 'Mesin -';
+
+          if (isSame) {
+            totalQty += q1;
+            if (q1 < 50) {
+              const res1 = cariStokKritisLaporan(m1, w1);
+              lineGroups[lineNum].push(`• ${displayMesin} | A & B | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(KRITIS)*`);
+              
+              let strStk = res1.isMediumEmpty 
+                ? `Stok M: *0kg* (Kosong) ➔ Cek S/L: S: *${res1.S}kg* | L: *${res1.L}kg*`
+                : `Stok Medium (M): *${res1.M}kg*`;
+
+              daftarWarning.push(`${displayMesin} (A&B): *${q1} kg*\n    └ ${strStk}`);
+            } else {
+              lineGroups[lineNum].push(`• ${displayMesin} | A & B | ${m1 || '-'} | ${w1 || '-'} | ${q1} kg`);
+            }
+          } else {
+            totalQty += (q1 + q2);
+            if (inj1Isi) {
+              if (q1 < 50) {
+                const res1 = cariStokKritisLaporan(m1, w1);
+                lineGroups[lineNum].push(`• ${displayMesin} | A | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(KRITIS)*`);
+                
+                let strStk = res1.isMediumEmpty 
+                  ? `Stok M: *0kg* (Kosong) ➔ Cek S/L: S: *${res1.S}kg* | L: *${res1.L}kg*`
+                  : `Stok Medium (M): *${res1.M}kg*`;
+
+                daftarWarning.push(`${displayMesin} (Inj A): *${q1} kg*\n    └ ${strStk}`);
+              } else {
+                lineGroups[lineNum].push(`• ${displayMesin} | A | ${m1 || '-'} | ${w1 || '-'} | ${q1} kg`);
+              }
+            }
+            if (inj2Isi) {
+              if (q2 < 50) {
+                const res2 = cariStokKritisLaporan(m2, w2);
+                lineGroups[lineNum].push(`• ${displayMesin} | B | ${m2 || '-'} | ${w2 || '-'} | *${q2} kg* ⚠️ *(KRITIS)*`);
+                
+                let strStk = res2.isMediumEmpty 
+                  ? `Stok M: *0kg* (Kosong) ➔ Cek S/L: S: *${res2.S}kg* | L: *${res2.L}kg*`
+                  : `Stok Medium (M): *${res2.M}kg*`;
+
+                daftarWarning.push(`${displayMesin} (Inj B): *${q2} kg*\n    └ ${strStk}`);
+              } else {
+                lineGroups[lineNum].push(`• ${displayMesin} | B | ${m2 || '-'} | ${w2 || '-'} | ${q2} kg`);
+              }
+            }
+          }
+        }
+      });
+
+      if (!adaIsi) {
+        alert('Isi minimal satu data mesin!');
+        return;
+      }
+
+      let pesan = `*LAPORAN STOCK HOPPER IP*\n`;
+      pesan += `📅 *Tanggal:* ${tgl}\n`;
+      pesan += `⏰ *Shift:* ${shift}\n`;
+      pesan += `👤 *Operator:* ${nama}\n`;
+      pesan += `-----------------------------------\n\n`;
+
+      const sortedLines = Object.keys(lineGroups).sort((a, b) => parseInt(a) - parseInt(b));
+
+      sortedLines.forEach((line) => {
+        if (line === "999") {
+          pesan += `🏭 *--- LAIN-LAIN ---*\n`;
+        } else {
+          pesan += `🏭 *--- LINE ${line} ---*\n`;
+        }
+
+        lineGroups[line].forEach(barisText => {
+          pesan += `${barisText}\n`;
+        });
+        pesan += `\n`;
+      });
+
+      pesan += `-----------------------------------\n`;
+      pesan += `📊 *TOTAL STOCK:* *${totalQty.toLocaleString('id-ID')} Kg*\n`;
+      
+      if (daftarWarning.length > 0) {
+        pesan += `-----------------------------------\n`;
+        pesan += `⚠️ *PERHATIAN: STOCK HOPPER KRITIS (<50Kg):*\n`;
+        daftarWarning.forEach(w => {
+          pesan += `  • ${w}\n`;
+        });
+      }
+      
+      pesan += `-----------------------------------\n`;
+
+      const urlWA = `https://wa.me/?text=${encodeURIComponent(pesan)}`;
+      window.open(urlWA, '_blank');
+    };
+
+    /* ========================================================
+       LOGIKA KHUSUS DASHBOARD DENAH GUDANG & FIREBASE
+    ======================================================== */
     window.autoCapitalize = function(input) {
       let start = input.selectionStart;
       let end = input.selectionEnd;
@@ -534,11 +1057,13 @@
     window.showZoneLayout = function() {
       document.getElementById('zoneLayoutView').style.display = 'flex';
       document.getElementById('detailView').style.display = 'none';
+      document.getElementById('hopperView').style.display = 'none';
       document.getElementById('btnHome').style.display = 'none';
     };
 
     window.openZoneMode = function(mode) {
       document.getElementById('zoneLayoutView').style.display = 'none';
+      document.getElementById('hopperView').style.display = 'none';
       document.getElementById('detailView').style.display = 'flex';
       document.getElementById('btnHome').style.display = 'block';
       switchMode(mode);
@@ -552,38 +1077,63 @@
       document.getElementById('reportView').style.display = 'none';
     };
 
-    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS (TERURUT A-Z) */
+    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS (MODEL & WARNA) */
     function updateDatalistOptions() {
-      const datalist = document.getElementById('modelOptions');
+      const modelDatalist = document.getElementById('modelOptions');
+      const colorDatalist = document.getElementById('colorOptions');
+
       const modelsSet = new Set([
         "Air Max", "Downshifter", "Mc Trainer", "Pegasus", 
         "Quest 7", "Reax Base", "Reax Wedge", "Revolution 6", 
         "Revolution 7", "Structure", "Vomero", "Winflo"
       ]);
 
+      const colorsSet = new Set();
+
+      // Ambil Model & Warna dari Medium
       Object.keys(dataMedium).forEach(code => {
         if (dataMedium[code].model) {
-          const formatted = dataMedium[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-          modelsSet.add(formatted);
+          modelsSet.add(dataMedium[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
+        }
+        if (dataMedium[code].color) {
+          colorsSet.add(dataMedium[code].color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
         }
       });
 
+      // Ambil Model & Warna dari Untested
       Object.keys(dataUntested).forEach(code => {
         if (dataUntested[code].model) {
-          const formatted = dataUntested[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-          modelsSet.add(formatted);
+          modelsSet.add(dataUntested[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
+        }
+        if (dataUntested[code].color) {
+          colorsSet.add(dataUntested[code].color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
         }
       });
 
-      datalist.innerHTML = '';
+      // Ambil Warna dari Small
+      Object.keys(dataSmall).forEach(code => {
+        if (dataSmall[code].color) {
+          colorsSet.add(dataSmall[code].color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
+        }
+      });
+
+      // Render Datalist Model
+      modelDatalist.innerHTML = '';
       Array.from(modelsSet).sort((a, b) => a.localeCompare(b)).forEach(model => {
         const option = document.createElement('option');
         option.value = model;
-        datalist.appendChild(option);
+        modelDatalist.appendChild(option);
+      });
+
+      // Render Datalist Warna
+      colorDatalist.innerHTML = '';
+      Array.from(colorsSet).sort((a, b) => a.localeCompare(b)).forEach(color => {
+        const option = document.createElement('option');
+        option.value = color;
+        colorDatalist.appendChild(option);
       });
     }
 
-    /* MENAMPILKAN DETIL PERINGATAN DUPLIKAT TERMASUK QTY DAN TOTALNYA */
     function checkDuplicateGlobal() {
       const alertBox = document.getElementById('alertDuplicate');
       let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : dataUntested);
@@ -747,7 +1297,6 @@
       }
     };
 
-    /* PROSES URUTAN LAPORAN TERURUT A-Z (MODEL & WARNA) */
     window.openReportModal = function() {
       const now = new Date();
       document.getElementById('rptDateStr').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
@@ -1083,7 +1632,6 @@
       document.getElementById('modalForm').style.display = 'flex';
     };
 
-    /* PENCARIAN GLOBAL TERURUT A-Z */
     window.searchGlobal = function() {
       const q = document.getElementById('inpHomeSearch').value.toLowerCase().trim();
       const resultBox = document.getElementById('homeSearchResultBox');
@@ -1241,6 +1789,7 @@
     onValue(ref(database, 'warehouseStock'), snap => {
       dataSmall = snap.val() || {};
       updateCells('SMALL', dataSmall);
+      updateDatalistOptions();
       if (activeMode === 'SMALL') { renderTable(); checkDuplicateGlobal(); }
     });
 
@@ -1258,7 +1807,6 @@
       if (activeMode === 'UNTESTED') { renderTable(); checkDuplicateGlobal(); }
     });
 
-    /* RENDER TABEL SUMMARY (TERURUT A-Z MODEL & WARNA) */
     window.renderTable = function() {
       const search = document.getElementById('inpSearch').value.toLowerCase();
       const filterBlk = document.getElementById('selFilterBlock').value;
