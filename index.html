@@ -160,19 +160,27 @@
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; font-weight: bold; }
     .close-btn:hover { color: var(--red); }
 
-    /* STYLING LAPORAN (EXCEL STYLE) */
+    /* STYLING LAPORAN (EXCEL STYLE) - RAPI & CENTER */
     .report-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; color: #000; overflow: auto; display: none; z-index: 1000; padding: 12px; }
     .report-paper { width: 1100px; margin: 0 auto; background: #fff; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 11px; padding: 16px; }
 
     .report-header-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; text-align: center; font-weight: bold; }
-    .report-header-table td { border: 1.5px solid #000; padding: 4px; font-size: 12px; }
+    .report-header-table td { border: 1.5px solid #000; padding: 6px; font-size: 12px; vertical-align: middle; }
 
     .report-grid { display: flex; gap: 12px; align-items: flex-start; }
     .report-col-med { flex: 1.4; }
     .report-col-sl { flex: 1; }
 
     .report-table { width: 100%; border-collapse: collapse; text-align: center; }
-    .report-table th, .report-table td { border: 1px solid #000; padding: 2px 4px; font-size: 10px; height: 18px; color: #000; }
+    .report-table th, .report-table td { 
+      border: 1px solid #000; 
+      padding: 4px 5px; 
+      font-size: 10.5px; 
+      line-height: 1.3;
+      color: #000; 
+      vertical-align: middle; 
+      word-break: break-word;
+    }
     .report-table th { background: #d9e1f2; font-weight: bold; text-transform: uppercase; }
     .report-table .bg-gray { background: #d9e1f2; font-weight: bold; }
     .report-table .text-left { text-align: left; }
@@ -549,7 +557,7 @@
       <button class="btn btn-danger" onclick="closeReportModal()">✕ Tutup Laporan</button>
     </div>
 
-    <!-- WRAAPPER KERTAS LAPORAN -->
+    <!-- WRAPPER KERTAS LAPORAN -->
     <div class="report-paper" id="reportPaperContent">
       <table class="report-header-table">
         <tr>
@@ -634,9 +642,8 @@
 
       const element = document.getElementById('reportPaperContent');
 
-      // Gunakan html2canvas untuk menangkap seluruh elemen dengan lebar asli
       html2canvas(element, {
-        scale: 2, // Kualitas HD
+        scale: 2, // Kualitas Jernih / HD
         useCORS: true,
         scrollX: 0,
         scrollY: 0,
@@ -660,39 +667,75 @@
     };
 
     /* ========================================================
-       LOGIKA KRITIS: CEK MEDIUM -> CEK FALLBACK S & L BERDASARKAN MCS
+       PERBAIKAN LOGIKA KRITIS (DENGAN CROSS-REFERENCE M <-> S/L)
     ======================================================== */
     function cariStokKritisLaporan(model, warna) {
       let totM = 0;
       let totS = 0, totL = 0;
-      let mcsFound = '';
+      let matchedMcsSet = new Set(); // Menyimpan kode MCS yang ditemukan
 
       const mTarget = (model || '').trim().toLowerCase();
       const wTarget = (warna || '').trim().toLowerCase();
 
-      // LANGKAH 1: Cari stok M berdasarkan Model & Warna di dataMedium
+      // LANGKAH 1: Cek stok Medium (M) berdasarkan Model & Warna
       Object.keys(dataMedium).forEach(code => {
         const item = dataMedium[code];
         const m = (item.model || '').trim().toLowerCase();
         const w = (item.color || '').trim().toLowerCase();
+        const mcsItem = (item.mcs || '').trim();
 
+        // Cocokkan jika model mengandung kata yang sama/mirip dan warna sama
         if (mTarget && wTarget && (m === mTarget || m.includes(mTarget) || mTarget.includes(m)) && w === wTarget) {
           totM += Number(item.qty) || 0;
-          if (item.mcs) mcsFound = item.mcs;
+          if (mcsItem) matchedMcsSet.add(mcsItem.toLowerCase());
         }
       });
 
-      // LANGKAH 2: Jika Medium kosong (0 Kg), Cari stok S & L berdasarkan MCS & Warna di dataSmall
+      // LANGKAH 2: Jika stok Medium kosong (0 Kg), Cari stok S & L
       if (totM === 0) {
-        const searchMcs = (mcsFound || mTarget).trim().toLowerCase();
+        // Cek juga apakah inputan model di hopper itu sendiri sebenarnya adalah kode MCS (misal: LCIP-001)
+        if (mTarget) {
+          matchedMcsSet.add(mTarget);
+        }
+
+        // Cari relasi MCS dari dataMedium jika nama modelnya mirip (misal: "Run Defy" -> cari data Medium lain yang punya model "Defy" untuk ambil MCS-nya)
+        Object.keys(dataMedium).forEach(code => {
+          const item = dataMedium[code];
+          const mMedium = (item.model || '').trim().toLowerCase();
+          const mcsMedium = (item.mcs || '').trim().toLowerCase();
+          
+          if (mTarget && (mMedium.includes(mTarget) || mTarget.includes(mMedium))) {
+            if (mcsMedium) matchedMcsSet.add(mcsMedium);
+          }
+        });
+
+        // Iterasi ke area Small & Large (dataSmall)
         Object.keys(dataSmall).forEach(code => {
           const item = dataSmall[code];
-          const mcs = (item.mcs || '').trim().toLowerCase();
-          const w = (item.color || '').trim().toLowerCase();
+          const mcsSmall = (item.mcs || '').trim().toLowerCase();
+          const wSmall = (item.color || '').trim().toLowerCase();
 
-          if (wTarget && w === wTarget && searchMcs && (mcs === searchMcs || mcs.includes(searchMcs) || searchMcs.includes(mcs))) {
-            totS += Number(item.qtyS) || 0;
-            totL += Number(item.qtyL) || 0;
+          // Validasi warna harus cocok (mengandung teks warna yang sama)
+          const isColorMatch = wTarget && (wSmall === wTarget || wSmall.includes(wTarget) || wTarget.includes(wSmall));
+
+          if (isColorMatch) {
+            // Cek apakah MCS di S/L cocok dengan MCS yang dikumpulkan dari Medium/Inputan
+            let isMcsMatch = false;
+            if (matchedMcsSet.size === 0) {
+              // Jika tidak ada filter MCS spesifik, asalkan warna sama ikut ditarik (opsional fallback)
+              isMcsMatch = true; 
+            } else {
+              matchedMcsSet.forEach(mcsKey => {
+                if (mcsSmall === mcsKey || mcsSmall.includes(mcsKey) || mcsKey.includes(mcsSmall)) {
+                  isMcsMatch = true;
+                }
+              });
+            }
+
+            if (isMcsMatch) {
+              totS += Number(item.qtyS) || 0;
+              totL += Number(item.qtyL) || 0;
+            }
           }
         });
       }
@@ -955,9 +998,11 @@
               const res1 = cariStokKritisLaporan(m1, w1);
               lineGroups[lineNum].push(`• ${displayMesin} | A & B | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(KRITIS)*`);
               
+              const identitasModelWarna = `${m1 || '-'} - ${w1 || '-'}`;
+
               let strStk = res1.isMediumEmpty 
-                ? `Stok M: *0kg* (Kosong) ➔ Cek S/L: S: *${res1.S}kg* | L: *${res1.L}kg*`
-                : `Stok Medium (M): *${res1.M}kg*`;
+                ? `Stok M (${identitasModelWarna}): *0kg* (Kosong) ➔ Cek S/L: S: *${res1.S}kg* | L: *${res1.L}kg*`
+                : `Stok Medium (${identitasModelWarna}): *${res1.M}kg*`;
 
               daftarWarning.push(`${displayMesin} (A&B): *${q1} kg*\n    └ ${strStk}`);
             } else {
@@ -970,9 +1015,11 @@
                 const res1 = cariStokKritisLaporan(m1, w1);
                 lineGroups[lineNum].push(`• ${displayMesin} | A | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(KRITIS)*`);
                 
+                const identitasModelWarna = `${m1 || '-'} - ${w1 || '-'}`;
+
                 let strStk = res1.isMediumEmpty 
-                  ? `Stok M: *0kg* (Kosong) ➔ Cek S/L: S: *${res1.S}kg* | L: *${res1.L}kg*`
-                  : `Stok Medium (M): *${res1.M}kg*`;
+                  ? `Stok M (${identitasModelWarna}): *0kg* ➔ Cek S/L: S: *${res1.S}kg* | L: *${res1.L}kg*`
+                  : `Stok Medium (${identitasModelWarna}): *${res1.M}kg*`;
 
                 daftarWarning.push(`${displayMesin} (Inj A): *${q1} kg*\n    └ ${strStk}`);
               } else {
@@ -984,9 +1031,11 @@
                 const res2 = cariStokKritisLaporan(m2, w2);
                 lineGroups[lineNum].push(`• ${displayMesin} | B | ${m2 || '-'} | ${w2 || '-'} | *${q2} kg* ⚠️ *(KRITIS)*`);
                 
+                const identitasModelWarna = `${m2 || '-'} - ${w2 || '-'}`;
+
                 let strStk = res2.isMediumEmpty 
-                  ? `Stok M: *0kg* (Kosong) ➔ Cek S/L: S: *${res2.S}kg* | L: *${res2.L}kg*`
-                  : `Stok Medium (M): *${res2.M}kg*`;
+                  ? `Stok M (${identitasModelWarna}): *0kg* ➔ Cek S/L: S: *${res2.S}kg* | L: *${res2.L}kg*`
+                  : `Stok Medium (${identitasModelWarna}): *${res2.M}kg*`;
 
                 daftarWarning.push(`${displayMesin} (Inj B): *${q2} kg*\n    └ ${strStk}`);
               } else {
@@ -1090,7 +1139,6 @@
 
       const colorsSet = new Set();
 
-      // Ambil Model & Warna dari Medium
       Object.keys(dataMedium).forEach(code => {
         if (dataMedium[code].model) {
           modelsSet.add(dataMedium[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
@@ -1100,7 +1148,6 @@
         }
       });
 
-      // Ambil Model & Warna dari Untested
       Object.keys(dataUntested).forEach(code => {
         if (dataUntested[code].model) {
           modelsSet.add(dataUntested[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
@@ -1110,14 +1157,12 @@
         }
       });
 
-      // Ambil Warna dari Small
       Object.keys(dataSmall).forEach(code => {
         if (dataSmall[code].color) {
           colorsSet.add(dataSmall[code].color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
         }
       });
 
-      // Render Datalist Model
       modelDatalist.innerHTML = '';
       Array.from(modelsSet).sort((a, b) => a.localeCompare(b)).forEach(model => {
         const option = document.createElement('option');
@@ -1125,7 +1170,6 @@
         modelDatalist.appendChild(option);
       });
 
-      // Render Datalist Warna
       colorDatalist.innerHTML = '';
       Array.from(colorsSet).sort((a, b) => a.localeCompare(b)).forEach(color => {
         const option = document.createElement('option');
