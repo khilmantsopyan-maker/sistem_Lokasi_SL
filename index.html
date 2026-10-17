@@ -41,7 +41,7 @@
     /* Layout Dashboard Utama */
     .zone-container { display: flex; flex-direction: column; gap: 16px; }
     
-    /* Search Box Global */
+    /* Search Box Global Menu Utama */
     .home-search-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
     .home-search-box h3 { font-size: 0.95rem; color: var(--accent); font-weight: bold; }
 
@@ -222,19 +222,35 @@
         📊 Buka Laporan Summary Stock
       </button>
 
-      <!-- PENCARIAN GLOBAL -->
+      <!-- PENCARIAN GLOBAL DI MENU UTAMA (BERDASARKAN MCS, MODEL, & WARNA DENGAN FILTER OTOMATIS) -->
       <div class="home-search-box">
-        <h3>🔍 Pencarian Cepat Barang</h3>
-        <input type="text" id="inpHomeSearch" placeholder="Ketik kode lokasi, mcs, model barang, atau warna..." oninput="searchGlobal()" />
+        <h3>🔍 Pencarian Cepat Barang (MCS, Model, & Warna)</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+          <div class="input-group">
+            <label>Cari / Pilih MCS</label>
+            <input type="text" id="inpHomeMcs" list="listHomeMcs" placeholder="Semua MCS..." oninput="onHomeFilterInput()" />
+            <datalist id="listHomeMcs"></datalist>
+          </div>
+          <div class="input-group">
+            <label>Cari / Pilih Model</label>
+            <input type="text" id="inpHomeModel" list="listHomeModels" placeholder="Semua Model..." oninput="onHomeFilterInput()" />
+            <datalist id="listHomeModels"></datalist>
+          </div>
+          <div class="input-group">
+            <label>Cari / Pilih Warna</label>
+            <input type="text" id="inpHomeColor" list="listHomeColors" placeholder="Semua Warna..." oninput="searchGlobal()" />
+            <datalist id="listHomeColors"></datalist>
+          </div>
+        </div>
         
-        <div id="homeSearchResultBox" class="table-box" style="display: none;">
+        <div id="homeSearchResultBox" class="table-box" style="display: none; margin-top: 6px;">
           <table>
             <thead>
               <tr>
                 <th>Area</th>
                 <th>Lokasi</th>
-                <th>Model / MCS</th>
-                <th>Warna</th>
+                <th>MCS</th>
+                <th>Model / Warna</th>
                 <th>QTY S (Kg)</th>
                 <th>QTY L (Kg)</th>
                 <th>QTY M (Kg)</th>
@@ -388,7 +404,22 @@
           <span id="lblSummaryTotal" style="color:var(--accent); font-size:0.8rem;">Total: 0 Kg</span>
         </div>
 
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+        <!-- PENCARIAN KHUSUS AREA MEDIUM: MODEL & WARNA OTOMATIS -->
+        <div id="mediumSearchContainer" style="display: none; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div class="input-group">
+            <label>Ketik / Pilih Model</label>
+            <input type="text" id="inpMediumModel" list="listMediumModels" placeholder="Cari model..." oninput="onMediumModelInput()" />
+            <datalist id="listMediumModels"></datalist>
+          </div>
+          <div class="input-group">
+            <label>Ketik / Pilih Warna</label>
+            <input type="text" id="inpMediumColor" list="listMediumColors" placeholder="Cari warna..." oninput="handleSearchInput()" />
+            <datalist id="listMediumColors"></datalist>
+          </div>
+        </div>
+
+        <!-- PENCARIAN STANDARD (UNTUK AREA SMALL & UNTESTED) -->
+        <div id="standardSearchContainer" style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
           <input type="text" id="inpSearch" placeholder="Ketik mcs, model, warna, lokasi..." oninput="handleSearchInput()" />
           <select id="selFilterBlock" onchange="handleSearchInput()">
             <option value="ALL">Semua Blok</option>
@@ -643,7 +674,7 @@
       const element = document.getElementById('reportPaperContent');
 
       html2canvas(element, {
-        scale: 2, // Kualitas Jernih / HD
+        scale: 2,
         useCORS: true,
         scrollX: 0,
         scrollY: 0,
@@ -672,33 +703,28 @@
     function cariStokKritisLaporan(model, warna) {
       let totM = 0;
       let totS = 0, totL = 0;
-      let matchedMcsSet = new Set(); // Menyimpan kode MCS yang ditemukan
+      let matchedMcsSet = new Set();
 
       const mTarget = (model || '').trim().toLowerCase();
       const wTarget = (warna || '').trim().toLowerCase();
 
-      // LANGKAH 1: Cek stok Medium (M) berdasarkan Model & Warna
       Object.keys(dataMedium).forEach(code => {
         const item = dataMedium[code];
         const m = (item.model || '').trim().toLowerCase();
         const w = (item.color || '').trim().toLowerCase();
         const mcsItem = (item.mcs || '').trim();
 
-        // Cocokkan jika model mengandung kata yang sama/mirip dan warna sama
         if (mTarget && wTarget && (m === mTarget || m.includes(mTarget) || mTarget.includes(m)) && w === wTarget) {
           totM += Number(item.qty) || 0;
           if (mcsItem) matchedMcsSet.add(mcsItem.toLowerCase());
         }
       });
 
-      // LANGKAH 2: Jika stok Medium kosong (0 Kg), Cari stok S & L
       if (totM === 0) {
-        // Cek juga apakah inputan model di hopper itu sendiri sebenarnya adalah kode MCS (misal: LCIP-001)
         if (mTarget) {
           matchedMcsSet.add(mTarget);
         }
 
-        // Cari relasi MCS dari dataMedium jika nama modelnya mirip (misal: "Run Defy" -> cari data Medium lain yang punya model "Defy" untuk ambil MCS-nya)
         Object.keys(dataMedium).forEach(code => {
           const item = dataMedium[code];
           const mMedium = (item.model || '').trim().toLowerCase();
@@ -709,20 +735,16 @@
           }
         });
 
-        // Iterasi ke area Small & Large (dataSmall)
         Object.keys(dataSmall).forEach(code => {
           const item = dataSmall[code];
           const mcsSmall = (item.mcs || '').trim().toLowerCase();
           const wSmall = (item.color || '').trim().toLowerCase();
 
-          // Validasi warna harus cocok (mengandung teks warna yang sama)
           const isColorMatch = wTarget && (wSmall === wTarget || wSmall.includes(wTarget) || wTarget.includes(wSmall));
 
           if (isColorMatch) {
-            // Cek apakah MCS di S/L cocok dengan MCS yang dikumpulkan dari Medium/Inputan
             let isMcsMatch = false;
             if (matchedMcsSet.size === 0) {
-              // Jika tidak ada filter MCS spesifik, asalkan warna sama ikut ditarik (opsional fallback)
               isMcsMatch = true; 
             } else {
               matchedMcsSet.forEach(mcsKey => {
@@ -1126,7 +1148,7 @@
       document.getElementById('reportView').style.display = 'none';
     };
 
-    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS (MODEL & WARNA) */
+    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS (MCS, MODEL & WARNA) */
     function updateDatalistOptions() {
       const modelDatalist = document.getElementById('modelOptions');
       const colorDatalist = document.getElementById('colorOptions');
@@ -1176,7 +1198,118 @@
         option.value = color;
         colorDatalist.appendChild(option);
       });
+
+      updateMediumSearchOptions();
+      updateHomeSearchOptions();
     }
+
+    function updateMediumSearchOptions() {
+      const modelListEl = document.getElementById('listMediumModels');
+      const selectedModel = document.getElementById('inpMediumModel').value.toLowerCase().trim();
+
+      const modelsSet = new Set();
+      const colorsSet = new Set();
+
+      Object.keys(dataMedium).forEach(code => {
+        const item = dataMedium[code];
+        if (item.model) {
+          const m = item.model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+          modelsSet.add(m);
+
+          if (!selectedModel || m.toLowerCase().includes(selectedModel)) {
+            if (item.color) {
+              const c = item.color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+              colorsSet.add(c);
+            }
+          }
+        }
+      });
+
+      modelListEl.innerHTML = '';
+      Array.from(modelsSet).sort((a, b) => a.localeCompare(b)).forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        modelListEl.appendChild(opt);
+      });
+
+      const colorListEl = document.getElementById('listMediumColors');
+      colorListEl.innerHTML = '';
+      Array.from(colorsSet).sort((a, b) => a.localeCompare(b)).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        colorListEl.appendChild(opt);
+      });
+    }
+
+    function updateHomeSearchOptions() {
+      const mcsListEl = document.getElementById('listHomeMcs');
+      const modelListEl = document.getElementById('listHomeModels');
+      const colorListEl = document.getElementById('listHomeColors');
+
+      const selectedMcs = document.getElementById('inpHomeMcs').value.toLowerCase().trim();
+      const selectedModel = document.getElementById('inpHomeModel').value.toLowerCase().trim();
+
+      const mcsSet = new Set();
+      const modelsSet = new Set();
+      const colorsSet = new Set();
+
+      const processDataset = (dataset) => {
+        Object.keys(dataset).forEach(code => {
+          const item = dataset[code];
+          if (!item) return;
+          const mcs = (item.mcs || '').trim();
+          const model = (item.model || '').trim();
+          const color = (item.color || '').trim();
+
+          if (mcs) mcsSet.add(mcs);
+
+          const mcsMatch = !selectedMcs || mcs.toLowerCase().includes(selectedMcs);
+          if (mcsMatch) {
+            if (model) modelsSet.add(model);
+          }
+
+          const modelMatch = !selectedModel || model.toLowerCase().includes(selectedModel);
+          if (mcsMatch && modelMatch) {
+            if (color) colorsSet.add(color);
+          }
+        });
+      };
+
+      processDataset(dataSmall);
+      processDataset(dataMedium);
+      processDataset(dataUntested);
+
+      mcsListEl.innerHTML = '';
+      Array.from(mcsSet).sort().forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        mcsListEl.appendChild(opt);
+      });
+
+      modelListEl.innerHTML = '';
+      Array.from(modelsSet).sort().forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        modelListEl.appendChild(opt);
+      });
+
+      colorListEl.innerHTML = '';
+      Array.from(colorsSet).sort().forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        colorListEl.appendChild(opt);
+      });
+    }
+
+    window.onMediumModelInput = function() {
+      updateMediumSearchOptions();
+      handleSearchInput();
+    };
+
+    window.onHomeFilterInput = function() {
+      updateHomeSearchOptions();
+      searchGlobal();
+    };
 
     function checkDuplicateGlobal() {
       const alertBox = document.getElementById('alertDuplicate');
@@ -1250,7 +1383,7 @@
       } else {
         alertBox.style.display = 'none';
       }
-    }
+    };
 
     window.highlightMultipleLocations = function(codesArray) {
       clearBlinking();
@@ -1507,20 +1640,30 @@
     };
 
     window.handleSearchInput = function() {
-      const query = document.getElementById('inpSearch').value.trim();
-      const filterBlk = document.getElementById('selFilterBlock').value;
       const box = document.getElementById('summaryContentBox');
       const alertBox = document.getElementById('alertDuplicate');
 
       clearBlinking();
 
-      if (query.length > 0) {
-        alertBox.style.display = 'none';
+      if (activeMode === 'MEDIUM') {
+        const mVal = document.getElementById('inpMediumModel').value.trim();
+        const cVal = document.getElementById('inpMediumColor').value.trim();
+        const isFiltering = mVal !== '' || cVal !== '';
+
+        if (isFiltering) alertBox.style.display = 'none';
+        else checkDuplicateGlobal();
+
+        box.style.display = isFiltering ? 'block' : 'none';
       } else {
-        checkDuplicateGlobal();
+        const query = document.getElementById('inpSearch').value.trim();
+        const filterBlk = document.getElementById('selFilterBlock').value;
+
+        if (query.length > 0) alertBox.style.display = 'none';
+        else checkDuplicateGlobal();
+
+        box.style.display = (query.length > 0 || filterBlk !== 'ALL') ? 'block' : 'none';
       }
 
-      box.style.display = (query.length > 0 || filterBlk !== 'ALL') ? 'block' : 'none';
       renderTable();
     };
 
@@ -1623,7 +1766,20 @@
       document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'grid' : 'none';
       document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
 
+      const medSearch = document.getElementById('mediumSearchContainer');
+      const stdSearch = document.getElementById('standardSearchContainer');
+
+      if (mode === 'MEDIUM') {
+        medSearch.style.display = 'grid';
+        stdSearch.style.display = 'none';
+      } else {
+        medSearch.style.display = 'none';
+        stdSearch.style.display = 'grid';
+      }
+
       document.getElementById('inpSearch').value = '';
+      document.getElementById('inpMediumModel').value = '';
+      document.getElementById('inpMediumColor').value = '';
       document.getElementById('summaryContentBox').style.display = 'none';
       clearBlinking();
 
@@ -1631,8 +1787,11 @@
       filterBlk.innerHTML = '<option value="ALL">Semua Blok</option>';
 
       let list = mode === 'SMALL' ? smallBlocks : (mode === 'MEDIUM' ? azBlocks : untestedLines);
-      list.forEach(b => filterBlk.add(new Option(b.replace('LINE', 'Line '), b)));
+      if (mode !== 'MEDIUM') {
+        list.forEach(b => filterBlk.add(new Option(b.replace('LINE', 'Line '), b)));
+      }
 
+      updateMediumSearchOptions();
       renderTable();
       checkDuplicateGlobal();
     };
@@ -1677,39 +1836,42 @@
     };
 
     window.searchGlobal = function() {
-      const q = document.getElementById('inpHomeSearch').value.toLowerCase().trim();
+      const mcsVal = document.getElementById('inpHomeMcs').value.toLowerCase().trim();
+      const modelVal = document.getElementById('inpHomeModel').value.toLowerCase().trim();
+      const colorVal = document.getElementById('inpHomeColor').value.toLowerCase().trim();
+
       const resultBox = document.getElementById('homeSearchResultBox');
       const zoneCards = document.getElementById('zoneCardsContainer');
       const btnReport = document.getElementById('btnReportMain');
       const tbody = document.getElementById('tblHomeSearchBody');
       tbody.innerHTML = '';
 
-      if (q.length > 0) {
+      const isFiltering = mcsVal !== '' || modelVal !== '' || colorVal !== '';
+
+      if (isFiltering) {
         zoneCards.style.display = 'none';
         btnReport.style.display = 'none';
 
         let results = [];
 
-        Object.keys(dataSmall).forEach(code => {
-          const item = dataSmall[code];
-          if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
-            results.push({ zone: 'SMALL', code, item });
-          }
-        });
+        const evaluateItem = (zone, code, item) => {
+          if (!item) return;
+          const itemMcs = (item.mcs || '').toLowerCase();
+          const itemModel = (item.model || '').toLowerCase();
+          const itemColor = (item.color || '').toLowerCase();
 
-        Object.keys(dataMedium).forEach(code => {
-          const item = dataMedium[code];
-          if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
-            results.push({ zone: 'MEDIUM', code, item });
-          }
-        });
+          const mcsMatch = !mcsVal || itemMcs.includes(mcsVal);
+          const modelMatch = !modelVal || itemModel.includes(modelVal) || itemMcs.includes(modelVal);
+          const colorMatch = !colorVal || itemColor.includes(colorVal);
 
-        Object.keys(dataUntested).forEach(code => {
-          const item = dataUntested[code];
-          if (code.toLowerCase().includes(q) || (item.mcs || '').toLowerCase().includes(q) || (item.model || '').toLowerCase().includes(q) || (item.color || '').toLowerCase().includes(q)) {
-            results.push({ zone: 'UNTESTED', code, item });
+          if (mcsMatch && modelMatch && colorMatch) {
+            results.push({ zone, code, item });
           }
-        });
+        };
+
+        Object.keys(dataSmall).forEach(code => evaluateItem('SMALL', code, dataSmall[code]));
+        Object.keys(dataMedium).forEach(code => evaluateItem('MEDIUM', code, dataMedium[code]));
+        Object.keys(dataUntested).forEach(code => evaluateItem('UNTESTED', code, dataUntested[code]));
 
         results.sort((a, b) => {
           const modelA = (a.item.model || a.item.mcs || '').toLowerCase();
@@ -1730,7 +1892,7 @@
               <td><span class="badge" style="background:var(--accent);">S/L</span></td>
               <td><strong>${code}</strong></td>
               <td>${item.mcs || '-'}</td>
-              <td>${item.color || '-'}</td>
+              <td>- / ${item.color || '-'}</td>
               <td><strong>${(item.qtyS || 0).toLocaleString('id-ID')} Kg</strong></td>
               <td><strong>${(item.qtyL || 0).toLocaleString('id-ID')} Kg</strong></td>
               <td>-</td>
@@ -1740,8 +1902,8 @@
             tr.innerHTML = `
               <td><span class="badge" style="background:var(--green); color:#fff;">Medium</span></td>
               <td><strong>${code}</strong></td>
-              <td>${item.model || '-'} (${item.mcs || '-'})</td>
-              <td>${item.color || '-'}</td>
+              <td>${item.mcs || '-'}</td>
+              <td>${item.model || '-'} / ${item.color || '-'}</td>
               <td>-</td>
               <td>-</td>
               <td><strong>${(item.qty || 0).toLocaleString('id-ID')} Kg</strong></td>
@@ -1751,8 +1913,8 @@
             tr.innerHTML = `
               <td><span class="badge" style="background:var(--yellow); color:#000;">Belum Slab</span></td>
               <td><strong>${code}</strong></td>
-              <td>${item.model || '-'} (${item.mcs || '-'})</td>
-              <td>${item.color || '-'}</td>
+              <td>${item.mcs || '-'}</td>
+              <td>${item.model || '-'} / ${item.color || '-'}</td>
               <td>-</td>
               <td>-</td>
               <td><strong>${(item.qty || 0).toLocaleString('id-ID')} Kg</strong></td>
@@ -1852,8 +2014,6 @@
     });
 
     window.renderTable = function() {
-      const search = document.getElementById('inpSearch').value.toLowerCase();
-      const filterBlk = document.getElementById('selFilterBlock').value;
       const thead = document.getElementById('tblHead');
       const tbody = document.getElementById('tblBody');
       tbody.innerHTML = '';
@@ -1862,19 +2022,42 @@
       let totalKg = 0;
       let itemList = [];
 
-      Object.keys(dataset).forEach(code => {
-        const item = dataset[code];
-        const [blk] = code.split('-');
-        if (filterBlk !== 'ALL' && blk !== filterBlk) return;
+      if (activeMode === 'MEDIUM') {
+        const mVal = document.getElementById('inpMediumModel').value.toLowerCase().trim();
+        const cVal = document.getElementById('inpMediumColor').value.toLowerCase().trim();
 
-        if (activeMode === 'SMALL') {
-          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
-          itemList.push({ code, item });
-        } else {
-          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
-          itemList.push({ code, item });
-        }
-      });
+        Object.keys(dataset).forEach(code => {
+          const item = dataset[code];
+          if (!item) return;
+
+          const itemModel = (item.model || '').toLowerCase();
+          const itemColor = (item.color || '').toLowerCase();
+
+          const modelMatch = !mVal || itemModel.includes(mVal);
+          const colorMatch = !cVal || itemColor.includes(cVal);
+
+          if (modelMatch && colorMatch) {
+            itemList.push({ code, item });
+          }
+        });
+      } else {
+        const search = document.getElementById('inpSearch').value.toLowerCase();
+        const filterBlk = document.getElementById('selFilterBlock').value;
+
+        Object.keys(dataset).forEach(code => {
+          const item = dataset[code];
+          const [blk] = code.split('-');
+          if (filterBlk !== 'ALL' && blk !== filterBlk) return;
+
+          if (activeMode === 'SMALL') {
+            if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
+            itemList.push({ code, item });
+          } else {
+            if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
+            itemList.push({ code, item });
+          }
+        });
+      }
 
       itemList.sort((a, b) => {
         const modelA = (a.item.model || a.item.mcs || '').toLowerCase();
