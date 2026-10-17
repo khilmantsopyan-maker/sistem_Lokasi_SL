@@ -222,7 +222,7 @@
         📊 Buka Laporan Summary Stock
       </button>
 
-      <!-- PENCARIAN GLOBAL DI MENU UTAMA (BERDASARKAN MCS, MODEL, & WARNA DENGAN FILTER OTOMATIS) -->
+      <!-- PENCARIAN GLOBAL DI MENU UTAMA -->
       <div class="home-search-box">
         <h3>🔍 Pencarian Cepat Barang (MCS, Model, & Warna)</h3>
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
@@ -404,6 +404,20 @@
           <span id="lblSummaryTotal" style="color:var(--accent); font-size:0.8rem;">Total: 0 Kg</span>
         </div>
 
+        <!-- PENCARIAN KHUSUS AREA SMALL & LARGE (S/L): MCS & WARNA OTOMATIS -->
+        <div id="smallSearchContainer" style="display: none; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div class="input-group">
+            <label>Ketik / Pilih MCS</label>
+            <input type="text" id="inpSmallMcs" list="listSmallMcs" placeholder="Cari MCS..." oninput="onSmallMcsInput()" />
+            <datalist id="listSmallMcs"></datalist>
+          </div>
+          <div class="input-group">
+            <label>Ketik / Pilih Warna</label>
+            <input type="text" id="inpSmallColor" list="listSmallColors" placeholder="Cari warna..." oninput="handleSearchInput()" />
+            <datalist id="listSmallColors"></datalist>
+          </div>
+        </div>
+
         <!-- PENCARIAN KHUSUS AREA MEDIUM: MODEL & WARNA OTOMATIS -->
         <div id="mediumSearchContainer" style="display: none; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div class="input-group">
@@ -418,7 +432,7 @@
           </div>
         </div>
 
-        <!-- PENCARIAN STANDARD (UNTUK AREA SMALL & UNTESTED) -->
+        <!-- PENCARIAN STANDARD (UNTUK AREA UNTESTED) -->
         <div id="standardSearchContainer" style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
           <input type="text" id="inpSearch" placeholder="Ketik mcs, model, warna, lokasi..." oninput="handleSearchInput()" />
           <select id="selFilterBlock" onchange="handleSearchInput()">
@@ -1148,7 +1162,7 @@
       document.getElementById('reportView').style.display = 'none';
     };
 
-    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS (MCS, MODEL & WARNA) */
+    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS */
     function updateDatalistOptions() {
       const modelDatalist = document.getElementById('modelOptions');
       const colorDatalist = document.getElementById('colorOptions');
@@ -1199,8 +1213,47 @@
         colorDatalist.appendChild(option);
       });
 
+      updateSmallSearchOptions();
       updateMediumSearchOptions();
       updateHomeSearchOptions();
+    }
+
+    function updateSmallSearchOptions() {
+      const mcsListEl = document.getElementById('listSmallMcs');
+      const selectedMcs = document.getElementById('inpSmallMcs').value.toLowerCase().trim();
+
+      const mcsSet = new Set();
+      const colorsSet = new Set();
+
+      Object.keys(dataSmall).forEach(code => {
+        const item = dataSmall[code];
+        if (item && item.mcs) {
+          const m = item.mcs.trim();
+          mcsSet.add(m);
+
+          if (!selectedMcs || m.toLowerCase().includes(selectedMcs)) {
+            if (item.color) {
+              const c = item.color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+              colorsSet.add(c);
+            }
+          }
+        }
+      });
+
+      mcsListEl.innerHTML = '';
+      Array.from(mcsSet).sort().forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        mcsListEl.appendChild(opt);
+      });
+
+      const colorListEl = document.getElementById('listSmallColors');
+      colorListEl.innerHTML = '';
+      Array.from(colorsSet).sort((a, b) => a.localeCompare(b)).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        colorListEl.appendChild(opt);
+      });
     }
 
     function updateMediumSearchOptions() {
@@ -1300,6 +1353,11 @@
         colorListEl.appendChild(opt);
       });
     }
+
+    window.onSmallMcsInput = function() {
+      updateSmallSearchOptions();
+      handleSearchInput();
+    };
 
     window.onMediumModelInput = function() {
       updateMediumSearchOptions();
@@ -1645,7 +1703,16 @@
 
       clearBlinking();
 
-      if (activeMode === 'MEDIUM') {
+      if (activeMode === 'SMALL') {
+        const mVal = document.getElementById('inpSmallMcs').value.trim();
+        const cVal = document.getElementById('inpSmallColor').value.trim();
+        const isFiltering = mVal !== '' || cVal !== '';
+
+        if (isFiltering) alertBox.style.display = 'none';
+        else checkDuplicateGlobal();
+
+        box.style.display = isFiltering ? 'block' : 'none';
+      } else if (activeMode === 'MEDIUM') {
         const mVal = document.getElementById('inpMediumModel').value.trim();
         const cVal = document.getElementById('inpMediumColor').value.trim();
         const isFiltering = mVal !== '' || cVal !== '';
@@ -1766,18 +1833,17 @@
       document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'grid' : 'none';
       document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
 
+      const smallSearch = document.getElementById('smallSearchContainer');
       const medSearch = document.getElementById('mediumSearchContainer');
       const stdSearch = document.getElementById('standardSearchContainer');
 
-      if (mode === 'MEDIUM') {
-        medSearch.style.display = 'grid';
-        stdSearch.style.display = 'none';
-      } else {
-        medSearch.style.display = 'none';
-        stdSearch.style.display = 'grid';
-      }
+      smallSearch.style.display = mode === 'SMALL' ? 'grid' : 'none';
+      medSearch.style.display = mode === 'MEDIUM' ? 'grid' : 'none';
+      stdSearch.style.display = mode === 'UNTESTED' ? 'grid' : 'none';
 
       document.getElementById('inpSearch').value = '';
+      document.getElementById('inpSmallMcs').value = '';
+      document.getElementById('inpSmallColor').value = '';
       document.getElementById('inpMediumModel').value = '';
       document.getElementById('inpMediumColor').value = '';
       document.getElementById('summaryContentBox').style.display = 'none';
@@ -1791,6 +1857,7 @@
         list.forEach(b => filterBlk.add(new Option(b.replace('LINE', 'Line '), b)));
       }
 
+      updateSmallSearchOptions();
       updateMediumSearchOptions();
       renderTable();
       checkDuplicateGlobal();
@@ -2022,7 +2089,25 @@
       let totalKg = 0;
       let itemList = [];
 
-      if (activeMode === 'MEDIUM') {
+      if (activeMode === 'SMALL') {
+        const mVal = document.getElementById('inpSmallMcs').value.toLowerCase().trim();
+        const cVal = document.getElementById('inpSmallColor').value.toLowerCase().trim();
+
+        Object.keys(dataset).forEach(code => {
+          const item = dataset[code];
+          if (!item) return;
+
+          const itemMcs = (item.mcs || '').toLowerCase();
+          const itemColor = (item.color || '').toLowerCase();
+
+          const mcsMatch = !mVal || itemMcs.includes(mVal);
+          const colorMatch = !cVal || itemColor.includes(cVal);
+
+          if (mcsMatch && colorMatch) {
+            itemList.push({ code, item });
+          }
+        });
+      } else if (activeMode === 'MEDIUM') {
         const mVal = document.getElementById('inpMediumModel').value.toLowerCase().trim();
         const cVal = document.getElementById('inpMediumColor').value.toLowerCase().trim();
 
@@ -2049,13 +2134,8 @@
           const [blk] = code.split('-');
           if (filterBlk !== 'ALL' && blk !== filterBlk) return;
 
-          if (activeMode === 'SMALL') {
-            if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
-            itemList.push({ code, item });
-          } else {
-            if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
-            itemList.push({ code, item });
-          }
+          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
+          itemList.push({ code, item });
         });
       }
 
