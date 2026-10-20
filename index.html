@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gudang Compound System</title>
   
-  <!-- Tailwind CSS CDN (Khusus komponen Hopper IP) -->
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts & FontAwesome Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -41,19 +41,21 @@
     /* Layout Dashboard Utama */
     .zone-container { display: flex; flex-direction: column; gap: 16px; }
     
-    /* Search Box Global Menu Utama */
+    /* Search Box Global Terpisah 3 Kolom */
     .home-search-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
     .home-search-box h3 { font-size: 0.95rem; color: var(--accent); font-weight: bold; }
+    .home-search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
 
-    .zone-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
-    .zone-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .zone-card h3 { font-size: 1.1rem; margin-bottom: 4px; font-weight: bold; }
-    .zone-card p { font-size: 0.8rem; color: var(--text-muted); }
-    .zone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .zone-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; }
+    .zone-card:hover { border-color: var(--accent); transform: translateY(-2px); background: #26354a; }
+    .zone-card h3 { font-size: 1rem; margin-bottom: 2px; font-weight: bold; }
+    .zone-card p { font-size: 0.78rem; color: var(--text-muted); }
+    
+    .section-title { font-size: 0.85rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 6px; display: flex; align-items: center; gap: 6px; }
 
     /* Navigasi Tab Denah */
-    .mode-tabs { display: flex; gap: 8px; justify-content: center; background: var(--card-bg); padding: 6px; border-radius: 10px; border: 1px solid var(--card-border); }
-    .tab-btn { flex: 1; padding: 8px; background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 0.85rem; border-radius: 6px; cursor: pointer; }
+    .mode-tabs { display: flex; gap: 6px; justify-content: center; background: var(--card-bg); padding: 6px; border-radius: 10px; border: 1px solid var(--card-border); overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 8px 10px; background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 0.8rem; border-radius: 6px; cursor: pointer; white-space: nowrap; }
     .tab-btn.active { background: var(--accent); color: #0f172a; }
 
     /* Panel Base */
@@ -65,7 +67,7 @@
     .input-group label { font-size: 0.75rem; color: var(--text-muted); }
     input, select, textarea { width: 100%; padding: 8px 10px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 6px; color: var(--text); font-size: 0.85rem; outline: none; }
     input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
     
     .btn { padding: 8px 12px; background: var(--accent); color: #0f172a; border: none; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
     .btn:hover { background: var(--accent-hover); color: #fff; }
@@ -80,6 +82,19 @@
     .block-title { font-weight: bold; font-size: 0.85rem; color: var(--accent); margin-bottom: 4px; }
     .rack-group { display: flex; gap: 4px; }
     .cell-col { display: flex; flex-direction: column; gap: 4px; }
+
+    /* Layout Khusus Area Rolling */
+    .rolling-layout { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+    .rolling-top-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; border-bottom: 1px dashed var(--card-border); padding-bottom: 16px; width: 100%; }
+    .rolling-main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; width: 100%; justify-content: center; }
+    .rolling-block { background: #1e293b; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .rolling-block-title { background: #854d0e; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; width: 100%; text-align: center; }
+    
+    /* Header khusus Blok L-1 s/d L-4 (Warna Biru Accent) */
+    .rolling-top-title { background: #0284c7; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; width: 100%; text-align: center; }
+
+    .rolling-cells-grid-5 { display: flex; gap: 4px; }
+    .rolling-cells-grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; width: 100%; }
 
     /* Cell Box Denah */
     .cell { 
@@ -103,7 +118,7 @@
     .cell.filled { background: var(--green) !important; color: #fff !important; }
     .cell.problem { background: var(--red) !important; color: #fff !important; }
 
-    /* Efek Berkedip Semua Lokasi Duplikat */
+    /* Efek Berkedip Lokasi Duplikat */
     .cell.highlight-blink {
       border: 2px solid #fff !important;
       background: var(--yellow) !important;
@@ -148,9 +163,7 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-    .alert-item:hover {
-      background: rgba(245, 158, 11, 0.4);
-    }
+    .alert-item:hover { background: rgba(245, 158, 11, 0.4); }
 
     /* MODAL POP-UP FORM */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; padding: 16px; }
@@ -160,7 +173,7 @@
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; font-weight: bold; }
     .close-btn:hover { color: var(--red); }
 
-    /* STYLING LAPORAN (EXCEL STYLE) - RAPI & CENTER */
+    /* STYLING LAPORAN (EXCEL STYLE) */
     .report-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; color: #000; overflow: auto; display: none; z-index: 1000; padding: 12px; }
     .report-paper { width: 1100px; margin: 0 auto; background: #fff; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 11px; padding: 16px; }
 
@@ -186,17 +199,11 @@
     .report-table .text-left { text-align: left; }
     .report-table .total-row { font-weight: bold; background: #f2f2f2; }
 
-    /* STYLING KHUSUS TAMPILAN HOPPER IP */
     .input-dark-border { border: 1.5px solid #1e293b !important; }
     .input-dark-border:focus { border-color: #059669 !important; }
 
-    /* LAYAR HP RESPONSIF */
     @media (max-width: 600px) {
       th, td { padding: 6px 4px !important; font-size: 0.73rem !important; }
-      .table-box td { white-space: nowrap !important; }
-      .table-box td:nth-child(3), .table-box td:nth-child(4) { max-width: 85px; overflow: hidden; text-overflow: ellipsis; }
-      .table-box td:nth-child(7) { max-width: 70px; overflow: hidden; text-overflow: ellipsis; }
-      .zone-grid { grid-template-columns: 1fr; }
     }
 
     @media print {
@@ -222,35 +229,34 @@
         📊 Buka Laporan Summary Stock
       </button>
 
-      <!-- PENCARIAN GLOBAL DI MENU UTAMA -->
+      <!-- PENCARIAN GLOBAL TERPISAH 3 KOLOM -->
       <div class="home-search-box">
-        <h3>🔍 Pencarian Cepat Barang (MCS, Model, & Warna)</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+        <h3>🔍 Pencarian Cepat Barang</h3>
+        
+        <div class="home-search-grid">
           <div class="input-group">
-            <label>Cari / Pilih MCS</label>
-            <input type="text" id="inpHomeMcs" list="listHomeMcs" placeholder="Semua MCS..." oninput="onHomeFilterInput()" />
-            <datalist id="listHomeMcs"></datalist>
+            <label style="color:#38bdf8; font-weight:600;">Cari MCS</label>
+            <input type="text" id="inpSearchMcs" placeholder="Ketik MCS..." oninput="searchGlobal()" />
           </div>
           <div class="input-group">
-            <label>Cari / Pilih Model</label>
-            <input type="text" id="inpHomeModel" list="listHomeModels" placeholder="Semua Model..." oninput="onHomeFilterInput()" />
-            <datalist id="listHomeModels"></datalist>
+            <label style="color:#38bdf8; font-weight:600;">Cari Model</label>
+            <input type="text" id="inpSearchModel" placeholder="Ketik Model..." oninput="searchGlobal()" />
           </div>
           <div class="input-group">
-            <label>Cari / Pilih Warna</label>
-            <input type="text" id="inpHomeColor" list="listHomeColors" placeholder="Semua Warna..." oninput="searchGlobal()" />
-            <datalist id="listHomeColors"></datalist>
+            <label style="color:#38bdf8; font-weight:600;">Cari Warna</label>
+            <input type="text" id="inpSearchColor" placeholder="Ketik Warna..." oninput="searchGlobal()" />
           </div>
         </div>
         
-        <div id="homeSearchResultBox" class="table-box" style="display: none; margin-top: 6px;">
+        <div id="homeSearchResultBox" class="table-box" style="display: none; margin-top: 4px;">
           <table>
             <thead>
               <tr>
                 <th>Area</th>
                 <th>Lokasi</th>
                 <th>MCS</th>
-                <th>Model / Warna</th>
+                <th>Model</th>
+                <th>Warna</th>
                 <th>QTY S (Kg)</th>
                 <th>QTY L (Kg)</th>
                 <th>QTY M (Kg)</th>
@@ -263,33 +269,51 @@
       </div>
 
       <!-- KARTU ZONA / MENU -->
-      <div id="zoneCardsContainer">
-        <!-- TOMBOL MENU HOPPER IP -->
-        <div class="zone-card" style="border-left: 4px solid #059669; margin-bottom: 12px; background: linear-gradient(135deg, #064e3b 0%, #1e293b 100%);" onclick="openHopperView()">
-          <div class="flex items-center justify-between">
-            <div class="text-left">
-              <h3 style="color: #34d399;">🏭 Laporan Stock Hopper IP</h3>
-              <p style="color: #a7f3d0;">Form Laporan Stock Hopper Mesin & Kirim ke WhatsApp</p>
-            </div>
-            <i class="fa-solid fa-arrow-right-long text-emerald-400 text-xl"></i>
+      <div id="zoneCardsContainer" style="display: flex; flex-direction: column; gap: 10px;">
+        
+        <div class="zone-card" style="border-left: 4px solid #059669; background: linear-gradient(135deg, #064e3b 0%, #1e293b 100%);" onclick="openHopperView()">
+          <div>
+            <h3 style="color: #34d399;"><i class="fa-solid fa-industry mr-2"></i> Laporan Stock Hopper IP</h3>
+            <p style="color: #a7f3d0;">Form Laporan Stock Hopper Mesin & Kirim ke WhatsApp</p>
           </div>
+          <i class="fa-solid fa-arrow-right-long text-emerald-400 text-lg"></i>
         </div>
 
-        <div class="zone-card" style="border-left: 4px solid var(--green); margin-bottom: 12px;" onclick="openZoneMode('MEDIUM')">
-          <h3>Area Medium (Pass)</h3>
-          <p>Denah & Stok Blok A - J (Nomor 1-4) | Blok K - Z (Nomor 1-7)</p>
+        <div class="section-title"><i class="fa-solid fa-people-carry-box text-sky-400"></i> Area Tim Blending</div>
+
+        <div class="zone-card" style="border-left: 4px solid var(--green);" onclick="openZoneMode('MEDIUM')">
+          <div>
+            <h3>Area Medium (Pass)</h3>
+            <p>Denah & Stok Blok A - J (Nomor 1-4) | Blok K - Z (Nomor 1-7)</p>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-500"></i>
         </div>
 
-        <div class="zone-grid">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="zone-card" style="border-left: 4px solid var(--accent);" onclick="openZoneMode('SMALL')">
-            <h3>Area Small & Large (S/L)</h3>
-            <p>Denah Blok A, B, dan C (Nomor 1-15)</p>
+            <div>
+              <h3>Area Small & Large</h3>
+              <p>Blok A, B, C (No 1-15)</p>
+            </div>
           </div>
           <div class="zone-card" style="border-left: 4px solid var(--yellow);" onclick="openZoneMode('UNTESTED')">
-            <h3>Medium Belum Test (Belum Slab)</h3>
-            <p>Area Line 1, Line 2, Line 3 (Nomor 1-7)</p>
+            <div>
+              <h3>Medium Belum Test</h3>
+              <p>Line 1, 2, 3 (No 1-7)</p>
+            </div>
           </div>
         </div>
+
+        <div class="section-title" style="margin-top: 4px;"><i class="fa-solid fa-arrows-spin text-rose-400"></i> Area Tim Rolling</div>
+
+        <div class="zone-card" style="border-left: 4px solid #e11d48;" onclick="openZoneMode('ROLLING')">
+          <div>
+            <h3 style="color: #fb7185;">Area Rolling (S, L, M)</h3>
+            <p>Denah Blok L-1 s/d L-4 (1-5) & Blok A - L (1-6)</p>
+          </div>
+          <i class="fa-solid fa-chevron-right text-slate-500"></i>
+        </div>
+
       </div>
 
     </div>
@@ -297,7 +321,6 @@
     <!-- VIEW LAPORAN STOCK HOPPER IP -->
     <div id="hopperView" style="display: none; flex-direction: column; gap: 16px;">
       
-      <!-- Header Hopper IP -->
       <div class="bg-[#0f172a] text-white p-4 rounded-2xl shadow-md border border-slate-700">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -315,7 +338,6 @@
         </div>
       </div>
 
-      <!-- Card Informasi Operator & Shift -->
       <div class="bg-white rounded-2xl p-4 md:p-5 shadow-sm border-2 border-slate-900 text-slate-900">
         <div class="flex items-center justify-between mb-4 border-b border-slate-200 pb-3">
           <div class="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wider">
@@ -346,7 +368,6 @@
         </div>
       </div>
 
-      <!-- Banner Total Hasil Stock -->
       <div class="bg-[#059669] text-white rounded-2xl p-4 shadow-lg shadow-emerald-700/20 flex items-center justify-between border-2 border-emerald-800">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white text-lg">
@@ -362,7 +383,6 @@
         </div>
       </div>
 
-      <!-- Section Rincian Data Mesin -->
       <div class="space-y-3">
         <div class="flex items-center justify-between px-1">
           <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
@@ -371,17 +391,13 @@
           <span class="text-xs text-slate-400 font-medium">Isi data tiap mesin</span>
         </div>
 
-        <div id="containerMesin" class="space-y-4 text-slate-900">
-          <!-- Card Mesin dimasukkan via JS -->
-        </div>
+        <div id="containerMesin" class="space-y-4 text-slate-900"></div>
       </div>
 
-      <!-- Tombol Tambah Mesin -->
       <button type="button" onclick="tambahBarisHopper()" class="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm rounded-xl border-2 border-slate-900 shadow-sm transition flex items-center justify-center gap-2">
         <i class="fa-solid fa-circle-plus text-emerald-600 text-lg"></i> Tambah Mesin Lain
       </button>
 
-      <!-- Tombol Kirim WhatsApp -->
       <button type="button" onclick="kirimWhatsAppHopper()" class="w-full py-4 bg-[#059669] hover:bg-[#047857] active:bg-[#065f46] text-white font-bold text-base rounded-2xl shadow-lg shadow-emerald-700/30 transition flex items-center justify-center gap-2.5 border-2 border-emerald-800">
         <i class="fa-brands fa-whatsapp text-2xl"></i> Kirim Semua Data ke WhatsApp
       </button>
@@ -394,50 +410,19 @@
       <div class="mode-tabs">
         <button class="tab-btn" id="tabSmall" onclick="switchMode('SMALL')">Small / Large</button>
         <button class="tab-btn" id="tabMedium" onclick="switchMode('MEDIUM')">Medium (Pass)</button>
-        <button class="tab-btn" id="tabUntested" onclick="switchMode('UNTESTED')">Belum Test (Belum Slab)</button>
+        <button class="tab-btn" id="tabUntested" onclick="switchMode('UNTESTED')">Belum Test</button>
+        <button class="tab-btn" id="tabRolling" onclick="switchMode('ROLLING')">Area Rolling</button>
       </div>
 
-      <!-- PANEL PENCARIAN & SUMMARY -->
       <div class="panel">
         <div class="panel-header">
-          <span>🔍 Cari Data Stok Area Ini</span>
+          <span id="lblSearchTitle">🔍 Cari Data Stok Area Ini</span>
           <span id="lblSummaryTotal" style="color:var(--accent); font-size:0.8rem;">Total: 0 Kg</span>
         </div>
 
-        <!-- PENCARIAN KHUSUS AREA SMALL & LARGE (S/L): MCS & WARNA OTOMATIS -->
-        <div id="smallSearchContainer" style="display: none; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <div class="input-group">
-            <label>Ketik / Pilih MCS</label>
-            <input type="text" id="inpSmallMcs" list="listSmallMcs" placeholder="Cari MCS..." oninput="onSmallMcsInput()" />
-            <datalist id="listSmallMcs"></datalist>
-          </div>
-          <div class="input-group">
-            <label>Ketik / Pilih Warna</label>
-            <input type="text" id="inpSmallColor" list="listSmallColors" placeholder="Cari warna..." oninput="handleSearchInput()" />
-            <datalist id="listSmallColors"></datalist>
-          </div>
-        </div>
-
-        <!-- PENCARIAN KHUSUS AREA MEDIUM: MODEL & WARNA OTOMATIS -->
-        <div id="mediumSearchContainer" style="display: none; grid-template-columns: 1fr 1fr; gap: 8px;">
-          <div class="input-group">
-            <label>Ketik / Pilih Model</label>
-            <input type="text" id="inpMediumModel" list="listMediumModels" placeholder="Cari model..." oninput="onMediumModelInput()" />
-            <datalist id="listMediumModels"></datalist>
-          </div>
-          <div class="input-group">
-            <label>Ketik / Pilih Warna</label>
-            <input type="text" id="inpMediumColor" list="listMediumColors" placeholder="Cari warna..." oninput="handleSearchInput()" />
-            <datalist id="listMediumColors"></datalist>
-          </div>
-        </div>
-
-        <!-- PENCARIAN STANDARD (UNTUK AREA UNTESTED) -->
-        <div id="standardSearchContainer" style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
-          <input type="text" id="inpSearch" placeholder="Ketik mcs, model, warna, lokasi..." oninput="handleSearchInput()" />
-          <select id="selFilterBlock" onchange="handleSearchInput()">
-            <option value="ALL">Semua Blok</option>
-          </select>
+        <!-- FILTER PENCARIAN DINAMIS TERPISAH PER AREA -->
+        <div id="dynamicSearchContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) 120px; gap: 8px;">
+          <!-- Akan diisi otomatis oleh script berdasarkan area aktif -->
         </div>
 
         <div class="alert-box" id="alertDuplicate"></div>
@@ -450,7 +435,6 @@
         </div>
       </div>
 
-      <!-- DENAH VISUAL -->
       <div class="panel">
         <div class="panel-header">
           <span>Denah Visual Area (Nomor Kotak)</span>
@@ -458,9 +442,10 @@
         </div>
 
         <div class="map-box" id="mapBoxContainer">
-          <div id="mapSmall" class="simple-map"></div>
+          <div id="mapSmall" class="simple-map" style="display: none;"></div>
           <div id="mapMedium" class="medium-grid-container" style="display: none;"></div>
           <div id="mapUntested" class="simple-map" style="display: none;"></div>
+          <div id="mapRolling" class="rolling-layout" style="display: none;"></div>
         </div>
       </div>
 
@@ -486,7 +471,7 @@
       </div>
 
       <!-- Form Small/Large -->
-      <div id="formSmall">
+      <div id="formSmall" style="display: none;">
         <div class="input-group">
           <label>MCS</label>
           <select id="inpMcs" onchange="checkDuplicateInModal()">
@@ -504,7 +489,7 @@
           <label>Warna</label>
           <input type="text" id="inpColorS" list="colorOptions" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
-        <div class="form-row" style="margin-top:6px;">
+        <div class="form-row" style="margin-top:6px; grid-template-columns: 1fr 1fr;">
           <div class="input-group">
             <label>QTY S (Kg)</label>
             <input type="number" id="inpQtyS" placeholder="0" min="0" />
@@ -574,7 +559,41 @@
         </div>
       </div>
 
-      <!-- DATALIST SARAN OTOMATIS (MODEL & WARNA) -->
+      <!-- Form Rolling -->
+      <div id="formRolling" style="display: none;">
+        <div class="input-group">
+          <label>MCS</label>
+          <select id="inpMcsR" onchange="checkDuplicateInModal()">
+            <option value="">-- Pilih MCS --</option>
+            <option value="RIP-024">RIP-024</option>
+            <option value="LCIP-001">LCIP-001</option>
+            <option value="LCIP-003">LCIP-003</option>
+            <option value="LCIP-024">LCIP-024</option>
+            <option value="IU-007">IU-007</option>
+            <option value="IU-009">IU-009</option>
+            <option value="CMP-014">CMP-014</option>
+          </select>
+        </div>
+        <div class="input-group" style="margin-top:6px;">
+          <label>Warna</label>
+          <input type="text" id="inpColorR" list="colorOptions" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
+        </div>
+        <div class="form-row" style="margin-top:6px;">
+          <div class="input-group">
+            <label>QTY S (Kg)</label>
+            <input type="number" id="inpQtySR" placeholder="0" min="0" />
+          </div>
+          <div class="input-group">
+            <label>QTY L (Kg)</label>
+            <input type="number" id="inpQtyLR" placeholder="0" min="0" />
+          </div>
+          <div class="input-group">
+            <label>QTY M (Kg)</label>
+            <input type="number" id="inpQtyMR" placeholder="0" min="0" />
+          </div>
+        </div>
+      </div>
+
       <datalist id="modelOptions"></datalist>
       <datalist id="colorOptions"></datalist>
 
@@ -602,7 +621,6 @@
       <button class="btn btn-danger" onclick="closeReportModal()">✕ Tutup Laporan</button>
     </div>
 
-    <!-- WRAPPER KERTAS LAPORAN -->
     <div class="report-paper" id="reportPaperContent">
       <table class="report-header-table">
         <tr>
@@ -647,6 +665,24 @@
           </table>
         </div>
       </div>
+
+      <!-- SUMMARY AREA ROLLING DI BAWAH -->
+      <div style="margin-top: 16px;">
+        <div style="font-weight: bold; font-size: 12px; margin-bottom: 6px; text-transform: uppercase;">SUMMARY STOCK - AREA ROLLING</div>
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th style="width: 20%;">MCS</th>
+              <th style="width: 40%;">COLOR</th>
+              <th style="width: 13%;">S</th>
+              <th style="width: 13%;">L</th>
+              <th style="width: 14%;">M</th>
+            </tr>
+          </thead>
+          <tbody id="rptBodyRolling"></tbody>
+        </table>
+      </div>
+
     </div>
   </div>
 
@@ -670,15 +706,16 @@
 
     let activeMode = 'SMALL';
     let selectedCode = '';
-    let dataSmall = {}, dataMedium = {}, dataUntested = {};
+    let dataSmall = {}, dataMedium = {}, dataUntested = {}, dataRolling = {};
 
     const smallBlocks = ['A', 'B', 'C'];
     const azBlocks = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
     const untestedLines = ['LINE1', 'LINE2', 'LINE3'];
+    const rollingTopBlocks = ['L-1', 'L-2', 'L-3', 'L-4'];
+    
+    // PEMBAHARUAN: BLOK ROLLING DITAMBAH SAMPAI L (A - L)
+    const rollingMainBlocks = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
-    /* ========================================================
-       FUNGSI DOWNLOAD LAPORAN LENGKAP SEBAGAI GAMBAR PNG
-    ======================================================== */
     window.downloadReportImage = function() {
       const btn = document.getElementById('btnDownloadImg');
       const originalText = btn.innerText;
@@ -711,9 +748,6 @@
       });
     };
 
-    /* ========================================================
-       PERBAIKAN LOGIKA KRITIS (DENGAN CROSS-REFERENCE M <-> S/L)
-    ======================================================== */
     function cariStokKritisLaporan(model, warna) {
       let totM = 0;
       let totS = 0, totL = 0;
@@ -735,15 +769,12 @@
       });
 
       if (totM === 0) {
-        if (mTarget) {
-          matchedMcsSet.add(mTarget);
-        }
+        if (mTarget) matchedMcsSet.add(mTarget);
 
         Object.keys(dataMedium).forEach(code => {
           const item = dataMedium[code];
           const mMedium = (item.model || '').trim().toLowerCase();
           const mcsMedium = (item.mcs || '').trim().toLowerCase();
-          
           if (mTarget && (mMedium.includes(mTarget) || mTarget.includes(mMedium))) {
             if (mcsMedium) matchedMcsSet.add(mcsMedium);
           }
@@ -753,7 +784,6 @@
           const item = dataSmall[code];
           const mcsSmall = (item.mcs || '').trim().toLowerCase();
           const wSmall = (item.color || '').trim().toLowerCase();
-
           const isColorMatch = wTarget && (wSmall === wTarget || wSmall.includes(wTarget) || wTarget.includes(wSmall));
 
           if (isColorMatch) {
@@ -762,9 +792,7 @@
               isMcsMatch = true; 
             } else {
               matchedMcsSet.forEach(mcsKey => {
-                if (mcsSmall === mcsKey || mcsSmall.includes(mcsKey) || mcsKey.includes(mcsSmall)) {
-                  isMcsMatch = true;
-                }
+                if (mcsSmall === mcsKey || mcsSmall.includes(mcsKey) || mcsKey.includes(mcsSmall)) isMcsMatch = true;
               });
             }
 
@@ -779,9 +807,7 @@
       return { M: totM, S: totS, L: totL, isMediumEmpty: totM === 0 };
     }
 
-    /* ========================================================
-       LOGIKA KHUSUS LAPORAN STOCK HOPPER IP
-    ======================================================== */
+    /* HOPPER IP */
     let dataMesin = [];
 
     window.openHopperView = function() {
@@ -806,15 +832,10 @@
 
       if (simpananShift) document.getElementById('inp-shift').value = simpananShift;
       if (simpananNama) document.getElementById('inp-nama').value = simpananNama;
-
       if (simpananMesin) {
         try { dataMesin = JSON.parse(simpananMesin); } catch(e) { dataMesin = []; }
       }
-
-      if (!dataMesin || dataMesin.length === 0) {
-        dataMesin = [buatStrukturMesinBaru()];
-      }
-
+      if (!dataMesin || dataMesin.length === 0) dataMesin = [buatStrukturMesinBaru()];
       renderTampilanHopper();
     }
 
@@ -833,7 +854,6 @@
 
       dataMesin.forEach((item, index) => {
         const isSame = item.isSameInjector !== false;
-
         const card = document.createElement('div');
         card.className = "bg-white p-4 md:p-5 rounded-2xl border-2 border-slate-900 shadow-sm space-y-4";
         
@@ -908,7 +928,6 @@
               </div>
             </div>
           </div>
-
           ${inj2HTML}
         `;
         container.appendChild(card);
@@ -939,9 +958,7 @@
       let total = 0;
       dataMesin.forEach(item => {
         total += (parseFloat(item.inj1.qty) || 0);
-        if (item.isSameInjector === false) {
-          total += (parseFloat(item.inj2.qty) || 0);
-        }
+        if (item.isSameInjector === false) total += (parseFloat(item.inj2.qty) || 0);
       });
       document.getElementById('total-qty-val').innerText = total.toLocaleString('id-ID');
     }
@@ -960,11 +977,8 @@
     };
 
     window.simpanDataLokalHopper = function() {
-      const shift = document.getElementById('inp-shift').value;
-      const nama = document.getElementById('inp-nama').value;
-
-      localStorage.setItem('laprod_shift_v12', shift);
-      localStorage.setItem('laprod_nama_v12', nama);
+      localStorage.setItem('laprod_shift_v12', document.getElementById('inp-shift').value);
+      localStorage.setItem('laprod_nama_v12', document.getElementById('inp-nama').value);
       localStorage.setItem('laprod_mesin_v12', JSON.stringify(dataMesin));
     };
 
@@ -983,30 +997,19 @@
     window.kirimWhatsAppHopper = function() {
       const shift = document.getElementById('inp-shift').value.trim();
       const nama = document.getElementById('inp-nama').value.trim();
-
-      if (!shift || !nama) {
-        alert('Harap lengkapi Shift dan Nama Operator!');
-        return;
-      }
+      if (!shift || !nama) { alert('Harap lengkapi Shift dan Nama Operator!'); return; }
 
       const tgl = document.getElementById('date-text-hopper').innerText;
-      
-      let totalQty = 0;
-      let adaIsi = false;
-      let daftarWarning = [];
-
-      let lineGroups = {};
+      let totalQty = 0, adaIsi = false, daftarWarning = [], lineGroups = {};
 
       dataMesin.forEach((item) => {
         const noMesinRaw = item.noMesin.trim();
         const numOnly = parseInt(noMesinRaw.replace(/\D/g, ''), 10);
-        
         const isSame = item.isSameInjector !== false;
 
         const m1 = (item.inj1.model || '').trim();
         const w1 = (item.inj1.warna || '').trim();
         const q1 = parseFloat(item.inj1.qty) || 0;
-
         const m2 = (item.inj2.model || '').trim();
         const w2 = (item.inj2.warna || '').trim();
         const q2 = parseFloat(item.inj2.qty) || 0;
@@ -1016,16 +1019,8 @@
 
         if (inj1Isi || inj2Isi) {
           adaIsi = true;
-
-          let lineNum = 999;
-          if (!isNaN(numOnly) && numOnly > 0) {
-            lineNum = Math.ceil(numOnly / 2);
-          }
-
-          if (!lineGroups[lineNum]) {
-            lineGroups[lineNum] = [];
-          }
-
+          let lineNum = (!isNaN(numOnly) && numOnly > 0) ? Math.ceil(numOnly / 2) : 999;
+          if (!lineGroups[lineNum]) lineGroups[lineNum] = [];
           const displayMesin = noMesinRaw ? `Mesin ${noMesinRaw}` : 'Mesin -';
 
           if (isSame) {
@@ -1033,14 +1028,7 @@
             if (q1 < 50) {
               const res1 = cariStokKritisLaporan(m1, w1);
               lineGroups[lineNum].push(`• ${displayMesin} | A & B | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(KRITIS)*`);
-              
-              const identitasModelWarna = `${m1 || '-'} - ${w1 || '-'}`;
-
-              let strStk = res1.isMediumEmpty 
-                ? `Stok M (${identitasModelWarna}): *0kg* (Kosong) ➔ Cek S/L: S: *${res1.S}kg* | L: *${res1.L}kg*`
-                : `Stok Medium (${identitasModelWarna}): *${res1.M}kg*`;
-
-              daftarWarning.push(`${displayMesin} (A&B): *${q1} kg*\n    └ ${strStk}`);
+              daftarWarning.push(`${displayMesin} (A&B): *${q1} kg* ➔ M:${res1.M} | S:${res1.S} | L:${res1.L}`);
             } else {
               lineGroups[lineNum].push(`• ${displayMesin} | A & B | ${m1 || '-'} | ${w1 || '-'} | ${q1} kg`);
             }
@@ -1050,14 +1038,7 @@
               if (q1 < 50) {
                 const res1 = cariStokKritisLaporan(m1, w1);
                 lineGroups[lineNum].push(`• ${displayMesin} | A | ${m1 || '-'} | ${w1 || '-'} | *${q1} kg* ⚠️ *(KRITIS)*`);
-                
-                const identitasModelWarna = `${m1 || '-'} - ${w1 || '-'}`;
-
-                let strStk = res1.isMediumEmpty 
-                  ? `Stok M (${identitasModelWarna}): *0kg* ➔ Cek S/L: S: *${res1.S}kg* | L: *${res1.L}kg*`
-                  : `Stok Medium (${identitasModelWarna}): *${res1.M}kg*`;
-
-                daftarWarning.push(`${displayMesin} (Inj A): *${q1} kg*\n    └ ${strStk}`);
+                daftarWarning.push(`${displayMesin} (Inj A): *${q1} kg* ➔ M:${res1.M}`);
               } else {
                 lineGroups[lineNum].push(`• ${displayMesin} | A | ${m1 || '-'} | ${w1 || '-'} | ${q1} kg`);
               }
@@ -1066,14 +1047,7 @@
               if (q2 < 50) {
                 const res2 = cariStokKritisLaporan(m2, w2);
                 lineGroups[lineNum].push(`• ${displayMesin} | B | ${m2 || '-'} | ${w2 || '-'} | *${q2} kg* ⚠️ *(KRITIS)*`);
-                
-                const identitasModelWarna = `${m2 || '-'} - ${w2 || '-'}`;
-
-                let strStk = res2.isMediumEmpty 
-                  ? `Stok M (${identitasModelWarna}): *0kg* ➔ Cek S/L: S: *${res2.S}kg* | L: *${res2.L}kg*`
-                  : `Stok Medium (${identitasModelWarna}): *${res2.M}kg*`;
-
-                daftarWarning.push(`${displayMesin} (Inj B): *${q2} kg*\n    └ ${strStk}`);
+                daftarWarning.push(`${displayMesin} (Inj B): *${q2} kg* ➔ M:${res2.M}`);
               } else {
                 lineGroups[lineNum].push(`• ${displayMesin} | B | ${m2 || '-'} | ${w2 || '-'} | ${q2} kg`);
               }
@@ -1082,60 +1056,27 @@
         }
       });
 
-      if (!adaIsi) {
-        alert('Isi minimal satu data mesin!');
-        return;
-      }
+      if (!adaIsi) { alert('Isi minimal satu data mesin!'); return; }
 
-      let pesan = `*LAPORAN STOCK HOPPER IP*\n`;
-      pesan += `📅 *Tanggal:* ${tgl}\n`;
-      pesan += `⏰ *Shift:* ${shift}\n`;
-      pesan += `👤 *Operator:* ${nama}\n`;
-      pesan += `-----------------------------------\n\n`;
-
-      const sortedLines = Object.keys(lineGroups).sort((a, b) => parseInt(a) - parseInt(b));
-
-      sortedLines.forEach((line) => {
-        if (line === "999") {
-          pesan += `🏭 *--- LAIN-LAIN ---*\n`;
-        } else {
-          pesan += `🏭 *--- LINE ${line} ---*\n`;
-        }
-
-        lineGroups[line].forEach(barisText => {
-          pesan += `${barisText}\n`;
-        });
+      let pesan = `*LAPORAN STOCK HOPPER IP*\n📅 *Tanggal:* ${tgl}\n⏰ *Shift:* ${shift}\n👤 *Operator:* ${nama}\n-----------------------------------\n\n`;
+      Object.keys(lineGroups).sort((a, b) => parseInt(a) - parseInt(b)).forEach((line) => {
+        pesan += line === "999" ? `🏭 *--- LAIN-LAIN ---*\n` : `🏭 *--- LINE ${line} ---*\n`;
+        lineGroups[line].forEach(b => pesan += `${b}\n`);
         pesan += `\n`;
       });
-
-      pesan += `-----------------------------------\n`;
-      pesan += `📊 *TOTAL STOCK:* *${totalQty.toLocaleString('id-ID')} Kg*\n`;
-      
+      pesan += `-----------------------------------\n📊 *TOTAL STOCK:* *${totalQty.toLocaleString('id-ID')} Kg*\n`;
       if (daftarWarning.length > 0) {
-        pesan += `-----------------------------------\n`;
-        pesan += `⚠️ *PERHATIAN: STOCK HOPPER KRITIS (<50Kg):*\n`;
-        daftarWarning.forEach(w => {
-          pesan += `  • ${w}\n`;
-        });
+        pesan += `-----------------------------------\n⚠️ *PERHATIAN: STOCK HOPPER KRITIS (<50Kg):*\n`;
+        daftarWarning.forEach(w => pesan += `  • ${w}\n`);
       }
-      
-      pesan += `-----------------------------------\n`;
 
-      const urlWA = `https://wa.me/?text=${encodeURIComponent(pesan)}`;
-      window.open(urlWA, '_blank');
+      window.open(`https://wa.me/?text=${encodeURIComponent(pesan)}`, '_blank');
     };
 
-    /* ========================================================
-       LOGIKA KHUSUS DASHBOARD DENAH GUDANG & FIREBASE
-    ======================================================== */
+    /* SISTEM GUDANG */
     window.autoCapitalize = function(input) {
-      let start = input.selectionStart;
-      let end = input.selectionEnd;
-      
-      input.value = input.value.replace(/\w\S*/g, function(txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-      });
-      
+      let start = input.selectionStart, end = input.selectionEnd;
+      input.value = input.value.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
       input.setSelectionRange(start, end);
     };
 
@@ -1154,232 +1095,42 @@
       switchMode(mode);
     };
 
-    window.closeModal = function() {
-      document.getElementById('modalForm').style.display = 'none';
-    };
+    window.closeModal = function() { document.getElementById('modalForm').style.display = 'none'; };
+    window.closeReportModal = function() { document.getElementById('reportView').style.display = 'none'; };
 
-    window.closeReportModal = function() {
-      document.getElementById('reportView').style.display = 'none';
-    };
-
-    /* FUNGSI KELOLA DATALIST SARAN OTOMATIS */
     function updateDatalistOptions() {
       const modelDatalist = document.getElementById('modelOptions');
       const colorDatalist = document.getElementById('colorOptions');
+      let modelsSet = new Set(["Air Max", "Downshifter", "Pegasus", "Revolution 7", "Vomero"]);
+      let colorsSet = new Set();
 
-      const modelsSet = new Set([
-        "Air Max", "Downshifter", "Mc Trainer", "Pegasus", 
-        "Quest 7", "Reax Base", "Reax Wedge", "Revolution 6", 
-        "Revolution 7", "Structure", "Vomero", "Winflo"
-      ]);
-
-      const colorsSet = new Set();
-
-      Object.keys(dataMedium).forEach(code => {
-        if (dataMedium[code].model) {
-          modelsSet.add(dataMedium[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
-        }
-        if (dataMedium[code].color) {
-          colorsSet.add(dataMedium[code].color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
-        }
+      [dataMedium, dataUntested].forEach(ds => {
+        Object.keys(ds).forEach(code => {
+          if (ds[code].model) modelsSet.add(ds[code].model.trim());
+          if (ds[code].color) colorsSet.add(ds[code].color.trim());
+        });
       });
-
-      Object.keys(dataUntested).forEach(code => {
-        if (dataUntested[code].model) {
-          modelsSet.add(dataUntested[code].model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
-        }
-        if (dataUntested[code].color) {
-          colorsSet.add(dataUntested[code].color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
-        }
-      });
-
-      Object.keys(dataSmall).forEach(code => {
-        if (dataSmall[code].color) {
-          colorsSet.add(dataSmall[code].color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()));
-        }
+      [dataSmall, dataRolling].forEach(ds => {
+        Object.keys(ds).forEach(code => {
+          if (ds[code].color) colorsSet.add(ds[code].color.trim());
+        });
       });
 
       modelDatalist.innerHTML = '';
-      Array.from(modelsSet).sort((a, b) => a.localeCompare(b)).forEach(model => {
-        const option = document.createElement('option');
-        option.value = model;
-        modelDatalist.appendChild(option);
-      });
-
+      Array.from(modelsSet).sort().forEach(m => modelDatalist.appendChild(new Option('', m)));
       colorDatalist.innerHTML = '';
-      Array.from(colorsSet).sort((a, b) => a.localeCompare(b)).forEach(color => {
-        const option = document.createElement('option');
-        option.value = color;
-        colorDatalist.appendChild(option);
-      });
-
-      updateSmallSearchOptions();
-      updateMediumSearchOptions();
-      updateHomeSearchOptions();
+      Array.from(colorsSet).sort().forEach(c => colorDatalist.appendChild(new Option('', c)));
     }
-
-    function updateSmallSearchOptions() {
-      const mcsListEl = document.getElementById('listSmallMcs');
-      const selectedMcs = document.getElementById('inpSmallMcs').value.toLowerCase().trim();
-
-      const mcsSet = new Set();
-      const colorsSet = new Set();
-
-      Object.keys(dataSmall).forEach(code => {
-        const item = dataSmall[code];
-        if (item && item.mcs) {
-          const m = item.mcs.trim();
-          mcsSet.add(m);
-
-          if (!selectedMcs || m.toLowerCase().includes(selectedMcs)) {
-            if (item.color) {
-              const c = item.color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-              colorsSet.add(c);
-            }
-          }
-        }
-      });
-
-      mcsListEl.innerHTML = '';
-      Array.from(mcsSet).sort().forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m;
-        mcsListEl.appendChild(opt);
-      });
-
-      const colorListEl = document.getElementById('listSmallColors');
-      colorListEl.innerHTML = '';
-      Array.from(colorsSet).sort((a, b) => a.localeCompare(b)).forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        colorListEl.appendChild(opt);
-      });
-    }
-
-    function updateMediumSearchOptions() {
-      const modelListEl = document.getElementById('listMediumModels');
-      const selectedModel = document.getElementById('inpMediumModel').value.toLowerCase().trim();
-
-      const modelsSet = new Set();
-      const colorsSet = new Set();
-
-      Object.keys(dataMedium).forEach(code => {
-        const item = dataMedium[code];
-        if (item.model) {
-          const m = item.model.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-          modelsSet.add(m);
-
-          if (!selectedModel || m.toLowerCase().includes(selectedModel)) {
-            if (item.color) {
-              const c = item.color.trim().replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-              colorsSet.add(c);
-            }
-          }
-        }
-      });
-
-      modelListEl.innerHTML = '';
-      Array.from(modelsSet).sort((a, b) => a.localeCompare(b)).forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m;
-        modelListEl.appendChild(opt);
-      });
-
-      const colorListEl = document.getElementById('listMediumColors');
-      colorListEl.innerHTML = '';
-      Array.from(colorsSet).sort((a, b) => a.localeCompare(b)).forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        colorListEl.appendChild(opt);
-      });
-    }
-
-    function updateHomeSearchOptions() {
-      const mcsListEl = document.getElementById('listHomeMcs');
-      const modelListEl = document.getElementById('listHomeModels');
-      const colorListEl = document.getElementById('listHomeColors');
-
-      const selectedMcs = document.getElementById('inpHomeMcs').value.toLowerCase().trim();
-      const selectedModel = document.getElementById('inpHomeModel').value.toLowerCase().trim();
-
-      const mcsSet = new Set();
-      const modelsSet = new Set();
-      const colorsSet = new Set();
-
-      const processDataset = (dataset) => {
-        Object.keys(dataset).forEach(code => {
-          const item = dataset[code];
-          if (!item) return;
-          const mcs = (item.mcs || '').trim();
-          const model = (item.model || '').trim();
-          const color = (item.color || '').trim();
-
-          if (mcs) mcsSet.add(mcs);
-
-          const mcsMatch = !selectedMcs || mcs.toLowerCase().includes(selectedMcs);
-          if (mcsMatch) {
-            if (model) modelsSet.add(model);
-          }
-
-          const modelMatch = !selectedModel || model.toLowerCase().includes(selectedModel);
-          if (mcsMatch && modelMatch) {
-            if (color) colorsSet.add(color);
-          }
-        });
-      };
-
-      processDataset(dataSmall);
-      processDataset(dataMedium);
-      processDataset(dataUntested);
-
-      mcsListEl.innerHTML = '';
-      Array.from(mcsSet).sort().forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m;
-        mcsListEl.appendChild(opt);
-      });
-
-      modelListEl.innerHTML = '';
-      Array.from(modelsSet).sort().forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m;
-        modelListEl.appendChild(opt);
-      });
-
-      colorListEl.innerHTML = '';
-      Array.from(colorsSet).sort().forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        colorListEl.appendChild(opt);
-      });
-    }
-
-    window.onSmallMcsInput = function() {
-      updateSmallSearchOptions();
-      handleSearchInput();
-    };
-
-    window.onMediumModelInput = function() {
-      updateMediumSearchOptions();
-      handleSearchInput();
-    };
-
-    window.onHomeFilterInput = function() {
-      updateHomeSearchOptions();
-      searchGlobal();
-    };
 
     function checkDuplicateGlobal() {
       const alertBox = document.getElementById('alertDuplicate');
-      let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : dataUntested);
-
+      let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : (activeMode === 'UNTESTED' ? dataUntested : dataRolling));
       let groupMap = {};
 
       Object.keys(dataset).forEach(code => {
         const item = dataset[code];
         let key = '';
-
-        if (activeMode === 'SMALL') {
+        if (activeMode === 'SMALL' || activeMode === 'ROLLING') {
           const mcs = (item.mcs || '').trim().toLowerCase();
           const color = (item.color || '').trim().toLowerCase();
           if (mcs && color) key = `${mcs}|${color}`;
@@ -1389,7 +1140,6 @@
           const color = (item.color || '').trim().toLowerCase();
           if (mcs && model && color) key = `${mcs}|${model}|${color}`;
         }
-
         if (key) {
           if (!groupMap[key]) groupMap[key] = [];
           groupMap[key].push({ code, item });
@@ -1400,133 +1150,83 @@
       let duplicateKeys = Object.keys(groupMap).filter(k => groupMap[k].length > 1);
 
       if (duplicateKeys.length > 0) {
-        alertHTML += `⚠️ <b>Perhatian:</b> Terdapat barang persis sama tersimpan di beberapa lokasi (Sentuh untuk membuat lokasi berkedip):<br>`;
-        
+        alertHTML += `⚠️ <b>Perhatian:</b> Terdapat barang persis sama tersimpan di beberapa lokasi:<br>`;
         duplicateKeys.forEach(key => {
           const parts = key.split('|');
-          const desc = activeMode === 'SMALL' 
-            ? `${parts[0].toUpperCase()} | ${parts[1].toUpperCase()}` 
-            : `${parts[0].toUpperCase()} | ${parts[1].toUpperCase()} | ${parts[2].toUpperCase()}`;
-          
+          const desc = (activeMode === 'SMALL' || activeMode === 'ROLLING') ? `${parts[0].toUpperCase()} | ${parts[1].toUpperCase()}` : `${parts[0].toUpperCase()} | ${parts[1].toUpperCase()} | ${parts[2].toUpperCase()}`;
           const itemsArr = groupMap[key];
           const codesArr = itemsArr.map(x => x.code);
-          const codesStr = JSON.stringify(codesArr).replace(/"/g, '&quot;');
           
-          let totalQtyCombined = 0;
-          const locationBadges = itemsArr.map(x => {
-            let qtyDisplay = '';
-            if (activeMode === 'SMALL') {
-              const qS = Number(x.item.qtyS) || 0;
-              const qL = Number(x.item.qtyL) || 0;
-              const sumSL = qS + qL;
-              totalQtyCombined += sumSL;
-              qtyDisplay = ` (S:${qS} / L:${qL} Kg)`;
-            } else {
-              const qM = Number(x.item.qty) || 0;
-              totalQtyCombined += qM;
-              qtyDisplay = ` (${qM} Kg)`;
-            }
-            return `<span class="badge" style="background:var(--yellow); color:#000;">${x.code}${qtyDisplay}</span>`;
+          let totalQty = 0;
+          const badges = itemsArr.map(x => {
+            let sum = 0;
+            if (activeMode === 'SMALL') sum = (Number(x.item.qtyS)||0) + (Number(x.item.qtyL)||0);
+            else if (activeMode === 'ROLLING') sum = (Number(x.item.qtyS)||0) + (Number(x.item.qtyL)||0) + (Number(x.item.qtyM)||0);
+            else sum = Number(x.item.qty)||0;
+            totalQty += sum;
+            return `<span class="badge" style="background:var(--yellow); color:#000;">${x.code} (${sum}Kg)</span>`;
           }).join(' ');
 
-          alertHTML += `
-            <div class="alert-item" onclick="highlightMultipleLocations(${codesStr})">
-              • <b>${desc}</b> &nbsp;➔&nbsp; <b>Total Gabungan: <span style="color:#22c55e;">${totalQtyCombined.toLocaleString('id-ID')} Kg</span></b><br>
-              &nbsp;&nbsp;Lokasi: ${locationBadges}
-            </div>`;
+          alertHTML += `<div class="alert-item" onclick="highlightMultipleLocations(${JSON.stringify(codesArr).replace(/"/g, '&quot;')})">
+            • <b>${desc}</b> ➔ Total: <span style="color:#22c55e;">${totalQty} Kg</span><br> Lokasi: ${badges}
+          </div>`;
         });
-
         alertBox.style.display = 'block';
         alertBox.innerHTML = alertHTML;
       } else {
         alertBox.style.display = 'none';
       }
-    };
+    }
 
     window.highlightMultipleLocations = function(codesArray) {
-      clearBlinking();
+      document.querySelectorAll('.cell.highlight-blink').forEach(c => c.classList.remove('highlight-blink'));
       let firstCell = null;
-
       codesArray.forEach(code => {
         const cell = document.getElementById(`cell-${activeMode}-${code}`);
-        if (cell) {
-          cell.classList.add('highlight-blink');
-          if (!firstCell) firstCell = cell;
-        }
+        if (cell) { cell.classList.add('highlight-blink'); if (!firstCell) firstCell = cell; }
       });
-
-      if (firstCell) {
-        firstCell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-      }
+      if (firstCell) firstCell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
     };
 
     window.checkDuplicateInModal = function() {
       const alertBox = document.getElementById('alertModalDuplicate');
-      let matches = [];
-
+      let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : (activeMode === 'UNTESTED' ? dataUntested : dataRolling));
+      
+      let mcs = '', model = '', color = '';
       if (activeMode === 'SMALL') {
-        const mcs = document.getElementById('inpMcs').value.trim().toLowerCase();
-        const color = document.getElementById('inpColorS').value.trim().toLowerCase();
-
+        mcs = document.getElementById('inpMcs').value.trim().toLowerCase();
+        color = document.getElementById('inpColorS').value.trim().toLowerCase();
         if (!mcs || !color) { alertBox.style.display = 'none'; return; }
-
-        Object.keys(dataSmall).forEach(code => {
-          if (code === selectedCode) return;
-          const item = dataSmall[code];
-          const itemMcs = (item.mcs || '').toLowerCase();
-          const itemColor = (item.color || '').toLowerCase();
-
-          if (itemMcs === mcs && itemColor === color) {
-            const qS = Number(item.qtyS) || 0;
-            const qL = Number(item.qtyL) || 0;
-            matches.push(`<b>${code}</b> [S:${qS} / L:${qL} Kg]`);
-          }
-        });
-
       } else if (activeMode === 'MEDIUM') {
-        const mcs = document.getElementById('inpMcsM').value.trim().toLowerCase();
-        const model = document.getElementById('inpModelM').value.trim().toLowerCase();
-        const color = document.getElementById('inpColorM').value.trim().toLowerCase();
-
+        mcs = document.getElementById('inpMcsM').value.trim().toLowerCase();
+        model = document.getElementById('inpModelM').value.trim().toLowerCase();
+        color = document.getElementById('inpColorM').value.trim().toLowerCase();
         if (!mcs || !model || !color) { alertBox.style.display = 'none'; return; }
-
-        Object.keys(dataMedium).forEach(code => {
-          if (code === selectedCode) return;
-          const item = dataMedium[code];
-          const itemMcs = (item.mcs || '').toLowerCase();
-          const itemModel = (item.model || '').toLowerCase();
-          const itemColor = (item.color || '').toLowerCase();
-
-          if (itemMcs === mcs && itemModel === model && itemColor === color) {
-            const qM = Number(item.qty) || 0;
-            matches.push(`<b>${code}</b> [${qM} Kg]`);
-          }
-        });
-
       } else if (activeMode === 'UNTESTED') {
-        const mcs = document.getElementById('inpMcsU').value.trim().toLowerCase();
-        const model = document.getElementById('inpModelU').value.trim().toLowerCase();
-        const color = document.getElementById('inpColorU').value.trim().toLowerCase();
-
+        mcs = document.getElementById('inpMcsU').value.trim().toLowerCase();
+        model = document.getElementById('inpModelU').value.trim().toLowerCase();
+        color = document.getElementById('inpColorU').value.trim().toLowerCase();
         if (!mcs || !model || !color) { alertBox.style.display = 'none'; return; }
-
-        Object.keys(dataUntested).forEach(code => {
-          if (code === selectedCode) return;
-          const item = dataUntested[code];
-          const itemMcs = (item.mcs || '').toLowerCase();
-          const itemModel = (item.model || '').toLowerCase();
-          const itemColor = (item.color || '').toLowerCase();
-
-          if (itemMcs === mcs && itemModel === model && itemColor === color) {
-            const qU = Number(item.qty) || 0;
-            matches.push(`<b>${code}</b> [${qU} Kg]`);
-          }
-        });
+      } else if (activeMode === 'ROLLING') {
+        mcs = document.getElementById('inpMcsR').value.trim().toLowerCase();
+        color = document.getElementById('inpColorR').value.trim().toLowerCase();
+        if (!mcs || !color) { alertBox.style.display = 'none'; return; }
       }
+
+      let matches = [];
+      Object.keys(dataset).forEach(code => {
+        if (code === selectedCode) return;
+        const item = dataset[code];
+        if (activeMode === 'SMALL' || activeMode === 'ROLLING') {
+          if ((item.mcs||'').toLowerCase() === mcs && (item.color||'').toLowerCase() === color) matches.push(`<b>${code}</b>`);
+        } else {
+          if ((item.mcs||'').toLowerCase() === mcs && (item.model||'').toLowerCase() === model && (item.color||'').toLowerCase() === color) matches.push(`<b>${code}</b>`);
+        }
+      });
 
       if (matches.length > 0) {
         alertBox.style.display = 'block';
-        alertBox.innerHTML = `⚠️ <b>Perhatian Operator:</b> Barang dengan MCS, Model, dan Warna yang sama persis sudah ada di lokasi: ${matches.join(', ')}. Harap periksa kembali agar stok tidak terpisah!`;
+        alertBox.innerHTML = `⚠️ Barang yang sama sudah ada di lokasi: ${matches.join(', ')}`;
       } else {
         alertBox.style.display = 'none';
       }
@@ -1537,9 +1237,9 @@
       document.getElementById('rptDateStr').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
       document.getElementById('rptTimeStr').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
+      // 1. Medium & Untested Report
       const tbodyMed = document.getElementById('rptBodyMed');
       tbodyMed.innerHTML = '';
-
       let medGroup = {};
 
       Object.keys(dataMedium).forEach(code => {
@@ -1553,7 +1253,6 @@
         if (!medGroup[mcs]) medGroup[mcs] = {};
         const key = `${model}_${color}`;
         if (!medGroup[mcs][key]) medGroup[mcs][key] = { model, color, pass: 0, fail: 0, bb: 0, belum: 0 };
-
         if (status === 'PASS') medGroup[mcs][key].pass += qty;
         else if (status === 'FAIL') medGroup[mcs][key].fail += qty;
         else if (status === 'BUBBLE' || status === 'BEDA_WARNA') medGroup[mcs][key].bb += qty;
@@ -1569,26 +1268,16 @@
         if (!medGroup[mcs]) medGroup[mcs] = {};
         const key = `${model}_${color}`;
         if (!medGroup[mcs][key]) medGroup[mcs][key] = { model, color, pass: 0, fail: 0, bb: 0, belum: 0 };
-
         medGroup[mcs][key].belum += qty;
       });
 
-      let grandMedPass = 0, grandMedFail = 0, grandMedBB = 0, grandMedBelum = 0;
-
       Object.keys(medGroup).sort().forEach(mcs => {
         let subPass = 0, subFail = 0, subBB = 0, subBelum = 0;
-        
-        const sortedKeys = Object.keys(medGroup[mcs]).sort((a, b) => {
-          const itemA = medGroup[mcs][a];
-          const itemB = medGroup[mcs][b];
-          if (itemA.model !== itemB.model) return itemA.model.localeCompare(itemB.model);
-          return itemA.color.localeCompare(itemB.color);
-        });
+        const sortedKeys = Object.keys(medGroup[mcs]).sort();
 
         sortedKeys.forEach((k, idx) => {
           const r = medGroup[mcs][k];
           subPass += r.pass; subFail += r.fail; subBB += r.bb; subBelum += r.belum;
-
           const tr = document.createElement('tr');
           tr.innerHTML = `
             ${idx === 0 ? `<td rowspan="${sortedKeys.length}" class="bg-gray">${mcs}</td>` : ''}
@@ -1602,33 +1291,15 @@
           tbodyMed.appendChild(tr);
         });
 
-        grandMedPass += subPass; grandMedFail += subFail; grandMedBB += subBB; grandMedBelum += subBelum;
         const trTot = document.createElement('tr');
         trTot.className = 'total-row';
-        trTot.innerHTML = `
-          <td colspan="3" style="text-align:right;">TOTAL</td>
-          <td>${subPass ? subPass.toLocaleString('id-ID') : '-'}</td>
-          <td>${subFail ? subFail.toLocaleString('id-ID') : '-'}</td>
-          <td>${subBB ? subBB.toLocaleString('id-ID') : '-'}</td>
-          <td>${subBelum ? subBelum.toLocaleString('id-ID') : '-'}</td>
-        `;
+        trTot.innerHTML = `<td colspan="3" style="text-align:right;">TOTAL</td><td>${subPass||'-'}</td><td>${subFail||'-'}</td><td>${subBB||'-'}</td><td>${subBelum||'-'}</td>`;
         tbodyMed.appendChild(trTot);
       });
 
-      const trGrandMed = document.createElement('tr');
-      trGrandMed.className = 'bg-gray';
-      trGrandMed.innerHTML = `
-        <td colspan="3" style="text-align:right;">GRAND TOTAL</td>
-        <td>${grandMedPass.toLocaleString('id-ID')}</td>
-        <td>${grandMedFail.toLocaleString('id-ID')}</td>
-        <td>${grandMedBB.toLocaleString('id-ID')}</td>
-        <td>${grandMedBelum.toLocaleString('id-ID')}</td>
-      `;
-      tbodyMed.appendChild(trGrandMed);
-
+      // 2. Small / Large Report
       const tbodySL = document.getElementById('rptBodySL');
       tbodySL.innerHTML = '';
-
       let slGroup = {};
       Object.keys(dataSmall).forEach(code => {
         const item = dataSmall[code];
@@ -1641,16 +1312,11 @@
         slGroup[mcs].push({ color, qtyS, qtyL });
       });
 
-      let grandS = 0, grandL = 0;
-
       Object.keys(slGroup).sort().forEach(mcs => {
         let subS = 0, subL = 0;
-        
         const rows = slGroup[mcs].sort((a, b) => a.color.localeCompare(b.color));
-
         rows.forEach((r, idx) => {
           subS += r.qtyS; subL += r.qtyL;
-
           const tr = document.createElement('tr');
           tr.innerHTML = `
             ${idx === 0 ? `<td rowspan="${rows.length}" class="bg-gray">${mcs}</td>` : ''}
@@ -1660,80 +1326,69 @@
           `;
           tbodySL.appendChild(tr);
         });
-
-        grandS += subS; grandL += subL;
         const trTot = document.createElement('tr');
         trTot.className = 'total-row';
-        trTot.innerHTML = `
-          <td colspan="2" style="text-align:right;">TOTAL</td>
-          <td>${subS ? subS.toLocaleString('id-ID') : '-'}</td>
-          <td>${subL ? subL.toLocaleString('id-ID') : '-'}</td>
-        `;
+        trTot.innerHTML = `<td colspan="2" style="text-align:right;">TOTAL</td><td>${subS||'-'}</td><td>${subL||'-'}</td>`;
         tbodySL.appendChild(trTot);
       });
 
-      const trGrandSL = document.createElement('tr');
-      trGrandSL.className = 'bg-gray';
-      trGrandSL.innerHTML = `
-        <td colspan="2" style="text-align:right;">GRAND TOTAL</td>
-        <td>${grandS.toLocaleString('id-ID')}</td>
-        <td>${grandL.toLocaleString('id-ID')}</td>
-      `;
-      tbodySL.appendChild(trGrandSL);
+      // 3. Area Rolling Report
+      const tbodyRolling = document.getElementById('rptBodyRolling');
+      tbodyRolling.innerHTML = '';
+      let rollingGroup = {};
+      Object.keys(dataRolling).forEach(code => {
+        const item = dataRolling[code];
+        const mcs = (item.mcs || 'LAINNYA').toUpperCase();
+        const color = (item.color || '-').toUpperCase();
+        const qtyS = Number(item.qtyS) || 0;
+        const qtyL = Number(item.qtyL) || 0;
+        const qtyM = Number(item.qtyM) || 0;
+
+        if (!rollingGroup[mcs]) rollingGroup[mcs] = [];
+        rollingGroup[mcs].push({ color, qtyS, qtyL, qtyM });
+      });
+
+      Object.keys(rollingGroup).sort().forEach(mcs => {
+        let subS = 0, subL = 0, subM = 0;
+        const rows = rollingGroup[mcs].sort((a, b) => a.color.localeCompare(b.color));
+        rows.forEach((r, idx) => {
+          subS += r.qtyS; subL += r.qtyL; subM += r.qtyM;
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            ${idx === 0 ? `<td rowspan="${rows.length}" class="bg-gray">${mcs}</td>` : ''}
+            <td class="text-left">${r.color}</td>
+            <td>${r.qtyS ? r.qtyS.toLocaleString('id-ID') : '-'}</td>
+            <td>${r.qtyL ? r.qtyL.toLocaleString('id-ID') : '-'}</td>
+            <td>${r.qtyM ? r.qtyM.toLocaleString('id-ID') : '-'}</td>
+          `;
+          tbodyRolling.appendChild(tr);
+        });
+        const trTot = document.createElement('tr');
+        trTot.className = 'total-row';
+        trTot.innerHTML = `<td colspan="2" style="text-align:right;">TOTAL</td><td>${subS||'-'}</td><td>${subL||'-'}</td><td>${subM||'-'}</td>`;
+        tbodyRolling.appendChild(trTot);
+      });
 
       document.getElementById('reportView').style.display = 'block';
     };
 
-    function clearBlinking() {
-      document.querySelectorAll('.cell.highlight-blink').forEach(c => c.classList.remove('highlight-blink'));
-    }
-
     window.selectLocationFromSummary = function(code) {
-      clearBlinking();
-      const targetCell = document.getElementById(`cell-${activeMode}-${code}`);
-      if (targetCell) {
-        targetCell.classList.add('highlight-blink');
-        targetCell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-      }
+      document.querySelectorAll('.cell.highlight-blink').forEach(c => c.classList.remove('highlight-blink'));
+      const target = document.getElementById(`cell-${activeMode}-${code}`);
+      if (target) { target.classList.add('highlight-blink'); target.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' }); }
     };
 
     window.handleSearchInput = function() {
-      const box = document.getElementById('summaryContentBox');
-      const alertBox = document.getElementById('alertDuplicate');
-
-      clearBlinking();
-
-      if (activeMode === 'SMALL') {
-        const mVal = document.getElementById('inpSmallMcs').value.trim();
-        const cVal = document.getElementById('inpSmallColor').value.trim();
-        const isFiltering = mVal !== '' || cVal !== '';
-
-        if (isFiltering) alertBox.style.display = 'none';
-        else checkDuplicateGlobal();
-
-        box.style.display = isFiltering ? 'block' : 'none';
-      } else if (activeMode === 'MEDIUM') {
-        const mVal = document.getElementById('inpMediumModel').value.trim();
-        const cVal = document.getElementById('inpMediumColor').value.trim();
-        const isFiltering = mVal !== '' || cVal !== '';
-
-        if (isFiltering) alertBox.style.display = 'none';
-        else checkDuplicateGlobal();
-
-        box.style.display = isFiltering ? 'block' : 'none';
-      } else {
-        const query = document.getElementById('inpSearch').value.trim();
-        const filterBlk = document.getElementById('selFilterBlock').value;
-
-        if (query.length > 0) alertBox.style.display = 'none';
-        else checkDuplicateGlobal();
-
-        box.style.display = (query.length > 0 || filterBlk !== 'ALL') ? 'block' : 'none';
-      }
-
+      let hasVal = false;
+      ['filterMcs', 'filterModel', 'filterColor'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && el.value.trim()) hasVal = true;
+      });
+      document.getElementById('summaryContentBox').style.display = hasVal ? 'block' : 'none';
       renderTable();
     };
 
+    /* BUILD MAPS */
     function buildMaps() {
       const mapS = document.getElementById('mapSmall');
       mapS.innerHTML = '';
@@ -1743,16 +1398,13 @@
         blkDiv.innerHTML = `<div class="block-title">Blok ${blk}</div>`;
         const rackGroup = document.createElement('div');
         rackGroup.className = 'rack-group';
-
         ['L', 'R'].forEach(side => {
           const col = document.createElement('div');
           col.className = 'cell-col';
           for (let r = 1; r <= 15; r++) {
             const code = `${blk}-${side}-${String(r).padStart(2, '0')}`;
             const c = document.createElement('div');
-            c.className = 'cell';
-            c.id = `cell-SMALL-${code}`;
-            c.textContent = r;
+            c.className = 'cell'; c.id = `cell-SMALL-${code}`; c.textContent = r;
             c.onclick = () => openModalForm('SMALL', code);
             col.appendChild(c);
           }
@@ -1767,13 +1419,9 @@
       azBlocks.forEach(blk => {
         const blkDiv = document.createElement('div');
         blkDiv.className = 'block-column';
-        blkDiv.style.background = '#1e293b';
-        blkDiv.style.padding = '6px';
-        blkDiv.style.borderRadius = '6px';
+        blkDiv.style.background = '#1e293b'; blkDiv.style.padding = '6px'; blkDiv.style.borderRadius = '6px';
         blkDiv.innerHTML = `<div class="block-title">${blk}</div>`;
-        
         const maxRows = (blk >= 'A' && blk <= 'J') ? 4 : 7;
-
         const rackGroup = document.createElement('div');
         rackGroup.className = 'rack-group';
         ['L', 'R'].forEach(side => {
@@ -1782,9 +1430,7 @@
           for (let r = 1; r <= maxRows; r++) {
             const code = `${blk}-${side}-${String(r).padStart(2, '0')}`;
             const c = document.createElement('div');
-            c.className = 'cell';
-            c.id = `cell-MEDIUM-${code}`;
-            c.textContent = r;
+            c.className = 'cell'; c.id = `cell-MEDIUM-${code}`; c.textContent = r;
             c.onclick = () => openModalForm('MEDIUM', code);
             col.appendChild(c);
           }
@@ -1802,16 +1448,13 @@
         blkDiv.innerHTML = `<div class="block-title">${line.replace('LINE', 'Line ')}</div>`;
         const rackGroup = document.createElement('div');
         rackGroup.className = 'rack-group';
-
         ['L', 'R'].forEach(side => {
           const col = document.createElement('div');
           col.className = 'cell-col';
           for (let r = 1; r <= 7; r++) {
             const code = `${line}-${side}-${String(r).padStart(2, '0')}`;
             const c = document.createElement('div');
-            c.className = 'cell';
-            c.id = `cell-UNTESTED-${code}`;
-            c.textContent = r;
+            c.className = 'cell'; c.id = `cell-UNTESTED-${code}`; c.textContent = r;
             c.onclick = () => openModalForm('UNTESTED', code);
             col.appendChild(c);
           }
@@ -1820,45 +1463,96 @@
         blkDiv.appendChild(rackGroup);
         mapU.appendChild(blkDiv);
       });
+
+      const mapR = document.getElementById('mapRolling');
+      mapR.innerHTML = '';
+      
+      // BUILD BARIS ATAS AREA ROLLING (BLOK L-1 s/d L-4 BERISI NOMOR 1 s/d 5)
+      const topRow = document.createElement('div');
+      topRow.className = 'rolling-top-row';
+      rollingTopBlocks.forEach(blk => {
+        const blkDiv = document.createElement('div');
+        blkDiv.className = 'rolling-block';
+        blkDiv.innerHTML = `<div class="rolling-top-title">${blk}</div>`;
+        const cellsGrid = document.createElement('div');
+        cellsGrid.className = 'rolling-cells-grid-5';
+        for (let r = 1; r <= 5; r++) {
+          const code = `${blk}-${r}`;
+          const c = document.createElement('div');
+          c.className = 'cell'; c.id = `cell-ROLLING-${code}`; c.textContent = r;
+          c.onclick = () => openModalForm('ROLLING', code);
+          cellsGrid.appendChild(c);
+        }
+        blkDiv.appendChild(cellsGrid);
+        topRow.appendChild(blkDiv);
+      });
+      mapR.appendChild(topRow);
+
+      // BUILD GRID UTAMA AREA ROLLING (BLOK A s/d L BERISI NOMOR 1 s/d 6)
+      const mainGrid = document.createElement('div');
+      mainGrid.className = 'rolling-main-grid';
+      rollingMainBlocks.forEach(blk => {
+        const blkDiv = document.createElement('div');
+        blkDiv.className = 'rolling-block';
+        blkDiv.innerHTML = `<div class="rolling-block-title">Blok ${blk}</div>`;
+        const cellsGrid = document.createElement('div');
+        cellsGrid.className = 'rolling-cells-grid-6';
+        [1, 3, 5, 2, 4, 6].forEach(r => {
+          const code = `${blk}-${r}`;
+          const c = document.createElement('div');
+          c.className = 'cell'; c.id = `cell-ROLLING-${code}`; c.textContent = r;
+          c.onclick = () => openModalForm('ROLLING', code);
+          cellsGrid.appendChild(c);
+        });
+        blkDiv.appendChild(cellsGrid);
+        mainGrid.appendChild(blkDiv);
+      });
+      mapR.appendChild(mainGrid);
     }
 
     window.switchMode = function(mode) {
       activeMode = mode;
-      
-      document.getElementById('tabSmall').classList.toggle('active', mode === 'SMALL');
-      document.getElementById('tabMedium').classList.toggle('active', mode === 'MEDIUM');
-      document.getElementById('tabUntested').classList.toggle('active', mode === 'UNTESTED');
+      ['Small', 'Medium', 'Untested', 'Rolling'].forEach(m => {
+        const btn = document.getElementById(`tab${m}`);
+        if (btn) btn.classList.toggle('active', mode === m.toUpperCase());
+        const map = document.getElementById(`map${m}`);
+        if (map) map.style.display = (mode === m.toUpperCase()) ? (m === 'Medium' ? 'grid' : 'flex') : 'none';
+      });
 
-      document.getElementById('mapSmall').style.display = mode === 'SMALL' ? 'flex' : 'none';
-      document.getElementById('mapMedium').style.display = mode === 'MEDIUM' ? 'grid' : 'none';
-      document.getElementById('mapUntested').style.display = mode === 'UNTESTED' ? 'flex' : 'none';
-
-      const smallSearch = document.getElementById('smallSearchContainer');
-      const medSearch = document.getElementById('mediumSearchContainer');
-      const stdSearch = document.getElementById('standardSearchContainer');
-
-      smallSearch.style.display = mode === 'SMALL' ? 'grid' : 'none';
-      medSearch.style.display = mode === 'MEDIUM' ? 'grid' : 'none';
-      stdSearch.style.display = mode === 'UNTESTED' ? 'grid' : 'none';
-
-      document.getElementById('inpSearch').value = '';
-      document.getElementById('inpSmallMcs').value = '';
-      document.getElementById('inpSmallColor').value = '';
-      document.getElementById('inpMediumModel').value = '';
-      document.getElementById('inpMediumColor').value = '';
       document.getElementById('summaryContentBox').style.display = 'none';
-      clearBlinking();
 
-      const filterBlk = document.getElementById('selFilterBlock');
-      filterBlk.innerHTML = '<option value="ALL">Semua Blok</option>';
-
-      let list = mode === 'SMALL' ? smallBlocks : (mode === 'MEDIUM' ? azBlocks : untestedLines);
-      if (mode !== 'MEDIUM') {
-        list.forEach(b => filterBlk.add(new Option(b.replace('LINE', 'Line '), b)));
+      const searchContainer = document.getElementById('dynamicSearchContainer');
+      const lblSearchTitle = document.getElementById('lblSearchTitle');
+      
+      // GENERATE KOTAK INPUT PENCARIAN TERPISAH SESUAI AREA
+      if (mode === 'SMALL') {
+        lblSearchTitle.textContent = "🔍 Cari Data Small & Large";
+        searchContainer.innerHTML = `
+          <input type="text" id="filterMcs" placeholder="Filter MCS..." oninput="handleSearchInput()" />
+          <input type="text" id="filterColor" placeholder="Filter Warna..." oninput="handleSearchInput()" />
+          <select id="selFilterBlock" onchange="handleSearchInput()"><option value="ALL">Semua Blok</option></select>
+        `;
+      } else if (mode === 'MEDIUM' || mode === 'UNTESTED') {
+        lblSearchTitle.textContent = "🔍 Cari Data Medium / Belum Test";
+        searchContainer.innerHTML = `
+          <input type="text" id="filterMcs" placeholder="Filter MCS..." oninput="handleSearchInput()" />
+          <input type="text" id="filterModel" placeholder="Filter Model..." oninput="handleSearchInput()" />
+          <input type="text" id="filterColor" placeholder="Filter Warna..." oninput="handleSearchInput()" />
+          <select id="selFilterBlock" onchange="handleSearchInput()"><option value="ALL">Semua Blok</option></select>
+        `;
+      } else if (mode === 'ROLLING') {
+        lblSearchTitle.textContent = "🔍 Cari Data Area Rolling";
+        searchContainer.innerHTML = `
+          <input type="text" id="filterMcs" placeholder="Filter MCS..." oninput="handleSearchInput()" />
+          <input type="text" id="filterColor" placeholder="Filter Warna..." oninput="handleSearchInput()" />
+          <select id="selFilterBlock" onchange="handleSearchInput()"><option value="ALL">Semua Blok</option></select>
+        `;
       }
 
-      updateSmallSearchOptions();
-      updateMediumSearchOptions();
+      const filterBlk = document.getElementById('selFilterBlock');
+      let list = mode === 'SMALL' ? smallBlocks : (mode === 'MEDIUM' ? azBlocks : (mode === 'UNTESTED' ? untestedLines : [...rollingTopBlocks, ...rollingMainBlocks]));
+      list.forEach(b => filterBlk.add(new Option(b.replace('LINE', 'Line '), b)));
+
       renderTable();
       checkDuplicateGlobal();
     };
@@ -1866,17 +1560,14 @@
     window.openModalForm = function(mode, code) {
       openZoneMode(mode);
       selectedCode = code;
-
       document.getElementById('lblCode').textContent = code;
-      
-      document.getElementById('formSmall').style.display = mode === 'SMALL' ? 'block' : 'none';
-      document.getElementById('formMedium').style.display = mode === 'MEDIUM' ? 'block' : 'none';
-      document.getElementById('formUntested').style.display = mode === 'UNTESTED' ? 'block' : 'none';
 
-      let item = {};
-      if (mode === 'SMALL') item = dataSmall[code] || {};
-      else if (mode === 'MEDIUM') item = dataMedium[code] || {};
-      else if (mode === 'UNTESTED') item = dataUntested[code] || {};
+      ['Small', 'Medium', 'Untested', 'Rolling'].forEach(m => {
+        document.getElementById(`form${m}`).style.display = (mode === m.toUpperCase()) ? 'block' : 'none';
+      });
+
+      let dataset = mode === 'SMALL' ? dataSmall : (mode === 'MEDIUM' ? dataMedium : (mode === 'UNTESTED' ? dataUntested : dataRolling));
+      let item = dataset[code] || {};
 
       document.getElementById('selStatus').value = item.status || 'PASS';
       document.getElementById('inpNotes').value = item.notes || '';
@@ -1884,18 +1575,24 @@
       if (mode === 'SMALL') {
         document.getElementById('inpMcs').value = item.mcs || '';
         document.getElementById('inpColorS').value = item.color || '';
-        document.getElementById('inpQtyS').value = item.qtyS !== undefined ? item.qtyS : '';
-        document.getElementById('inpQtyL').value = item.qtyL !== undefined ? item.qtyL : '';
+        document.getElementById('inpQtyS').value = item.qtyS || '';
+        document.getElementById('inpQtyL').value = item.qtyL || '';
       } else if (mode === 'MEDIUM') {
         document.getElementById('inpMcsM').value = item.mcs || '';
         document.getElementById('inpModelM').value = item.model || '';
         document.getElementById('inpColorM').value = item.color || '';
-        document.getElementById('inpQtyM').value = item.qty !== undefined ? item.qty : '';
+        document.getElementById('inpQtyM').value = item.qty || '';
       } else if (mode === 'UNTESTED') {
         document.getElementById('inpMcsU').value = item.mcs || '';
         document.getElementById('inpModelU').value = item.model || '';
         document.getElementById('inpColorU').value = item.color || '';
-        document.getElementById('inpQtyU').value = item.qty !== undefined ? item.qty : '';
+        document.getElementById('inpQtyU').value = item.qty || '';
+      } else if (mode === 'ROLLING') {
+        document.getElementById('inpMcsR').value = item.mcs || '';
+        document.getElementById('inpColorR').value = item.color || '';
+        document.getElementById('inpQtySR').value = item.qtyS || '';
+        document.getElementById('inpQtyLR').value = item.qtyL || '';
+        document.getElementById('inpQtyMR').value = item.qtyM || '';
       }
 
       checkDuplicateInModal();
@@ -1903,9 +1600,9 @@
     };
 
     window.searchGlobal = function() {
-      const mcsVal = document.getElementById('inpHomeMcs').value.toLowerCase().trim();
-      const modelVal = document.getElementById('inpHomeModel').value.toLowerCase().trim();
-      const colorVal = document.getElementById('inpHomeColor').value.toLowerCase().trim();
+      const qMcs = document.getElementById('inpSearchMcs').value.toLowerCase().trim();
+      const qModel = document.getElementById('inpSearchModel').value.toLowerCase().trim();
+      const qColor = document.getElementById('inpSearchColor').value.toLowerCase().trim();
 
       const resultBox = document.getElementById('homeSearchResultBox');
       const zoneCards = document.getElementById('zoneCardsContainer');
@@ -1913,86 +1610,45 @@
       const tbody = document.getElementById('tblHomeSearchBody');
       tbody.innerHTML = '';
 
-      const isFiltering = mcsVal !== '' || modelVal !== '' || colorVal !== '';
-
-      if (isFiltering) {
+      if (qMcs.length > 0 || qModel.length > 0 || qColor.length > 0) {
         zoneCards.style.display = 'none';
         btnReport.style.display = 'none';
-
         let results = [];
 
-        const evaluateItem = (zone, code, item) => {
-          if (!item) return;
-          const itemMcs = (item.mcs || '').toLowerCase();
-          const itemModel = (item.model || '').toLowerCase();
-          const itemColor = (item.color || '').toLowerCase();
+        [ {z:'SMALL', d:dataSmall}, {z:'MEDIUM', d:dataMedium}, {z:'UNTESTED', d:dataUntested}, {z:'ROLLING', d:dataRolling} ].forEach(obj => {
+          Object.keys(obj.d).forEach(code => {
+            const item = obj.d[code];
+            const mcs = (item.mcs || '').toLowerCase();
+            const model = (item.model || '').toLowerCase();
+            const color = (item.color || '').toLowerCase();
 
-          const mcsMatch = !mcsVal || itemMcs.includes(mcsVal);
-          const modelMatch = !modelVal || itemModel.includes(modelVal) || itemMcs.includes(modelVal);
-          const colorMatch = !colorVal || itemColor.includes(colorVal);
+            const matchMcs = !qMcs || mcs.includes(qMcs);
+            const matchModel = !qModel || model.includes(qModel);
+            const matchColor = !qColor || color.includes(qColor);
 
-          if (mcsMatch && modelMatch && colorMatch) {
-            results.push({ zone, code, item });
-          }
-        };
-
-        Object.keys(dataSmall).forEach(code => evaluateItem('SMALL', code, dataSmall[code]));
-        Object.keys(dataMedium).forEach(code => evaluateItem('MEDIUM', code, dataMedium[code]));
-        Object.keys(dataUntested).forEach(code => evaluateItem('UNTESTED', code, dataUntested[code]));
-
-        results.sort((a, b) => {
-          const modelA = (a.item.model || a.item.mcs || '').toLowerCase();
-          const modelB = (b.item.model || b.item.mcs || '').toLowerCase();
-          if (modelA !== modelB) return modelA.localeCompare(modelB);
-          const colorA = (a.item.color || '').toLowerCase();
-          const colorB = (b.item.color || '').toLowerCase();
-          return colorA.localeCompare(colorB);
+            if (matchMcs && matchModel && matchColor) {
+              results.push({ zone: obj.z, code, item });
+            }
+          });
         });
 
-        results.forEach(res => {
-          const { zone, code, item } = res;
+        results.forEach(({ zone, code, item }) => {
           const tr = document.createElement('tr');
           tr.onclick = () => { openZoneMode(zone); selectLocationFromSummary(code); };
-
-          if (zone === 'SMALL') {
-            tr.innerHTML = `
-              <td><span class="badge" style="background:var(--accent);">S/L</span></td>
-              <td><strong>${code}</strong></td>
-              <td>${item.mcs || '-'}</td>
-              <td>- / ${item.color || '-'}</td>
-              <td><strong>${(item.qtyS || 0).toLocaleString('id-ID')} Kg</strong></td>
-              <td><strong>${(item.qtyL || 0).toLocaleString('id-ID')} Kg</strong></td>
-              <td>-</td>
-              <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
-            `;
-          } else if (zone === 'MEDIUM') {
-            tr.innerHTML = `
-              <td><span class="badge" style="background:var(--green); color:#fff;">Medium</span></td>
-              <td><strong>${code}</strong></td>
-              <td>${item.mcs || '-'}</td>
-              <td>${item.model || '-'} / ${item.color || '-'}</td>
-              <td>-</td>
-              <td>-</td>
-              <td><strong>${(item.qty || 0).toLocaleString('id-ID')} Kg</strong></td>
-              <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
-            `;
-          } else if (zone === 'UNTESTED') {
-            tr.innerHTML = `
-              <td><span class="badge" style="background:var(--yellow); color:#000;">Belum Slab</span></td>
-              <td><strong>${code}</strong></td>
-              <td>${item.mcs || '-'}</td>
-              <td>${item.model || '-'} / ${item.color || '-'}</td>
-              <td>-</td>
-              <td>-</td>
-              <td><strong>${(item.qty || 0).toLocaleString('id-ID')} Kg</strong></td>
-              <td>Belum Test</td>
-            `;
-          }
+          tr.innerHTML = `
+            <td><span class="badge" style="background:${zone==='ROLLING'?'#e11d48':'var(--accent)'};">${zone}</span></td>
+            <td><strong>${code}</strong></td>
+            <td>${item.mcs || '-'}</td>
+            <td>${item.model || '-'}</td>
+            <td>${item.color || '-'}</td>
+            <td>${item.qtyS || '-'}</td>
+            <td>${item.qtyL || '-'}</td>
+            <td>${item.qtyM || item.qty || '-'}</td>
+            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
+          `;
           tbody.appendChild(tr);
         });
-
         resultBox.style.display = results.length > 0 ? 'block' : 'none';
-
       } else {
         zoneCards.style.display = 'block';
         btnReport.style.display = 'block';
@@ -2010,39 +1666,35 @@
         const color = document.getElementById('inpColorS').value.trim();
         const qtyS = Number(document.getElementById('inpQtyS').value) || 0;
         const qtyL = Number(document.getElementById('inpQtyL').value) || 0;
-
-        set(ref(database, `warehouseStock/${code}`), { mcs, color, qtyS, qtyL, notes, status }).then(() => {
-          alert(`Data lokasi ${code} berhasil disimpan!`); closeModal();
-        });
-
+        set(ref(database, `warehouseStock/${code}`), { mcs, color, qtyS, qtyL, notes, status }).then(() => { alert('Disimpan!'); closeModal(); });
       } else if (activeMode === 'MEDIUM') {
         const mcs = document.getElementById('inpMcsM').value;
         const model = document.getElementById('inpModelM').value.trim();
         const color = document.getElementById('inpColorM').value.trim();
         const qty = Number(document.getElementById('inpQtyM').value) || 0;
-
-        set(ref(database, `warehouseStockMedium/${code}`), { mcs, model, color, qty, notes, status }).then(() => {
-          alert(`Data lokasi ${code} berhasil disimpan!`); closeModal();
-        });
-
+        set(ref(database, `warehouseStockMedium/${code}`), { mcs, model, color, qty, notes, status }).then(() => { alert('Disimpan!'); closeModal(); });
       } else if (activeMode === 'UNTESTED') {
         const mcs = document.getElementById('inpMcsU').value;
         const model = document.getElementById('inpModelU').value.trim();
         const color = document.getElementById('inpColorU').value.trim();
         const qty = Number(document.getElementById('inpQtyU').value) || 0;
-
-        set(ref(database, `warehouseStockUntested/${code}`), { mcs, model, color, qty, notes, status }).then(() => {
-          alert(`Data lokasi ${code} berhasil disimpan!`); closeModal();
-        });
+        set(ref(database, `warehouseStockUntested/${code}`), { mcs, model, color, qty, notes, status }).then(() => { alert('Disimpan!'); closeModal(); });
+      } else if (activeMode === 'ROLLING') {
+        const mcs = document.getElementById('inpMcsR').value;
+        const color = document.getElementById('inpColorR').value.trim();
+        const qtyS = Number(document.getElementById('inpQtySR').value) || 0;
+        const qtyL = Number(document.getElementById('inpQtyLR').value) || 0;
+        const qtyM = Number(document.getElementById('inpQtyMR').value) || 0;
+        set(ref(database, `warehouseRolling/${code}`), { mcs, color, qtyS, qtyL, qtyM, notes, status }).then(() => { alert('Disimpan!'); closeModal(); });
       }
     };
 
     window.deleteData = function() {
-      const code = selectedCode;
-      if (confirm(`Kosongkan data lokasi ${code}?`)) {
-        if (activeMode === 'SMALL') remove(ref(database, `warehouseStock/${code}`));
-        else if (activeMode === 'MEDIUM') remove(ref(database, `warehouseStockMedium/${code}`));
-        else if (activeMode === 'UNTESTED') remove(ref(database, `warehouseStockUntested/${code}`));
+      if (confirm(`Kosongkan lokasi ${selectedCode}?`)) {
+        if (activeMode === 'SMALL') remove(ref(database, `warehouseStock/${selectedCode}`));
+        else if (activeMode === 'MEDIUM') remove(ref(database, `warehouseStockMedium/${selectedCode}`));
+        else if (activeMode === 'UNTESTED') remove(ref(database, `warehouseStockUntested/${selectedCode}`));
+        else if (activeMode === 'ROLLING') remove(ref(database, `warehouseRolling/${selectedCode}`));
         closeModal();
       }
     };
@@ -2059,152 +1711,64 @@
       });
     }
 
-    onValue(ref(database, 'warehouseStock'), snap => {
-      dataSmall = snap.val() || {};
-      updateCells('SMALL', dataSmall);
-      updateDatalistOptions();
-      if (activeMode === 'SMALL') { renderTable(); checkDuplicateGlobal(); }
-    });
-
-    onValue(ref(database, 'warehouseStockMedium'), snap => {
-      dataMedium = snap.val() || {};
-      updateCells('MEDIUM', dataMedium);
-      updateDatalistOptions();
-      if (activeMode === 'MEDIUM') { renderTable(); checkDuplicateGlobal(); }
-    });
-
-    onValue(ref(database, 'warehouseStockUntested'), snap => {
-      dataUntested = snap.val() || {};
-      updateCells('UNTESTED', dataUntested);
-      updateDatalistOptions();
-      if (activeMode === 'UNTESTED') { renderTable(); checkDuplicateGlobal(); }
-    });
+    onValue(ref(database, 'warehouseStock'), snap => { dataSmall = snap.val() || {}; updateCells('SMALL', dataSmall); updateDatalistOptions(); if(activeMode==='SMALL'){renderTable();checkDuplicateGlobal();} });
+    onValue(ref(database, 'warehouseStockMedium'), snap => { dataMedium = snap.val() || {}; updateCells('MEDIUM', dataMedium); updateDatalistOptions(); if(activeMode==='MEDIUM'){renderTable();checkDuplicateGlobal();} });
+    onValue(ref(database, 'warehouseStockUntested'), snap => { dataUntested = snap.val() || {}; updateCells('UNTESTED', dataUntested); updateDatalistOptions(); if(activeMode==='UNTESTED'){renderTable();checkDuplicateGlobal();} });
+    onValue(ref(database, 'warehouseRolling'), snap => { dataRolling = snap.val() || {}; updateCells('ROLLING', dataRolling); updateDatalistOptions(); if(activeMode==='ROLLING'){renderTable();checkDuplicateGlobal();} });
 
     window.renderTable = function() {
+      const fMcsEl = document.getElementById('filterMcs');
+      const fModelEl = document.getElementById('filterModel');
+      const fColorEl = document.getElementById('filterColor');
+
+      const fMcs = fMcsEl ? fMcsEl.value.toLowerCase().trim() : '';
+      const fModel = fModelEl ? fModelEl.value.toLowerCase().trim() : '';
+      const fColor = fColorEl ? fColorEl.value.toLowerCase().trim() : '';
+
+      const filterBlk = document.getElementById('selFilterBlock').value;
       const thead = document.getElementById('tblHead');
       const tbody = document.getElementById('tblBody');
       tbody.innerHTML = '';
 
-      let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : dataUntested);
-      let totalKg = 0;
-      let itemList = [];
+      let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : (activeMode === 'UNTESTED' ? dataUntested : dataRolling));
+      let totalKg = 0, itemList = [];
 
-      if (activeMode === 'SMALL') {
-        const mVal = document.getElementById('inpSmallMcs').value.toLowerCase().trim();
-        const cVal = document.getElementById('inpSmallColor').value.toLowerCase().trim();
+      Object.keys(dataset).forEach(code => {
+        const item = dataset[code];
+        if (filterBlk !== 'ALL' && !code.startsWith(filterBlk)) return;
 
-        Object.keys(dataset).forEach(code => {
-          const item = dataset[code];
-          if (!item) return;
+        const mcs = (item.mcs || '').toLowerCase();
+        const model = (item.model || '').toLowerCase();
+        const color = (item.color || '').toLowerCase();
 
-          const itemMcs = (item.mcs || '').toLowerCase();
-          const itemColor = (item.color || '').toLowerCase();
+        // FILTER BERDASARKAN KOLOM MASING-MASING
+        if (fMcs && !mcs.includes(fMcs)) return;
+        if (fModel && !model.includes(fModel)) return;
+        if (fColor && !color.includes(fColor)) return;
 
-          const mcsMatch = !mVal || itemMcs.includes(mVal);
-          const colorMatch = !cVal || itemColor.includes(cVal);
-
-          if (mcsMatch && colorMatch) {
-            itemList.push({ code, item });
-          }
-        });
-      } else if (activeMode === 'MEDIUM') {
-        const mVal = document.getElementById('inpMediumModel').value.toLowerCase().trim();
-        const cVal = document.getElementById('inpMediumColor').value.toLowerCase().trim();
-
-        Object.keys(dataset).forEach(code => {
-          const item = dataset[code];
-          if (!item) return;
-
-          const itemModel = (item.model || '').toLowerCase();
-          const itemColor = (item.color || '').toLowerCase();
-
-          const modelMatch = !mVal || itemModel.includes(mVal);
-          const colorMatch = !cVal || itemColor.includes(cVal);
-
-          if (modelMatch && colorMatch) {
-            itemList.push({ code, item });
-          }
-        });
-      } else {
-        const search = document.getElementById('inpSearch').value.toLowerCase();
-        const filterBlk = document.getElementById('selFilterBlock').value;
-
-        Object.keys(dataset).forEach(code => {
-          const item = dataset[code];
-          const [blk] = code.split('-');
-          if (filterBlk !== 'ALL' && blk !== filterBlk) return;
-
-          if (search && !code.toLowerCase().includes(search) && !(item.mcs||'').toLowerCase().includes(search) && !(item.model||'').toLowerCase().includes(search) && !(item.color||'').toLowerCase().includes(search)) return;
-          itemList.push({ code, item });
-        });
-      }
-
-      itemList.sort((a, b) => {
-        const modelA = (a.item.model || a.item.mcs || '').toLowerCase();
-        const modelB = (b.item.model || b.item.mcs || '').toLowerCase();
-        if (modelA !== modelB) return modelA.localeCompare(modelB);
-
-        const colorA = (a.item.color || '').toLowerCase();
-        const colorB = (b.item.color || '').toLowerCase();
-        return colorA.localeCompare(colorB);
+        itemList.push({ code, item });
       });
 
       if (activeMode === 'SMALL') {
-        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>QTY S (Kg)</th><th>QTY L (Kg)</th><th>Notes</th></tr>`;
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>S (Kg)</th><th>L (Kg)</th><th>Notes</th></tr>`;
         itemList.forEach(({ code, item }) => {
-          const qS = Number(item.qtyS) || 0;
-          const qL = Number(item.qtyL) || 0;
+          const qS = Number(item.qtyS) || 0, qL = Number(item.qtyL) || 0;
           totalKg += (qS + qL);
-
-          const tr = document.createElement('tr');
-          tr.onclick = () => selectLocationFromSummary(code);
-          tr.innerHTML = `
-            <td><span class="badge">${code}</span></td>
-            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
-            <td>${item.mcs || '-'}</td>
-            <td title="${item.color || ''}">${item.color || '-'}</td>
-            <td><strong>${qS.toLocaleString('id-ID')}</strong></td>
-            <td><strong>${qL.toLocaleString('id-ID')}</strong></td>
-            <td title="${item.notes || ''}" style="color:var(--text-muted);">${item.notes || '-'}</td>
-          `;
-          tbody.appendChild(tr);
+          tbody.innerHTML += `<tr onclick="selectLocationFromSummary('${code}')"><td><span class="badge">${code}</span></td><td style="color:${item.status==='PASS'?'var(--green)':'var(--red)'}">${item.status||'PASS'}</td><td>${item.mcs||'-'}</td><td>${item.color||'-'}</td><td><strong>${qS}</strong></td><td><strong>${qL}</strong></td><td>${item.notes||'-'}</td></tr>`;
         });
-      } else if (activeMode === 'MEDIUM') {
-        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Model</th><th>Warna</th><th>QTY M (Kg)</th><th>Notes</th></tr>`;
+      } else if (activeMode === 'MEDIUM' || activeMode === 'UNTESTED') {
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Model</th><th>Warna</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
         itemList.forEach(({ code, item }) => {
           const qty = Number(item.qty) || 0;
           totalKg += qty;
-
-          const tr = document.createElement('tr');
-          tr.onclick = () => selectLocationFromSummary(code);
-          tr.innerHTML = `
-            <td><span class="badge">${code}</span></td>
-            <td style="color:${item.status === 'PASS' ? 'var(--green)' : 'var(--red)'}">${item.status || 'PASS'}</td>
-            <td>${item.mcs || '-'}</td>
-            <td title="${item.model || ''}">${item.model || '-'}</td>
-            <td title="${item.color || ''}">${item.color || '-'}</td>
-            <td><strong>${qty.toLocaleString('id-ID')}</strong></td>
-            <td title="${item.notes || ''}" style="color:var(--text-muted);">${item.notes || '-'}</td>
-          `;
-          tbody.appendChild(tr);
+          tbody.innerHTML += `<tr onclick="selectLocationFromSummary('${code}')"><td><span class="badge">${code}</span></td><td style="color:${item.status==='PASS'?'var(--green)':'var(--red)'}">${item.status||'PASS'}</td><td>${item.mcs||'-'}</td><td>${item.model||'-'}</td><td>${item.color||'-'}</td><td><strong>${qty}</strong></td><td>${item.notes||'-'}</td></tr>`;
         });
-      } else if (activeMode === 'UNTESTED') {
-        thead.innerHTML = `<tr><th>Lokasi</th><th>MCS</th><th>Model</th><th>Warna</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
+      } else if (activeMode === 'ROLLING') {
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>S</th><th>L</th><th>M</th><th>Notes</th></tr>`;
         itemList.forEach(({ code, item }) => {
-          const qty = Number(item.qty) || 0;
-          totalKg += qty;
-
-          const tr = document.createElement('tr');
-          tr.onclick = () => selectLocationFromSummary(code);
-          tr.innerHTML = `
-            <td><span class="badge" style="background:var(--yellow); color:#000;">${code}</span></td>
-            <td>${item.mcs || '-'}</td>
-            <td title="${item.model || ''}">${item.model || '-'}</td>
-            <td title="${item.color || ''}">${item.color || '-'}</td>
-            <td><strong>${qty.toLocaleString('id-ID')}</strong></td>
-            <td title="${item.notes || ''}" style="color:var(--text-muted);">${item.notes || '-'}</td>
-          `;
-          tbody.appendChild(tr);
+          const qS = Number(item.qtyS) || 0, qL = Number(item.qtyL) || 0, qM = Number(item.qtyM) || 0;
+          totalKg += (qS + qL + qM);
+          tbody.innerHTML += `<tr onclick="selectLocationFromSummary('${code}')"><td><span class="badge">${code}</span></td><td style="color:${item.status==='PASS'?'var(--green)':'var(--red)'}">${item.status||'PASS'}</td><td>${item.mcs||'-'}</td><td>${item.color||'-'}</td><td><strong>${qS}</strong></td><td><strong>${qL}</strong></td><td><strong>${qM}</strong></td><td>${item.notes||'-'}</td></tr>`;
         });
       }
 
