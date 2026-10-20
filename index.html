@@ -89,10 +89,7 @@
     .rolling-main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; width: 100%; justify-content: center; }
     .rolling-block { background: #1e293b; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .rolling-block-title { background: #854d0e; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; width: 100%; text-align: center; }
-    
-    /* Header khusus Blok L-1 s/d L-4 (Warna Biru Accent) */
     .rolling-top-title { background: #0284c7; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; width: 100%; text-align: center; }
-
     .rolling-cells-grid-5 { display: flex; gap: 4px; }
     .rolling-cells-grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; width: 100%; }
 
@@ -483,8 +480,8 @@
             <option value="IU-007">IU-007</option>
             <option value="IU-009">IU-009</option>
             <option value="CMP-014">CMP-014</option>
+            <option value="CMP-010">CMP-010</option>
             <option value="CMP-001">CMP-001</option>
-	          <option value="CMP-010">CMP-010</option>
           </select>
         </div>
         <div class="input-group" style="margin-top:6px;">
@@ -516,8 +513,8 @@
             <option value="IU-007">IU-007</option>
             <option value="IU-009">IU-009</option>
             <option value="CMP-014">CMP-014</option>
+            <option value="CMP-010">CMP-010</option>
             <option value="CMP-001">CMP-001</option>
-	          <option value="CMP-010">CMP-010</option>
           </select>
         </div>
         <div class="input-group" style="margin-top:6px;">
@@ -547,8 +544,8 @@
             <option value="IU-007">IU-007</option>
             <option value="IU-009">IU-009</option>
             <option value="CMP-014">CMP-014</option>
+            <option value="CMP-010">CMP-010</option>
             <option value="CMP-001">CMP-001</option>
-	          <option value="CMP-010">CMP-010</option>
           </select>
         </div>
         <div class="input-group" style="margin-top:6px;">
@@ -578,8 +575,8 @@
             <option value="IU-007">IU-007</option>
             <option value="IU-009">IU-009</option>
             <option value="CMP-014">CMP-014</option>
+            <option value="CMP-010">CMP-010</option>
             <option value="CMP-001">CMP-001</option>
-	          <option value="CMP-010">CMP-010</option>
           </select>
         </div>
         <div class="input-group" style="margin-top:6px;">
@@ -643,16 +640,16 @@
           <table class="report-table">
             <thead>
               <tr>
-                <th rowspan="2" style="width: 15%;">MCS</th>
-                <th rowspan="2" style="width: 35%;">MODEL</th>
-                <th rowspan="2" style="width: 25%;">COLOR</th>
+                <th rowspan="2" style="width: 10%;">MCS</th>
+                <th rowspan="2" style="width: 20%;">MODEL</th>
+                <th rowspan="2" style="width: 20%;">COLOR</th>
                 <th colspan="4">DAILY STOCK COMPOUND (KG)<br>MEDIUM</th>
               </tr>
               <tr>
-                <th style="width: 6%;">PASS</th>
-                <th style="width: 6%;">FAIL</th>
-                <th style="width: 6%;">BB/BW</th>
-                <th style="width: 7%;">BELUM SLAB</th>
+                <th style="width: 10%;">PASS</th>
+                <th style="width: 10%;">FAIL</th>
+                <th style="width: 15%;">BB/BW</th>
+                <th style="width: 15%;">BELUM SLAB</th>
               </tr>
             </thead>
             <tbody id="rptBodyMed"></tbody>
@@ -664,9 +661,9 @@
             <thead>
               <tr>
                 <th style="width: 20%;">MCS</th>
-                <th style="width: 50%;">COLOR</th>
-                <th style="width: 15%;">S</th>
-                <th style="width: 15%;">L</th>
+                <th style="width: 40%;">COLOR</th>
+                <th style="width: 20%;">S</th>
+                <th style="width: 20%;">L</th>
               </tr>
             </thead>
             <tbody id="rptBodySL"></tbody>
@@ -674,17 +671,18 @@
         </div>
       </div>
 
-      <!-- SUMMARY AREA ROLLING DI BAWAH -->
+      <!-- SUMMARY AREA ROLLING DI BAWAH (DITAMBAHKAN KOLOM CATATAN / NOTES) -->
       <div style="margin-top: 16px;">
         <div style="font-weight: bold; font-size: 12px; margin-bottom: 6px; text-transform: uppercase;">SUMMARY STOCK - AREA ROLLING</div>
         <table class="report-table">
           <thead>
             <tr>
-              <th style="width: 20%;">MCS</th>
-              <th style="width: 40%;">COLOR</th>
-              <th style="width: 13%;">S</th>
-              <th style="width: 13%;">L</th>
-              <th style="width: 14%;">M</th>
+              <th style="width: 10%;">MCS</th>
+              <th style="width: 20%;">COLOR</th>
+              <th style="width: 10%;">S</th>
+              <th style="width: 10%;">L</th>
+              <th style="width: 10%;">M</th>
+              <th style="width: 40%;">CATATAN</th>
             </tr>
           </thead>
           <tbody id="rptBodyRolling"></tbody>
@@ -720,8 +718,6 @@
     const azBlocks = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
     const untestedLines = ['LINE1', 'LINE2', 'LINE3'];
     const rollingTopBlocks = ['L-1', 'L-2', 'L-3', 'L-4'];
-    
-    // PEMBAHARUAN: BLOK ROLLING DITAMBAH SAMPAI L (A - L)
     const rollingMainBlocks = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
     window.downloadReportImage = function() {
@@ -1340,7 +1336,7 @@
         tbodySL.appendChild(trTot);
       });
 
-      // 3. Area Rolling Report
+      // 3. Area Rolling Report (MODIFIKASI: Menampilkan Catatan/Notes per baris)
       const tbodyRolling = document.getElementById('rptBodyRolling');
       tbodyRolling.innerHTML = '';
       let rollingGroup = {};
@@ -1348,12 +1344,13 @@
         const item = dataRolling[code];
         const mcs = (item.mcs || 'LAINNYA').toUpperCase();
         const color = (item.color || '-').toUpperCase();
+        const notes = (item.notes || '-').toUpperCase();
         const qtyS = Number(item.qtyS) || 0;
         const qtyL = Number(item.qtyL) || 0;
         const qtyM = Number(item.qtyM) || 0;
 
         if (!rollingGroup[mcs]) rollingGroup[mcs] = [];
-        rollingGroup[mcs].push({ color, qtyS, qtyL, qtyM });
+        rollingGroup[mcs].push({ color, qtyS, qtyL, qtyM, notes });
       });
 
       Object.keys(rollingGroup).sort().forEach(mcs => {
@@ -1368,12 +1365,13 @@
             <td>${r.qtyS ? r.qtyS.toLocaleString('id-ID') : '-'}</td>
             <td>${r.qtyL ? r.qtyL.toLocaleString('id-ID') : '-'}</td>
             <td>${r.qtyM ? r.qtyM.toLocaleString('id-ID') : '-'}</td>
+            <td class="text-left">${r.notes}</td>
           `;
           tbodyRolling.appendChild(tr);
         });
         const trTot = document.createElement('tr');
         trTot.className = 'total-row';
-        trTot.innerHTML = `<td colspan="2" style="text-align:right;">TOTAL</td><td>${subS||'-'}</td><td>${subL||'-'}</td><td>${subM||'-'}</td>`;
+        trTot.innerHTML = `<td colspan="2" style="text-align:right;">TOTAL</td><td>${subS||'-'}</td><td>${subL||'-'}</td><td>${subM||'-'}</td><td>-</td>`;
         tbodyRolling.appendChild(trTot);
       });
 
@@ -1475,7 +1473,6 @@
       const mapR = document.getElementById('mapRolling');
       mapR.innerHTML = '';
       
-      // BUILD BARIS ATAS AREA ROLLING (BLOK L-1 s/d L-4 BERISI NOMOR 1 s/d 5)
       const topRow = document.createElement('div');
       topRow.className = 'rolling-top-row';
       rollingTopBlocks.forEach(blk => {
@@ -1496,7 +1493,6 @@
       });
       mapR.appendChild(topRow);
 
-      // BUILD GRID UTAMA AREA ROLLING (BLOK A s/d L BERISI NOMOR 1 s/d 6)
       const mainGrid = document.createElement('div');
       mainGrid.className = 'rolling-main-grid';
       rollingMainBlocks.forEach(blk => {
@@ -1532,7 +1528,6 @@
       const searchContainer = document.getElementById('dynamicSearchContainer');
       const lblSearchTitle = document.getElementById('lblSearchTitle');
       
-      // GENERATE KOTAK INPUT PENCARIAN TERPISAH SESUAI AREA
       if (mode === 'SMALL') {
         lblSearchTitle.textContent = "🔍 Cari Data Small & Large";
         searchContainer.innerHTML = `
@@ -1749,7 +1744,6 @@
         const model = (item.model || '').toLowerCase();
         const color = (item.color || '').toLowerCase();
 
-        // FILTER BERDASARKAN KOLOM MASING-MASING
         if (fMcs && !mcs.includes(fMcs)) return;
         if (fModel && !model.includes(fModel)) return;
         if (fColor && !color.includes(fColor)) return;
@@ -1772,11 +1766,11 @@
           tbody.innerHTML += `<tr onclick="selectLocationFromSummary('${code}')"><td><span class="badge">${code}</span></td><td style="color:${item.status==='PASS'?'var(--green)':'var(--red)'}">${item.status||'PASS'}</td><td>${item.mcs||'-'}</td><td>${item.model||'-'}</td><td>${item.color||'-'}</td><td><strong>${qty}</strong></td><td>${item.notes||'-'}</td></tr>`;
         });
       } else if (activeMode === 'ROLLING') {
-        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>S</th><th>L</th><th>M</th><th>Notes</th></tr>`;
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>S</th><th>L</th><th>M</th><th>Catatan</th></tr>`;
         itemList.forEach(({ code, item }) => {
           const qS = Number(item.qtyS) || 0, qL = Number(item.qtyL) || 0, qM = Number(item.qtyM) || 0;
           totalKg += (qS + qL + qM);
-          tbody.innerHTML += `<tr onclick="selectLocationFromSummary('${code}')"><td><span class="badge">${code}</span></td><td style="color:${item.status==='PASS'?'var(--green)':'var(--red)'}">${item.status||'PASS'}</td><td>${item.mcs||'-'}</td><td>${item.color||'-'}</td><td><strong>${qS}</strong></td><td><strong>${qL}</strong></td><td><strong>${qM}</strong></td><td>${item.notes||'-'}</td></tr>`;
+          tbody.innerHTML += `<tr onclick="selectLocationFromSummary('${code}')"><td><span class="badge" style="background:#e11d48; color:#fff;">${code}</span></td><td style="color:${item.status==='PASS'?'var(--green)':'var(--red)'}">${item.status||'PASS'}</td><td>${item.mcs||'-'}</td><td>${item.color||'-'}</td><td><strong>${qS}</strong></td><td><strong>${qL}</strong></td><td><strong>${qM}</strong></td><td>${item.notes||'-'}</td></tr>`;
         });
       }
 
