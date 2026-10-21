@@ -31,12 +31,30 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background: var(--bg); color: var(--text); padding: 12px; min-height: 100vh; }
     
-    .wrapper { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+    .wrapper { max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
 
     /* Header */
-    .header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--card-border); }
+    .header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--card-border); gap: 8px; }
     .header h1 { font-size: 1.1rem; color: var(--accent); font-weight: bold; }
     .nav-btn { padding: 6px 12px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: none; }
+
+    /* Tombol Rekomendasi Blending di Header */
+    .btn-header-rec {
+      padding: 7px 12px;
+      background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+      color: #fff;
+      border: 1px solid #c084fc;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
+      transition: all 0.2s;
+    }
+    .btn-header-rec:hover { background: linear-gradient(135deg, #9333ea 0%, #6b21a8 100%); transform: translateY(-1px); }
 
     /* Layout Dashboard Utama */
     .zone-container { display: flex; flex-direction: column; gap: 16px; }
@@ -257,6 +275,8 @@
 
     @media (max-width: 600px) {
       th, td { padding: 6px 4px !important; font-size: 0.73rem !important; }
+      .header h1 { font-size: 0.95rem; }
+      .btn-header-rec { font-size: 0.72rem; padding: 6px 8px; }
     }
 
     @media print {
@@ -270,9 +290,15 @@
 <body>
 
   <div class="wrapper">
+    <!-- HEADER DENGAN TOMBOL REKOMENDASI BLENDING DI POJOK KANAN ANAS -->
     <div class="header">
       <h1>Gudang Compound System</h1>
-      <button class="nav-btn" id="btnHome" onclick="showZoneLayout()">Menu Utama</button>
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <button class="btn-header-rec" onclick="openBlendingRecommendationView()" title="Buka Matching S & L">
+          <i class="fa-solid fa-bolt"></i> <span>Matching Blending</span>
+        </button>
+        <button class="nav-btn" id="btnHome" onclick="showZoneLayout()">Menu Utama</button>
+      </div>
     </div>
 
     <!-- DASHBOARD UTAMA -->
@@ -321,7 +347,7 @@
         </div>
       </div>
 
-      <!-- KARTU ZONA / MENU -->
+      <!-- KARTU ZONA / MENU UTAMA (SEKARANG LEBIH RINGKAS DI HP) -->
       <div id="zoneCardsContainer" style="display: flex; flex-direction: column; gap: 10px;">
         
         <div class="zone-card" style="border-left: 4px solid #059669; background: linear-gradient(135deg, #064e3b 0%, #1e293b 100%);" onclick="openHopperView()">
@@ -365,6 +391,87 @@
             <p>Denah Blok L-1 s/d L-4 (1-5) & Blok A - L (1-6)</p>
           </div>
           <i class="fa-solid fa-chevron-right text-slate-500"></i>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- VIEW REKOMENDASI KERJA BLENDING -->
+    <div id="blendingRecView" style="display: none; flex-direction: column; gap: 16px;">
+      
+      <div class="bg-[#0f172a] text-white p-4 rounded-2xl shadow-md border border-purple-800/60">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-purple-900/40">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <div>
+              <h2 class="font-bold text-base md:text-lg leading-tight text-purple-300">Rekomendasi Kerja Blending (Gabungan S & L)</h2>
+              <p class="text-xs text-slate-400">Biru = Blending | Merah = Rolling | Kiri = Small (S) | Kanan = Large (L)</p>
+            </div>
+          </div>
+          <button onclick="renderTampilanBlendingRec()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-3.5 py-2 rounded-lg border border-slate-700 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-rotate-right"></i> Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- TAMPILAN 2 KOLOM (KIRI: TABEL GABUNGAN S & L | KANAN: PILIHAN MODEL) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- KOLOM KIRI: TABEL GABUNGAN S & L -->
+        <div class="panel">
+          <div class="panel-header">
+            <span>📦 Compound Siap Blending (Matching S & L)</span>
+            <span id="lblMatchingCount" class="badge" style="background:#a855f7; color:#fff;">0 Item</span>
+          </div>
+
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom: 4px;">
+            <i class="fa-solid fa-info-circle text-purple-400"></i> Klik baris untuk melihat detail pengambilan & rekomendasi model.
+          </div>
+
+          <div class="table-box" style="max-height: 480px;">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 34%;">MCS / Warna</th>
+                  <th style="width: 33%;">Small (S)</th>
+                  <th style="width: 33%;">Large (L)</th>
+                </tr>
+              </thead>
+              <tbody id="tblMatchingBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- KOLOM KANAN: REKOMENDASI MODEL & DETAIL LOKASI PENGAMBILAN -->
+        <div class="panel" style="border-color: #8b5cf6;">
+          <div class="panel-header">
+            <span style="color:#c084fc;">👟 Detail Pengambilan & Model</span>
+            <span id="lblSelectedMcsColor" class="badge" style="background:#3b82f6; color:#fff;">Pilih Barang</span>
+          </div>
+
+          <div id="recModelPlaceholder" style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+            <i class="fa-solid fa-hand-pointer text-3xl text-purple-400 mb-2 block"></i>
+            Silakan klik salah satu baris Compound di sebelah kiri untuk melihat rincian lokasi asal & rekomendasi Model.
+          </div>
+
+          <div id="recModelContent" style="display: none; flex-direction: column; gap: 12px;">
+            
+            <!-- KOTAK INFO ASAL BARANG -->
+            <div id="detailAsalBarang" style="background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px;">
+              <!-- Diisi via JavaScript -->
+            </div>
+
+            <!-- KOTAK PILIHAN MODEL -->
+            <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid #a855f7; padding: 10px; border-radius: 8px; font-size: 0.8rem;">
+              <p><b>Rekomendasi Model untuk MCS ini:</b></p>
+              <p class="text-xs text-slate-300" style="margin-top:2px;">Daftar model yang menggunakan MCS ini beserta status stok Medium (Slab)-nya:</p>
+            </div>
+
+            <div id="modelCardsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;"></div>
+          </div>
         </div>
 
       </div>
@@ -533,7 +640,7 @@
       <div class="input-group">
         <label>Status Kondisi</label>
         <select id="selStatus">
-          <option value="PASS">Pass / Normal (Hijau)</option>
+          <option value="PASS">Pass</option>
           <option value="FAIL_PANJANG">Fail (Panjang)</option>
           <option value="FAIL_PENDEK">Fail (Pendek)</option>
           <option value="BUBBLE">Bubble</option>
@@ -786,6 +893,194 @@
     const rollingTopBlocks = ['L-1', 'L-2', 'L-3', 'L-4'];
     const rollingMainBlocks = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 
+    /* ========================================================= */
+    /* LOGIKA GABUNGAN SILANG S & L (ROLLING + BLENDING)         */
+    /* ========================================================= */
+    window.openBlendingRecommendationView = function() {
+      document.getElementById('zoneLayoutView').style.display = 'none';
+      document.getElementById('detailView').style.display = 'none';
+      document.getElementById('hopperView').style.display = 'none';
+      document.getElementById('blendingRecView').style.display = 'flex';
+      document.getElementById('btnHome').style.display = 'block';
+      renderTampilanBlendingRec();
+    };
+
+    function renderTampilanBlendingRec() {
+      const tbody = document.getElementById('tblMatchingBody');
+      const lblCount = document.getElementById('lblMatchingCount');
+      tbody.innerHTML = '';
+
+      let stockMap = {};
+
+      // 1. Kumpulkan semua stok S dan L dari Area Blending (Small)
+      Object.keys(dataSmall).forEach(code => {
+        const item = dataSmall[code];
+        const mcs = (item.mcs || '').trim();
+        const color = (item.color || '').trim();
+        const s = Number(item.qtyS) || 0;
+        const l = Number(item.qtyL) || 0;
+
+        if (mcs && color && (s > 0 || l > 0)) {
+          let key = `${mcs.toUpperCase()}_${color.toUpperCase()}`;
+          if (!stockMap[key]) stockMap[key] = { mcs: mcs.toUpperCase(), color: color.toUpperCase(), sItems: [], lItems: [] };
+          if (s > 0) stockMap[key].sItems.push({ code, area: 'Blending', qty: s });
+          if (l > 0) stockMap[key].lItems.push({ code, area: 'Blending', qty: l });
+        }
+      });
+
+      // 2. Kumpulkan & Akumulasikan stok S dan L dari Area Rolling
+      Object.keys(dataRolling).forEach(code => {
+        const item = dataRolling[code];
+        const mcs = (item.mcs || '').trim();
+        const color = (item.color || '').trim();
+        const s = Number(item.qtyS) || 0;
+        const l = Number(item.qtyL) || 0;
+
+        if (mcs && color && (s > 0 || l > 0)) {
+          let key = `${mcs.toUpperCase()}_${color.toUpperCase()}`;
+          if (!stockMap[key]) stockMap[key] = { mcs: mcs.toUpperCase(), color: color.toUpperCase(), sItems: [], lItems: [] };
+          if (s > 0) stockMap[key].sItems.push({ code, area: 'Rolling', qty: s });
+          if (l > 0) stockMap[key].lItems.push({ code, area: 'Rolling', qty: l });
+        }
+      });
+
+      // 3. Filter HANYA yang memiliki S > 0 DAN L > 0
+      let matchingList = [];
+      Object.keys(stockMap).forEach(key => {
+        let item = stockMap[key];
+        let totalS = item.sItems.reduce((acc, curr) => acc + curr.qty, 0);
+        let totalL = item.lItems.reduce((acc, curr) => acc + curr.qty, 0);
+
+        if (totalS > 0 && totalL > 0) {
+          matchingList.push({
+            mcs: item.mcs,
+            color: item.color,
+            totalS: totalS,
+            totalL: totalL,
+            sItems: item.sItems,
+            lItems: item.lItems
+          });
+        }
+      });
+
+      lblCount.textContent = `${matchingList.length} Item Matching`;
+
+      if (matchingList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:16px;">Tidak ada kombinasi S & L yang lengkap saat ini.</td></tr>`;
+        document.getElementById('recModelPlaceholder').style.display = 'block';
+        document.getElementById('recModelContent').style.display = 'none';
+        return;
+      }
+
+      matchingList.forEach(data => {
+        let sHtml = data.sItems.map(x => {
+          let bg = x.area === 'Rolling' ? '#e11d48' : '#0284c7';
+          return `<span class="badge" style="background:${bg}; color:#fff; margin:2px;">${x.code} (${x.qty}Kg)</span>`;
+        }).join('<br>');
+
+        let lHtml = data.lItems.map(x => {
+          let bg = x.area === 'Rolling' ? '#e11d48' : '#0284c7';
+          return `<span class="badge" style="background:${bg}; color:#fff; margin:2px;">${x.code} (${x.qty}Kg)</span>`;
+        }).join('<br>');
+
+        const tr = document.createElement('tr');
+        tr.onclick = () => selectCombinedItemForRecommendation(data);
+        tr.innerHTML = `
+          <td><strong>${data.mcs}</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">${data.color}</span></td>
+          <td>${sHtml}</td>
+          <td>${lHtml}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function selectCombinedItemForRecommendation(data) {
+      document.getElementById('lblSelectedMcsColor').textContent = `${data.mcs} - ${data.color}`;
+      document.getElementById('recModelPlaceholder').style.display = 'none';
+      document.getElementById('recModelContent').style.display = 'flex';
+
+      const detailAsal = document.getElementById('detailAsalBarang');
+      let sText = data.sItems.map(x => `${x.code} (${x.qty} Kg di ${x.area})`).join(', ');
+      let lText = data.lItems.map(x => `${x.code} (${x.qty} Kg di ${x.area})`).join(', ');
+
+      detailAsal.innerHTML = `
+        <p style="font-weight:bold; color:var(--accent);"><i class="fa-solid fa-map-pin mr-1"></i> Petunjuk Pengambilan Bahan:</p>
+        <p>• Ambil Qty S (Total <b>${data.totalS} Kg</b>) dari: <b>${sText}</b></p>
+        <p>• Ambil Qty L (Total <b>${data.totalL} Kg</b>) dari: <b>${lText}</b></p>
+      `;
+
+      const container = document.getElementById('modelCardsContainer');
+      container.innerHTML = '';
+
+      const targetMcs = data.mcs.toLowerCase();
+      const targetColor = data.color.toLowerCase();
+
+      let modelMap = {};
+      Object.keys(dataMedium).forEach(code => {
+        const mItem = dataMedium[code];
+        const mcs = (mItem.mcs || '').toLowerCase();
+        const model = (mItem.model || '').trim();
+        const color = (mItem.color || '').toLowerCase();
+        const qty = Number(mItem.qty) || 0;
+
+        if (mcs === targetMcs || targetMcs.includes(mcs) || mcs.includes(targetMcs)) {
+          if (model) {
+            const key = model.toUpperCase();
+            if (!modelMap[key]) modelMap[key] = { model: key, colorMatchQty: 0, locations: [] };
+            
+            if (color === targetColor) {
+              modelMap[key].colorMatchQty += qty;
+              modelMap[key].locations.push(`${code} (${qty}Kg)`);
+            }
+          }
+        }
+      });
+
+      const modelsFound = Object.keys(modelMap);
+
+      if (modelsFound.length === 0) {
+        container.innerHTML = `
+          <div style="background:#1e293b; padding:10px; border-radius:8px; border:1px solid var(--card-border); text-align:center;">
+            <p style="color:var(--yellow); font-weight:bold; font-size:0.8rem;">⚠️ Belum ada riwayat Model terdaftar untuk MCS ${data.mcs}</p>
+          </div>
+        `;
+        return;
+      }
+
+      modelsFound.forEach(mKey => {
+        const mInfo = modelMap[mKey];
+        const card = document.createElement('div');
+        card.style.background = '#0f172a';
+        card.style.border = '1px solid #334155';
+        card.style.borderRadius = '8px';
+        card.style.padding = '10px';
+        card.style.display = 'flex';
+        card.style.flexDirection = 'column';
+        card.style.gap = '4px';
+
+        let badgeStatus = '<span class="badge" style="background:var(--green); color:#fff;">Aman</span>';
+        if (mInfo.colorMatchQty === 0) {
+          badgeStatus = '<span class="badge" style="background:var(--red); color:#fff;">Kosong (0 Kg)</span>';
+        } else if (mInfo.colorMatchQty < 100) {
+          badgeStatus = '<span class="badge" style="background:var(--yellow); color:#000;">Menipis</span>';
+        }
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="font-weight:bold; color:var(--accent); font-size:0.85rem;">👟 ${mInfo.model}</h4>
+            ${badgeStatus}
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">
+            • Stok Medium Warna ${data.color}: <strong style="color:#fff;">${mInfo.colorMatchQty} Kg</strong> | Lokasi: ${mInfo.locations.length > 0 ? mInfo.locations.join(', ') : '-'}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* ========================================================= */
+    /* DOWNLOAD LAPORAN & OTOMASI UTAMA SISTEM                   */
+    /* ========================================================= */
     window.downloadReportImage = function() {
       const btn = document.getElementById('btnDownloadImg');
       const originalText = btn.innerText;
@@ -883,6 +1178,7 @@
     window.openHopperView = function() {
       document.getElementById('zoneLayoutView').style.display = 'none';
       document.getElementById('detailView').style.display = 'none';
+      document.getElementById('blendingRecView').style.display = 'none';
       document.getElementById('hopperView').style.display = 'flex';
       document.getElementById('btnHome').style.display = 'block';
       inisialisasiDataHopper();
@@ -1154,12 +1450,14 @@
       document.getElementById('zoneLayoutView').style.display = 'flex';
       document.getElementById('detailView').style.display = 'none';
       document.getElementById('hopperView').style.display = 'none';
+      document.getElementById('blendingRecView').style.display = 'none';
       document.getElementById('btnHome').style.display = 'none';
     };
 
     window.openZoneMode = function(mode) {
       document.getElementById('zoneLayoutView').style.display = 'none';
       document.getElementById('hopperView').style.display = 'none';
+      document.getElementById('blendingRecView').style.display = 'none';
       document.getElementById('detailView').style.display = 'flex';
       document.getElementById('btnHome').style.display = 'block';
       switchMode(mode);
@@ -1223,7 +1521,6 @@
         }
       });
 
-      // 1. Cek Duplikat
       let duplicateKeys = Object.keys(groupMap).filter(k => groupMap[k].length > 1);
       if (duplicateKeys.length > 0) {
         dupCountEl.textContent = duplicateKeys.length;
@@ -1255,12 +1552,10 @@
         alertList.innerHTML = '';
       }
 
-      // 2. Cek Barang Bermasalah / Fail (Khusus Area MEDIUM)
       if (activeMode === 'MEDIUM') {
         let probItems = [];
         Object.keys(dataMedium).forEach(code => {
           const item = dataMedium[code];
-          // Pengecekan kriteria status gagal baru
           if (['FAIL', 'FAIL_PANJANG', 'FAIL_PENDEK', 'BUBBLE', 'BEDA_WARNA'].includes(item.status)) {
             probItems.push({ code, item });
           }
@@ -1271,14 +1566,7 @@
           let probHTML = '';
           probItems.forEach(({ code, item }) => {
             const qty = Number(item.qty) || 0;
-            
-            // Format teks status untuk tampilan dropdown
-            let statusLabel = 'FAIL';
-            if (item.status === 'FAIL_PANJANG') statusLabel = 'FAIL (PANJANG)';
-            else if (item.status === 'FAIL_PENDEK') statusLabel = 'FAIL (PENDEK)';
-            else if (item.status === 'BUBBLE') statusLabel = 'BUBBLE';
-            else if (item.status === 'BEDA_WARNA') statusLabel = 'BEDA WARNA';
-
+            let statusLabel = item.status === 'FAIL_PANJANG' ? 'FAIL (PANJANG)' : (item.status === 'FAIL_PENDEK' ? 'FAIL (PENDEK)' : (item.status === 'BUBBLE' ? 'BUBBLE' : (item.status === 'BEDA_WARNA' ? 'BEDA WARNA' : 'FAIL')));
             const notesText = item.notes ? ` | Catatan: <i>"${item.notes}"</i>` : '';
 
             probHTML += `<div class="alert-item-red" onclick="highlightMultipleLocations(['${code}'])">
@@ -1379,7 +1667,6 @@
       document.getElementById('rptDateStr').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
       document.getElementById('rptTimeStr').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-      // 1. Medium & Untested Report
       const tbodyMed = document.getElementById('rptBodyMed');
       tbodyMed.innerHTML = '';
       let medGroup = {};
@@ -1439,7 +1726,6 @@
         tbodyMed.appendChild(trTot);
       });
 
-      // 2. Small / Large Report
       const tbodySL = document.getElementById('rptBodySL');
       tbodySL.innerHTML = '';
       let slGroup = {};
@@ -1474,7 +1760,6 @@
         tbodySL.appendChild(trTot);
       });
 
-      // 3. Area Rolling Report
       const tbodyRolling = document.getElementById('rptBodyRolling');
       tbodyRolling.innerHTML = '';
       let rollingGroup = {};
@@ -1528,7 +1813,6 @@
       renderTable();
     };
 
-    /* BUILD MAPS */
     function buildMaps() {
       const mapS = document.getElementById('mapSmall');
       mapS.innerHTML = '';
@@ -1660,7 +1944,6 @@
       document.getElementById('inpFilterText').value = '';
       document.getElementById('summaryContentBox').style.display = 'none';
 
-      // Tutup semua dropdown saat pindah tab
       document.getElementById('alertDuplicateList').style.display = 'none';
       document.getElementById('dupIcon').className = 'fa-solid fa-chevron-down';
       document.getElementById('alertProblemList').style.display = 'none';
