@@ -41,7 +41,6 @@
     /* Layout Dashboard Utama */
     .zone-container { display: flex; flex-direction: column; gap: 16px; }
     
-    /* Search Box Global Terpisah 3 Kolom */
     .home-search-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
     .home-search-box h3 { font-size: 0.95rem; color: var(--accent); font-weight: bold; }
     .home-search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
@@ -115,7 +114,7 @@
     .cell.filled { background: var(--green) !important; color: #fff !important; }
     .cell.problem { background: var(--red) !important; color: #fff !important; }
 
-    /* Efek Berkedip Lokasi Duplikat */
+    /* Efek Berkedip Lokasi */
     .cell.highlight-blink {
       border: 2px solid #fff !important;
       background: var(--yellow) !important;
@@ -140,27 +139,84 @@
     tr:hover { background: rgba(56, 189, 248, 0.15); cursor: pointer; }
     .badge { background: var(--accent); color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; display: inline-block; }
 
-    /* KOTAK PERINGATAN KUNING */
+    /* KOTAK AKORDEON */
     .alert-box {
       background: rgba(245, 158, 11, 0.15);
       border: 1px solid var(--yellow);
       color: #fef08a;
-      padding: 10px 12px;
       border-radius: 8px;
       font-size: 0.8rem;
       display: none;
-      line-height: 1.6;
+      overflow: hidden;
     }
+    .alert-box-red {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--red);
+      color: #fca5a5;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      display: none;
+      overflow: hidden;
+    }
+    .alert-header-btn {
+      width: 100%;
+      background: rgba(245, 158, 11, 0.25);
+      border: none;
+      color: #fef08a;
+      padding: 10px 12px;
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .alert-header-btn:hover { background: rgba(245, 158, 11, 0.4); }
 
+    .alert-header-btn-red {
+      width: 100%;
+      background: rgba(239, 68, 68, 0.25);
+      border: none;
+      color: #fca5a5;
+      padding: 10px 12px;
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+    .alert-header-btn-red:hover { background: rgba(239, 68, 68, 0.4); }
+
+    .alert-content-body {
+      padding: 10px;
+      display: none;
+      max-height: 250px;
+      overflow-y: auto;
+      flex-direction: column;
+      gap: 6px;
+    }
     .alert-item {
-      padding: 6px 8px;
-      margin-top: 4px;
+      padding: 8px 10px;
       border-radius: 6px;
       background: rgba(245, 158, 11, 0.2);
       cursor: pointer;
       transition: background 0.2s;
+      border: 1px solid rgba(245, 158, 11, 0.3);
     }
     .alert-item:hover { background: rgba(245, 158, 11, 0.4); }
+
+    .alert-item-red {
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: rgba(239, 68, 68, 0.2);
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    .alert-item-red:hover { background: rgba(239, 68, 68, 0.4); }
 
     /* MODAL POP-UP FORM */
     .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; padding: 16px; }
@@ -417,12 +473,29 @@
           <span id="lblSummaryTotal" style="color:var(--accent); font-size:0.8rem;">Total: 0 Kg</span>
         </div>
 
-        <!-- FILTER PENCARIAN DINAMIS TERPISAH PER AREA -->
-        <div id="dynamicSearchContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) 120px; gap: 8px;">
-          <!-- Akan diisi otomatis oleh script berdasarkan area aktif -->
+        <!-- FORM PENCARIAN GABUNGAN -->
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="inpFilterText" style="flex: 1;" placeholder="Ketik mcs, model, warna, lokasi..." oninput="handleSearchInput()" />
+          <select id="selFilterBlock" style="width: 180px;" onchange="handleSearchInput()"><option value="ALL">Semua Blok</option></select>
         </div>
 
-        <div class="alert-box" id="alertDuplicate"></div>
+        <!-- KOTAK AKORDEON DUPLIKAT -->
+        <div class="alert-box" id="alertDuplicate">
+          <button class="alert-header-btn" onclick="toggleAlertDuplicate()">
+            <span>⚠️ Terdapat barang persis sama di beberapa lokasi (<span id="dupCount">0</span> barang)</span>
+            <i class="fa-solid fa-chevron-down" id="dupIcon"></i>
+          </button>
+          <div class="alert-content-body" id="alertDuplicateList"></div>
+        </div>
+
+        <!-- KOTAK AKORDEON BARANG BERMASALAH / FAIL (KHUSUS MEDIUM) -->
+        <div class="alert-box-red" id="alertProblemMedium">
+          <button class="alert-header-btn-red" onclick="toggleAlertProblem()">
+            <span>🚨 Perhatian: Terdapat <span id="probCount">0</span> barang bermasalah / Fail (Klik untuk lihat)</span>
+            <i class="fa-solid fa-chevron-down" id="probIcon"></i>
+          </button>
+          <div class="alert-content-body" id="alertProblemList"></div>
+        </div>
 
         <div id="summaryContentBox" class="table-box" style="display: none; margin-top: 6px;">
           <table>
@@ -461,9 +534,10 @@
         <label>Status Kondisi</label>
         <select id="selStatus">
           <option value="PASS">Pass / Normal (Hijau)</option>
-          <option value="FAIL">Fail / Bermasalah (Merah)</option>
-          <option value="BUBBLE">Bubble (Merah)</option>
-          <option value="BEDA_WARNA">Beda Warna (Merah)</option>
+          <option value="FAIL_PANJANG">Fail (Panjang)</option>
+          <option value="FAIL_PENDEK">Fail (Pendek)</option>
+          <option value="BUBBLE">Bubble</option>
+          <option value="BEDA_WARNA">Beda Warna</option>
         </select>
       </div>
 
@@ -480,8 +554,6 @@
             <option value="IU-007">IU-007</option>
             <option value="IU-009">IU-009</option>
             <option value="CMP-014">CMP-014</option>
-            <option value="CMP-010">CMP-010</option>
-            <option value="CMP-001">CMP-001</option>
           </select>
         </div>
         <div class="input-group" style="margin-top:6px;">
@@ -513,8 +585,6 @@
             <option value="IU-007">IU-007</option>
             <option value="IU-009">IU-009</option>
             <option value="CMP-014">CMP-014</option>
-            <option value="CMP-010">CMP-010</option>
-            <option value="CMP-001">CMP-001</option>
           </select>
         </div>
         <div class="input-group" style="margin-top:6px;">
@@ -544,8 +614,6 @@
             <option value="IU-007">IU-007</option>
             <option value="IU-009">IU-009</option>
             <option value="CMP-014">CMP-014</option>
-            <option value="CMP-010">CMP-010</option>
-            <option value="CMP-001">CMP-001</option>
           </select>
         </div>
         <div class="input-group" style="margin-top:6px;">
@@ -575,8 +643,6 @@
             <option value="IU-007">IU-007</option>
             <option value="IU-009">IU-009</option>
             <option value="CMP-014">CMP-014</option>
-            <option value="CMP-010">CMP-010</option>
-            <option value="CMP-001">CMP-001</option>
           </select>
         </div>
         <div class="input-group" style="margin-top:6px;">
@@ -640,16 +706,16 @@
           <table class="report-table">
             <thead>
               <tr>
-                <th rowspan="2" style="width: 10%;">MCS</th>
-                <th rowspan="2" style="width: 20%;">MODEL</th>
-                <th rowspan="2" style="width: 20%;">COLOR</th>
+                <th rowspan="2" style="width: 15%;">MCS</th>
+                <th rowspan="2" style="width: 35%;">MODEL</th>
+                <th rowspan="2" style="width: 25%;">COLOR</th>
                 <th colspan="4">DAILY STOCK COMPOUND (KG)<br>MEDIUM</th>
               </tr>
               <tr>
-                <th style="width: 10%;">PASS</th>
-                <th style="width: 10%;">FAIL</th>
-                <th style="width: 15%;">BB/BW</th>
-                <th style="width: 15%;">BELUM SLAB</th>
+                <th style="width: 6%;">PASS</th>
+                <th style="width: 6%;">FAIL</th>
+                <th style="width: 6%;">BB/BW</th>
+                <th style="width: 7%;">BELUM SLAB</th>
               </tr>
             </thead>
             <tbody id="rptBodyMed"></tbody>
@@ -661,9 +727,9 @@
             <thead>
               <tr>
                 <th style="width: 20%;">MCS</th>
-                <th style="width: 40%;">COLOR</th>
-                <th style="width: 20%;">S</th>
-                <th style="width: 20%;">L</th>
+                <th style="width: 50%;">COLOR</th>
+                <th style="width: 15%;">S</th>
+                <th style="width: 15%;">L</th>
               </tr>
             </thead>
             <tbody id="rptBodySL"></tbody>
@@ -671,18 +737,18 @@
         </div>
       </div>
 
-      <!-- SUMMARY AREA ROLLING DI BAWAH (DITAMBAHKAN KOLOM CATATAN / NOTES) -->
+      <!-- SUMMARY AREA ROLLING DI BAWAH -->
       <div style="margin-top: 16px;">
         <div style="font-weight: bold; font-size: 12px; margin-bottom: 6px; text-transform: uppercase;">SUMMARY STOCK - AREA ROLLING</div>
         <table class="report-table">
           <thead>
             <tr>
-              <th style="width: 10%;">MCS</th>
-              <th style="width: 20%;">COLOR</th>
+              <th style="width: 15%;">MCS</th>
+              <th style="width: 35%;">COLOR</th>
               <th style="width: 10%;">S</th>
               <th style="width: 10%;">L</th>
               <th style="width: 10%;">M</th>
-              <th style="width: 40%;">CATATAN</th>
+              <th style="width: 20%;">CATATAN</th>
             </tr>
           </thead>
           <tbody id="rptBodyRolling"></tbody>
@@ -1128,6 +1194,13 @@
 
     function checkDuplicateGlobal() {
       const alertBox = document.getElementById('alertDuplicate');
+      const alertList = document.getElementById('alertDuplicateList');
+      const dupCountEl = document.getElementById('dupCount');
+      
+      const probBox = document.getElementById('alertProblemMedium');
+      const probList = document.getElementById('alertProblemList');
+      const probCountEl = document.getElementById('probCount');
+
       let dataset = activeMode === 'SMALL' ? dataSmall : (activeMode === 'MEDIUM' ? dataMedium : (activeMode === 'UNTESTED' ? dataUntested : dataRolling));
       let groupMap = {};
 
@@ -1150,11 +1223,11 @@
         }
       });
 
-      let alertHTML = '';
+      // 1. Cek Duplikat
       let duplicateKeys = Object.keys(groupMap).filter(k => groupMap[k].length > 1);
-
       if (duplicateKeys.length > 0) {
-        alertHTML += `⚠️ <b>Perhatian:</b> Terdapat barang persis sama tersimpan di beberapa lokasi:<br>`;
+        dupCountEl.textContent = duplicateKeys.length;
+        let alertHTML = '';
         duplicateKeys.forEach(key => {
           const parts = key.split('|');
           const desc = (activeMode === 'SMALL' || activeMode === 'ROLLING') ? `${parts[0].toUpperCase()} | ${parts[1].toUpperCase()}` : `${parts[0].toUpperCase()} | ${parts[1].toUpperCase()} | ${parts[2].toUpperCase()}`;
@@ -1175,12 +1248,77 @@
             • <b>${desc}</b> ➔ Total: <span style="color:#22c55e;">${totalQty} Kg</span><br> Lokasi: ${badges}
           </div>`;
         });
+        alertList.innerHTML = alertHTML;
         alertBox.style.display = 'block';
-        alertBox.innerHTML = alertHTML;
       } else {
         alertBox.style.display = 'none';
+        alertList.innerHTML = '';
+      }
+
+      // 2. Cek Barang Bermasalah / Fail (Khusus Area MEDIUM)
+      if (activeMode === 'MEDIUM') {
+        let probItems = [];
+        Object.keys(dataMedium).forEach(code => {
+          const item = dataMedium[code];
+          // Pengecekan kriteria status gagal baru
+          if (['FAIL', 'FAIL_PANJANG', 'FAIL_PENDEK', 'BUBBLE', 'BEDA_WARNA'].includes(item.status)) {
+            probItems.push({ code, item });
+          }
+        });
+
+        if (probItems.length > 0) {
+          probCountEl.textContent = probItems.length;
+          let probHTML = '';
+          probItems.forEach(({ code, item }) => {
+            const qty = Number(item.qty) || 0;
+            
+            // Format teks status untuk tampilan dropdown
+            let statusLabel = 'FAIL';
+            if (item.status === 'FAIL_PANJANG') statusLabel = 'FAIL (PANJANG)';
+            else if (item.status === 'FAIL_PENDEK') statusLabel = 'FAIL (PENDEK)';
+            else if (item.status === 'BUBBLE') statusLabel = 'BUBBLE';
+            else if (item.status === 'BEDA_WARNA') statusLabel = 'BEDA WARNA';
+
+            const notesText = item.notes ? ` | Catatan: <i>"${item.notes}"</i>` : '';
+
+            probHTML += `<div class="alert-item-red" onclick="highlightMultipleLocations(['${code}'])">
+              • <span class="badge" style="background:var(--red); color:#fff;">${code}</span> | <b>${(item.mcs||'-').toUpperCase()}</b> | ${(item.model||'-').toUpperCase()} | ${(item.color||'-').toUpperCase()} ➔ <b>${qty} Kg</b> [<b>${statusLabel}</b>]${notesText}
+            </div>`;
+          });
+          probList.innerHTML = probHTML;
+          probBox.style.display = 'block';
+        } else {
+          probBox.style.display = 'none';
+          probList.innerHTML = '';
+        }
+      } else {
+        probBox.style.display = 'none';
       }
     }
+
+    window.toggleAlertDuplicate = function() {
+      const listBody = document.getElementById('alertDuplicateList');
+      const icon = document.getElementById('dupIcon');
+      if (listBody.style.display === 'flex') {
+        listBody.style.display = 'none';
+        icon.className = 'fa-solid fa-chevron-down';
+      } else {
+        listBody.style.display = 'flex';
+        icon.className = 'fa-solid fa-chevron-up';
+      }
+    };
+
+    window.toggleAlertProblem = function() {
+      const listBody = document.getElementById('alertProblemList');
+      const icon = document.getElementById('probIcon');
+      if (listBody.style.display === 'flex') {
+        listBody.style.display = 'none';
+        icon.className = 'fa-solid fa-chevron-down';
+      } else {
+        listBody.style.display = 'flex';
+        icon.className = 'fa-solid fa-chevron-up';
+      }
+    };
 
     window.highlightMultipleLocations = function(codesArray) {
       document.querySelectorAll('.cell.highlight-blink').forEach(c => c.classList.remove('highlight-blink'));
@@ -1258,7 +1396,7 @@
         const key = `${model}_${color}`;
         if (!medGroup[mcs][key]) medGroup[mcs][key] = { model, color, pass: 0, fail: 0, bb: 0, belum: 0 };
         if (status === 'PASS') medGroup[mcs][key].pass += qty;
-        else if (status === 'FAIL') medGroup[mcs][key].fail += qty;
+        else if (status === 'FAIL' || status === 'FAIL_PANJANG' || status === 'FAIL_PENDEK') medGroup[mcs][key].fail += qty;
         else if (status === 'BUBBLE' || status === 'BEDA_WARNA') medGroup[mcs][key].bb += qty;
       });
 
@@ -1336,7 +1474,7 @@
         tbodySL.appendChild(trTot);
       });
 
-      // 3. Area Rolling Report (MODIFIKASI: Menampilkan Catatan/Notes per baris)
+      // 3. Area Rolling Report
       const tbodyRolling = document.getElementById('rptBodyRolling');
       tbodyRolling.innerHTML = '';
       let rollingGroup = {};
@@ -1385,12 +1523,8 @@
     };
 
     window.handleSearchInput = function() {
-      let hasVal = false;
-      ['filterMcs', 'filterModel', 'filterColor'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el && el.value.trim()) hasVal = true;
-      });
-      document.getElementById('summaryContentBox').style.display = hasVal ? 'block' : 'none';
+      const txt = document.getElementById('inpFilterText').value.trim();
+      document.getElementById('summaryContentBox').style.display = txt.length > 0 ? 'block' : 'none';
       renderTable();
     };
 
@@ -1523,36 +1657,17 @@
         if (map) map.style.display = (mode === m.toUpperCase()) ? (m === 'Medium' ? 'grid' : 'flex') : 'none';
       });
 
+      document.getElementById('inpFilterText').value = '';
       document.getElementById('summaryContentBox').style.display = 'none';
 
-      const searchContainer = document.getElementById('dynamicSearchContainer');
-      const lblSearchTitle = document.getElementById('lblSearchTitle');
-      
-      if (mode === 'SMALL') {
-        lblSearchTitle.textContent = "🔍 Cari Data Small & Large";
-        searchContainer.innerHTML = `
-          <input type="text" id="filterMcs" placeholder="Filter MCS..." oninput="handleSearchInput()" />
-          <input type="text" id="filterColor" placeholder="Filter Warna..." oninput="handleSearchInput()" />
-          <select id="selFilterBlock" onchange="handleSearchInput()"><option value="ALL">Semua Blok</option></select>
-        `;
-      } else if (mode === 'MEDIUM' || mode === 'UNTESTED') {
-        lblSearchTitle.textContent = "🔍 Cari Data Medium / Belum Test";
-        searchContainer.innerHTML = `
-          <input type="text" id="filterMcs" placeholder="Filter MCS..." oninput="handleSearchInput()" />
-          <input type="text" id="filterModel" placeholder="Filter Model..." oninput="handleSearchInput()" />
-          <input type="text" id="filterColor" placeholder="Filter Warna..." oninput="handleSearchInput()" />
-          <select id="selFilterBlock" onchange="handleSearchInput()"><option value="ALL">Semua Blok</option></select>
-        `;
-      } else if (mode === 'ROLLING') {
-        lblSearchTitle.textContent = "🔍 Cari Data Area Rolling";
-        searchContainer.innerHTML = `
-          <input type="text" id="filterMcs" placeholder="Filter MCS..." oninput="handleSearchInput()" />
-          <input type="text" id="filterColor" placeholder="Filter Warna..." oninput="handleSearchInput()" />
-          <select id="selFilterBlock" onchange="handleSearchInput()"><option value="ALL">Semua Blok</option></select>
-        `;
-      }
+      // Tutup semua dropdown saat pindah tab
+      document.getElementById('alertDuplicateList').style.display = 'none';
+      document.getElementById('dupIcon').className = 'fa-solid fa-chevron-down';
+      document.getElementById('alertProblemList').style.display = 'none';
+      document.getElementById('probIcon').className = 'fa-solid fa-chevron-down';
 
       const filterBlk = document.getElementById('selFilterBlock');
+      filterBlk.innerHTML = '<option value="ALL">Semua Blok</option>';
       let list = mode === 'SMALL' ? smallBlocks : (mode === 'MEDIUM' ? azBlocks : (mode === 'UNTESTED' ? untestedLines : [...rollingTopBlocks, ...rollingMainBlocks]));
       list.forEach(b => filterBlk.add(new Option(b.replace('LINE', 'Line '), b)));
 
@@ -1708,7 +1823,7 @@
         const item = dataset[code];
         const cell = document.getElementById(`cell-${mode}-${code}`);
         if (cell && item) {
-          const isProb = ['FAIL', 'BUBBLE', 'BEDA_WARNA'].includes(item.status);
+          const isProb = ['FAIL', 'FAIL_PANJANG', 'FAIL_PENDEK', 'BUBBLE', 'BEDA_WARNA'].includes(item.status);
           cell.classList.add(isProb ? 'problem' : 'filled');
         }
       });
@@ -1720,14 +1835,7 @@
     onValue(ref(database, 'warehouseRolling'), snap => { dataRolling = snap.val() || {}; updateCells('ROLLING', dataRolling); updateDatalistOptions(); if(activeMode==='ROLLING'){renderTable();checkDuplicateGlobal();} });
 
     window.renderTable = function() {
-      const fMcsEl = document.getElementById('filterMcs');
-      const fModelEl = document.getElementById('filterModel');
-      const fColorEl = document.getElementById('filterColor');
-
-      const fMcs = fMcsEl ? fMcsEl.value.toLowerCase().trim() : '';
-      const fModel = fModelEl ? fModelEl.value.toLowerCase().trim() : '';
-      const fColor = fColorEl ? fColorEl.value.toLowerCase().trim() : '';
-
+      const query = document.getElementById('inpFilterText').value.toLowerCase().trim();
       const filterBlk = document.getElementById('selFilterBlock').value;
       const thead = document.getElementById('tblHead');
       const tbody = document.getElementById('tblBody');
@@ -1743,10 +1851,9 @@
         const mcs = (item.mcs || '').toLowerCase();
         const model = (item.model || '').toLowerCase();
         const color = (item.color || '').toLowerCase();
+        const codeLower = code.toLowerCase();
 
-        if (fMcs && !mcs.includes(fMcs)) return;
-        if (fModel && !model.includes(fModel)) return;
-        if (fColor && !color.includes(fColor)) return;
+        if (query && !mcs.includes(query) && !model.includes(query) && !color.includes(query) && !codeLower.includes(query)) return;
 
         itemList.push({ code, item });
       });
