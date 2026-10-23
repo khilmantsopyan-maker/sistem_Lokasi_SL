@@ -1199,8 +1199,13 @@
       }
 
       closeSpkModal();
+      
+      // DISIMPAN KE FIREBASE SUPAYA BISA DILIHAT SEMUA PENGGUNA
+      set(ref(database, 'spkBlending'), listSpkBlending);
+      set(ref(database, 'spkRolling'), listSpkRolling);
+
       renderSpkTables();
-      alert('SPK Blending & SPK Pengambilan Rolling berhasil dibuat!');
+      alert('SPK Blending & SPK Pengambilan Rolling berhasil dibuat dan disimpan!');
     };
 
     function renderSpkTables() {
@@ -1249,13 +1254,17 @@
     }
 
     window.hapusSpkBlending = function(idx) {
-      listSpkBlending.splice(idx, 1);
-      renderSpkTables();
+      if (confirm("Hapus SPK Blending ini?")) {
+        listSpkBlending.splice(idx, 1);
+        set(ref(database, 'spkBlending'), listSpkBlending);
+      }
     };
 
     window.hapusSpkRolling = function(idx) {
-      listSpkRolling.splice(idx, 1);
-      renderSpkTables();
+      if (confirm("Hapus SPK Rolling ini?")) {
+        listSpkRolling.splice(idx, 1);
+        set(ref(database, 'spkRolling'), listSpkRolling);
+      }
     };
 
     /* ========================================================= */
@@ -1760,7 +1769,7 @@
       } else {
         probBox.style.display = 'none';
       }
-    }
+    };
 
     window.toggleAlertDuplicate = function() {
       const listBody = document.getElementById('alertDuplicateList');
@@ -2290,10 +2299,21 @@
       });
     }
 
+    // FIREBASE LISTENERS UNTUK STOK & SPK
     onValue(ref(database, 'warehouseStock'), snap => { dataSmall = snap.val() || {}; updateCells('SMALL', dataSmall); updateDatalistOptions(); if(activeMode==='SMALL'){renderTable();checkDuplicateGlobal();} });
     onValue(ref(database, 'warehouseStockMedium'), snap => { dataMedium = snap.val() || {}; updateCells('MEDIUM', dataMedium); updateDatalistOptions(); if(activeMode==='MEDIUM'){renderTable();checkDuplicateGlobal();} });
     onValue(ref(database, 'warehouseStockUntested'), snap => { dataUntested = snap.val() || {}; updateCells('UNTESTED', dataUntested); updateDatalistOptions(); if(activeMode==='UNTESTED'){renderTable();checkDuplicateGlobal();} });
     onValue(ref(database, 'warehouseRolling'), snap => { dataRolling = snap.val() || {}; updateCells('ROLLING', dataRolling); updateDatalistOptions(); if(activeMode==='ROLLING'){renderTable();checkDuplicateGlobal();} });
+    
+    // Sinkronisasi Real-time SPK Blending & SPK Rolling ke Firebase untuk semua pengguna
+    onValue(ref(database, 'spkBlending'), snap => {
+      listSpkBlending = snap.val() || [];
+      renderSpkTables();
+    });
+    onValue(ref(database, 'spkRolling'), snap => {
+      listSpkRolling = snap.val() || [];
+      renderSpkTables();
+    });
 
     window.renderTable = function() {
       const query = document.getElementById('inpFilterText').value.toLowerCase().trim();
