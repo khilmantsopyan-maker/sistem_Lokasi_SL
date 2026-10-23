@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gudang Compound System</title>
   
   <!-- Tailwind CSS CDN -->
@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Library html2canvas -->
+  <!-- Library html2canvas untuk konversi laporan ke gambar PNG utuh -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
@@ -28,108 +28,107 @@
       --text-muted: #94a3b8;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 8px; min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 12px; min-height: 100vh; }
     
-    .wrapper { max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .wrapper { max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
 
-    /* Header Mobile Friendly */
-    .header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 10px 12px; border-radius: 12px; border: 1px solid var(--card-border); gap: 6px; }
-    .header h1 { font-size: 0.95rem; color: var(--accent); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .nav-btn { padding: 6px 10px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; font-weight: 600; font-size: 0.75rem; cursor: pointer; display: none; }
+    /* Header */
+    .header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--card-border); gap: 8px; }
+    .header h1 { font-size: 1.1rem; color: var(--accent); font-weight: bold; }
+    .nav-btn { padding: 6px 12px; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); color: var(--accent); border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: pointer; display: none; }
 
-    /* Tombol Rekomendasi Blending */
+    /* Tombol Rekomendasi Blending di Header */
     .btn-header-rec {
-      padding: 6px 10px;
+      padding: 7px 12px;
       background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
       color: #fff;
       border: 1px solid #c084fc;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
-      box-shadow: 0 2px 6px rgba(168, 85, 247, 0.3);
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba(168, 85, 247, 0.3);
       transition: all 0.2s;
-      white-space: nowrap;
     }
-    .btn-header-rec:active { transform: scale(0.96); }
+    .btn-header-rec:hover { background: linear-gradient(135deg, #9333ea 0%, #6b21a8 100%); transform: translateY(-1px); }
 
     /* Layout Dashboard Utama */
-    .zone-container { display: flex; flex-direction: column; gap: 12px; }
+    .zone-container { display: flex; flex-direction: column; gap: 16px; }
     
-    .home-search-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-    .home-search-box h3 { font-size: 0.85rem; color: var(--accent); font-weight: 700; }
-    .home-search-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .home-search-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .home-search-box h3 { font-size: 0.95rem; color: var(--accent); font-weight: bold; }
+    .home-search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
 
-    .zone-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 12px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; }
-    .zone-card:active { background: #26354a; transform: scale(0.98); }
-    .zone-card h3 { font-size: 0.88rem; margin-bottom: 2px; font-weight: 700; }
-    .zone-card p { font-size: 0.72rem; color: var(--text-muted); line-height: 1.2; }
+    .zone-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 18px; text-align: left; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; }
+    .zone-card:hover { border-color: var(--accent); transform: translateY(-2px); background: #26354a; }
+    .zone-card h3 { font-size: 1rem; margin-bottom: 2px; font-weight: bold; }
+    .zone-card p { font-size: 0.78rem; color: var(--text-muted); }
     
-    .section-title { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+    .section-title { font-size: 0.85rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 6px; display: flex; align-items: center; gap: 6px; }
 
     /* Navigasi Tab Denah */
-    .mode-tabs { display: flex; gap: 4px; background: var(--card-bg); padding: 4px; border-radius: 10px; border: 1px solid var(--card-border); overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .tab-btn { flex: 1; padding: 8px 6px; background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 0.75rem; border-radius: 6px; cursor: pointer; white-space: nowrap; text-align: center; }
-    .tab-btn.active { background: var(--accent); color: #0f172a; font-weight: 700; }
+    .mode-tabs { display: flex; gap: 6px; justify-content: center; background: var(--card-bg); padding: 6px; border-radius: 10px; border: 1px solid var(--card-border); overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 8px 10px; background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 0.8rem; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+    .tab-btn.active { background: var(--accent); color: #0f172a; }
 
     /* Panel Base */
-    .panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-    .panel-header { font-size: 0.85rem; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .panel-header { font-size: 0.9rem; font-weight: 600; color: var(--accent); border-bottom: 1px solid var(--card-border); padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Form Input HP Friendly */
-    .input-group { display: flex; flex-direction: column; gap: 3px; }
-    .input-group label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; }
-    input, select, textarea { width: 100%; padding: 8px 10px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; color: var(--text); font-size: 0.8rem; outline: none; }
+    /* Form Input */
+    .input-group { display: flex; flex-direction: column; gap: 4px; }
+    .input-group label { font-size: 0.75rem; color: var(--text-muted); }
+    input, select, textarea { width: 100%; padding: 8px 10px; background: #0f172a; border: 1px solid var(--card-border); border-radius: 6px; color: var(--text); font-size: 0.85rem; outline: none; }
     input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-    .form-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
     
-    .btn { padding: 9px 12px; background: var(--accent); color: #0f172a; border: none; border-radius: 8px; font-weight: 700; font-size: 0.78rem; cursor: pointer; text-align: center; }
-    .btn:active { opacity: 0.8; transform: scale(0.98); }
+    .btn { padding: 8px 12px; background: var(--accent); color: #0f172a; border: none; border-radius: 6px; font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+    .btn:hover { background: var(--accent-hover); color: #fff; }
     .btn-danger { background: var(--red); color: #fff; }
     .btn-warning { background: var(--yellow); color: #000; }
     .btn-success { background: var(--green); color: #fff; }
 
     /* Denah / Map Grid Area */
-    .map-box { background: #0f172a; border: 1px solid var(--card-border); border-radius: 10px; padding: 10px; overflow-x: auto; max-height: 480px; overflow-y: auto; position: relative; -webkit-overflow-scrolling: touch; }
-    .simple-map { display: flex; gap: 12px; justify-content: flex-start; min-width: max-content; }
+    .map-box { background: #0f172a; border: 1px solid var(--card-border); border-radius: 8px; padding: 12px; overflow-x: auto; max-height: 520px; overflow-y: auto; position: relative; }
+    .simple-map { display: flex; gap: 16px; justify-content: center; }
     .block-column { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .block-title { font-weight: 700; font-size: 0.78rem; color: var(--accent); margin-bottom: 2px; }
+    .block-title { font-weight: bold; font-size: 0.85rem; color: var(--accent); margin-bottom: 4px; }
     .rack-group { display: flex; gap: 4px; }
     .cell-col { display: flex; flex-direction: column; gap: 4px; }
 
     /* Layout Khusus Area Rolling */
-    .rolling-layout { display: flex; flex-direction: column; gap: 14px; align-items: center; width: max-content; }
-    .rolling-top-row { display: flex; gap: 10px; flex-wrap: nowrap; justify-content: center; border-bottom: 1px dashed var(--card-border); padding-bottom: 12px; width: 100%; }
-    .rolling-main-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; width: 100%; }
-    .rolling-block { background: #1e293b; border: 1px solid var(--card-border); border-radius: 8px; padding: 6px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .rolling-block-title { background: #854d0e; color: #fff; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; width: 100%; text-align: center; }
-    .rolling-top-title { background: #0284c7; color: #fff; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; width: 100%; text-align: center; }
-    .rolling-cells-grid-5 { display: flex; gap: 3px; }
-    .rolling-cells-grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; width: 100%; }
+    .rolling-layout { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+    .rolling-top-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; border-bottom: 1px dashed var(--card-border); padding-bottom: 16px; width: 100%; }
+    .rolling-main-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; width: 100%; justify-content: center; }
+    .rolling-block { background: #1e293b; border: 1px solid var(--card-border); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .rolling-block-title { background: #854d0e; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; width: 100%; text-align: center; }
+    .rolling-top-title { background: #0284c7; color: #fff; font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 4px; width: 100%; text-align: center; }
+    .rolling-cells-grid-5 { display: flex; gap: 4px; }
+    .rolling-cells-grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; width: 100%; }
 
     /* Cell Box Denah */
     .cell { 
-      width: 30px; 
-      height: 30px; 
+      width: 32px; 
+      height: 32px; 
       background: #1e293b; 
       border: 1px solid var(--card-border); 
-      border-radius: 6px; 
+      border-radius: 5px; 
       cursor: pointer; 
       transition: all 0.15s; 
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: rgba(255, 255, 255, 0.7);
       user-select: none;
     }
 
-    .cell:active { border-color: var(--accent); transform: scale(1.1); z-index: 2; color: #fff; }
+    .cell:hover { border-color: var(--accent); transform: scale(1.15); z-index: 2; color: #fff; }
     .cell.filled { background: var(--green) !important; color: #fff !important; }
     .cell.problem { background: var(--red) !important; color: #fff !important; }
 
@@ -138,25 +137,25 @@
       border: 2px solid #fff !important;
       background: var(--yellow) !important;
       color: #000 !important;
-      box-shadow: 0 0 12px var(--yellow);
+      box-shadow: 0 0 16px var(--yellow);
       animation: pulseBlink 0.8s infinite alternate;
       z-index: 10;
     }
 
     @keyframes pulseBlink {
       0% { transform: scale(1); box-shadow: 0 0 4px var(--yellow); }
-      100% { transform: scale(1.25); box-shadow: 0 0 14px var(--yellow); }
+      100% { transform: scale(1.35); box-shadow: 0 0 18px var(--yellow); }
     }
 
-    .medium-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); gap: 8px; width: 100%; align-items: start; }
+    .medium-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 10px; width: 100%; align-items: start; }
 
     /* Tabel Summary Data */
-    .table-box { max-height: 300px; overflow-y: auto; overflow-x: auto; border: 1px solid var(--card-border); border-radius: 8px; -webkit-overflow-scrolling: touch; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: left; }
-    th, td { padding: 6px 8px; border-bottom: 1px solid var(--card-border); white-space: nowrap; }
-    th { background: #0f172a; color: var(--accent); position: sticky; top: 0; z-index: 5; font-size: 0.72rem; }
-    tr:active { background: rgba(56, 189, 248, 0.15); }
-    .badge { background: var(--accent); color: #0f172a; padding: 2px 5px; border-radius: 4px; font-weight: 700; font-size: 0.7rem; display: inline-block; }
+    .table-box { max-height: 400px; overflow-y: auto; overflow-x: auto; border: 1px solid var(--card-border); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--card-border); }
+    th { background: #0f172a; color: var(--accent); position: sticky; top: 0; z-index: 5; }
+    tr:hover { background: rgba(56, 189, 248, 0.15); cursor: pointer; }
+    .badge { background: var(--accent); color: #0f172a; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 0.75rem; display: inline-block; }
 
     /* KOTAK AKORDEON */
     .alert-box {
@@ -164,7 +163,7 @@
       border: 1px solid var(--yellow);
       color: #fef08a;
       border-radius: 8px;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       display: none;
       overflow: hidden;
     }
@@ -173,7 +172,7 @@
       border: 1px solid var(--red);
       color: #fca5a5;
       border-radius: 8px;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       display: none;
       overflow: hidden;
     }
@@ -182,85 +181,86 @@
       background: rgba(245, 158, 11, 0.25);
       border: none;
       color: #fef08a;
-      padding: 8px 10px;
-      font-weight: 700;
+      padding: 10px 12px;
+      font-weight: bold;
       text-align: left;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.78rem;
+      font-size: 0.85rem;
     }
+    .alert-header-btn:hover { background: rgba(245, 158, 11, 0.4); }
 
     .alert-header-btn-red {
       width: 100%;
       background: rgba(239, 68, 68, 0.25);
       border: none;
       color: #fca5a5;
-      padding: 8px 10px;
-      font-weight: 700;
+      padding: 10px 12px;
+      font-weight: bold;
       text-align: left;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.78rem;
+      font-size: 0.85rem;
     }
+    .alert-header-btn-red:hover { background: rgba(239, 68, 68, 0.4); }
 
     .alert-content-body {
-      padding: 8px;
+      padding: 10px;
       display: none;
-      max-height: 200px;
+      max-height: 250px;
       overflow-y: auto;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
     }
     .alert-item {
-      padding: 6px 8px;
+      padding: 8px 10px;
       border-radius: 6px;
       background: rgba(245, 158, 11, 0.2);
       cursor: pointer;
+      transition: background 0.2s;
       border: 1px solid rgba(245, 158, 11, 0.3);
     }
+    .alert-item:hover { background: rgba(245, 158, 11, 0.4); }
 
     .alert-item-red {
-      padding: 6px 8px;
+      padding: 8px 10px;
       border-radius: 6px;
       background: rgba(239, 68, 68, 0.2);
       cursor: pointer;
+      transition: background 0.2s;
       border: 1px solid rgba(239, 68, 68, 0.4);
     }
+    .alert-item-red:hover { background: rgba(239, 68, 68, 0.4); }
 
-    /* MODAL POP-UP MOBILE BOTTOM SHEET */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: flex-end; z-index: 999; padding: 0; }
-    .modal-card { background: var(--card-bg); border: 1px solid var(--card-border); border-top-left-radius: 16px; border-top-right-radius: 16px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; width: 100%; max-width: 500px; padding: 16px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 -10px 25px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 6px; }
-    .modal-header h3 { color: var(--accent); font-size: 0.95rem; font-weight: 700; }
+    /* MODAL POP-UP FORM */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; padding: 16px; }
+    .modal-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; width: 100%; max-width: 420px; padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 8px; }
+    .modal-header h3 { color: var(--accent); font-size: 1rem; }
     .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; font-weight: bold; }
+    .close-btn:hover { color: var(--red); }
 
-    /* STYLING LAPORAN */
-    .report-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; color: #000; overflow: auto; display: none; z-index: 1000; padding: 8px; }
-    .report-paper { width: 100%; max-width: 1100px; margin: 0 auto; background: #fff; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 11px; padding: 8px; }
+    /* STYLING LAPORAN (EXCEL STYLE) */
+    .report-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #fff; color: #000; overflow: auto; display: none; z-index: 1000; padding: 12px; }
+    .report-paper { width: 1100px; margin: 0 auto; background: #fff; font-family: 'Arial Narrow', Arial, sans-serif; font-size: 11px; padding: 16px; }
 
     .report-header-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; text-align: center; font-weight: bold; }
-    .report-header-table td { border: 1.5px solid #000; padding: 4px; font-size: 11px; vertical-align: middle; }
+    .report-header-table td { border: 1.5px solid #000; padding: 6px; font-size: 12px; vertical-align: middle; }
 
-    .report-grid { display: flex; flex-direction: column; gap: 12px; }
-    @media (min-width: 768px) {
-      .modal-overlay { align-items: center; padding: 16px; }
-      .modal-card { border-radius: 12px; max-height: auto; }
-      .report-grid { flex-direction: row; }
-    }
-
+    .report-grid { display: flex; gap: 12px; align-items: flex-start; }
     .report-col-med { flex: 1.4; }
     .report-col-sl { flex: 1; }
 
     .report-table { width: 100%; border-collapse: collapse; text-align: center; }
     .report-table th, .report-table td { 
       border: 1px solid #000; 
-      padding: 3px 4px; 
-      font-size: 10px; 
-      line-height: 1.2;
+      padding: 4px 5px; 
+      font-size: 10.5px; 
+      line-height: 1.3;
       color: #000; 
       vertical-align: middle; 
       word-break: break-word;
@@ -272,6 +272,12 @@
 
     .input-dark-border { border: 1.5px solid #1e293b !important; }
     .input-dark-border:focus { border-color: #059669 !important; }
+
+    @media (max-width: 600px) {
+      th, td { padding: 6px 4px !important; font-size: 0.73rem !important; }
+      .header h1 { font-size: 0.95rem; }
+      .btn-header-rec { font-size: 0.72rem; padding: 6px 8px; }
+    }
 
     @media print {
       body * { visibility: hidden; }
@@ -286,10 +292,10 @@
   <div class="wrapper">
     <!-- HEADER -->
     <div class="header">
-      <h1>Gudang Compound</h1>
+      <h1>Gudang Compound System</h1>
       <div style="display: flex; gap: 6px; align-items: center;">
         <button class="btn-header-rec" onclick="openBlendingRecommendationView()" title="Buka Matching S & L">
-          <i class="fa-solid fa-bolt text-xs"></i> <span>Matching</span>
+          <i class="fa-solid fa-bolt"></i> <span>Matching Blending</span>
         </button>
         <button class="nav-btn" id="btnHome" onclick="showZoneLayout()">Menu Utama</button>
       </div>
@@ -298,8 +304,8 @@
     <!-- DASHBOARD UTAMA -->
     <div id="zoneLayoutView" class="zone-container">
       
-      <button class="btn btn-warning" id="btnReportMain" onclick="openReportModal()" style="padding: 10px; font-size: 0.85rem;">
-        📊 Laporan Summary Stock
+      <button class="btn btn-warning" id="btnReportMain" onclick="openReportModal()" style="padding: 12px; font-size: 0.95rem;">
+        📊 Buka Laporan Summary Stock
       </button>
 
       <!-- PENCARIAN GLOBAL TERPISAH 3 KOLOM -->
@@ -308,16 +314,16 @@
         
         <div class="home-search-grid">
           <div class="input-group">
-            <label style="color:#38bdf8;">MCS</label>
-            <input type="text" id="inpSearchMcs" placeholder="MCS..." oninput="searchGlobal()" />
+            <label style="color:#38bdf8; font-weight:600;">Cari MCS</label>
+            <input type="text" id="inpSearchMcs" placeholder="Ketik MCS..." oninput="searchGlobal()" />
           </div>
           <div class="input-group">
-            <label style="color:#38bdf8;">Model</label>
-            <input type="text" id="inpSearchModel" placeholder="Model..." oninput="searchGlobal()" />
+            <label style="color:#38bdf8; font-weight:600;">Cari Model</label>
+            <input type="text" id="inpSearchModel" placeholder="Ketik Model..." oninput="searchGlobal()" />
           </div>
           <div class="input-group">
-            <label style="color:#38bdf8;">Warna</label>
-            <input type="text" id="inpSearchColor" placeholder="Warna..." oninput="searchGlobal()" />
+            <label style="color:#38bdf8; font-weight:600;">Cari Warna</label>
+            <input type="text" id="inpSearchColor" placeholder="Ketik Warna..." oninput="searchGlobal()" />
           </div>
         </div>
         
@@ -330,9 +336,9 @@
                 <th>MCS</th>
                 <th>Model</th>
                 <th>Warna</th>
-                <th>QTY S</th>
-                <th>QTY L</th>
-                <th>QTY M</th>
+                <th>QTY S (Kg)</th>
+                <th>QTY L (Kg)</th>
+                <th>QTY M (Kg)</th>
                 <th>Kondisi</th>
               </tr>
             </thead>
@@ -342,49 +348,49 @@
       </div>
 
       <!-- KARTU ZONA / MENU UTAMA -->
-      <div id="zoneCardsContainer" style="display: flex; flex-direction: column; gap: 8px;">
+      <div id="zoneCardsContainer" style="display: flex; flex-direction: column; gap: 10px;">
         
         <div class="zone-card" style="border-left: 4px solid #059669; background: linear-gradient(135deg, #064e3b 0%, #1e293b 100%);" onclick="openHopperView()">
           <div>
-            <h3 style="color: #34d399;"><i class="fa-solid fa-industry mr-1.5"></i> Laporan Hopper IP</h3>
-            <p style="color: #a7f3d0;">Form Hopper Mesin & WhatsApp</p>
+            <h3 style="color: #34d399;"><i class="fa-solid fa-industry mr-2"></i> Laporan Stock Hopper IP</h3>
+            <p style="color: #a7f3d0;">Form Laporan Stock Hopper Mesin & Kirim ke WhatsApp</p>
           </div>
-          <i class="fa-solid fa-arrow-right text-emerald-400 text-sm"></i>
+          <i class="fa-solid fa-arrow-right-long text-emerald-400 text-lg"></i>
         </div>
 
-        <div class="section-title"><i class="fa-solid fa-people-carry-box text-sky-400"></i> Tim Blending</div>
+        <div class="section-title"><i class="fa-solid fa-people-carry-box text-sky-400"></i> Area Tim Blending</div>
 
         <div class="zone-card" style="border-left: 4px solid var(--green);" onclick="openZoneMode('MEDIUM')">
           <div>
             <h3>Area Medium (Pass)</h3>
-            <p>A - J (No 1-4) | K - Z (No 1-7)</p>
+            <p>Denah & Stok Blok A - J (Nomor 1-4) | Blok K - Z (Nomor 1-7)</p>
           </div>
-          <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
+          <i class="fa-solid fa-chevron-right text-slate-500"></i>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="zone-card" style="border-left: 4px solid var(--accent);" onclick="openZoneMode('SMALL')">
             <div>
-              <h3>Small & Large</h3>
+              <h3>Area Small & Large</h3>
               <p>Blok A, B, C (No 1-15)</p>
             </div>
           </div>
           <div class="zone-card" style="border-left: 4px solid var(--yellow);" onclick="openZoneMode('UNTESTED')">
             <div>
-              <h3>Belum Test</h3>
+              <h3>Medium Belum Test</h3>
               <p>Line 1, 2, 3 (No 1-7)</p>
             </div>
           </div>
         </div>
 
-        <div class="section-title"><i class="fa-solid fa-arrows-spin text-rose-400"></i> Tim Rolling</div>
+        <div class="section-title" style="margin-top: 4px;"><i class="fa-solid fa-arrows-spin text-rose-400"></i> Area Tim Rolling</div>
 
         <div class="zone-card" style="border-left: 4px solid #e11d48;" onclick="openZoneMode('ROLLING')">
           <div>
             <h3 style="color: #fb7185;">Area Rolling (S, L, M)</h3>
-            <p>L-1 s/d L-4 & Blok A - L</p>
+            <p>Denah Blok L-1 s/d L-4 (1-5) & Blok A - L (1-6)</p>
           </div>
-          <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
+          <i class="fa-solid fa-chevron-right text-slate-500"></i>
         </div>
 
       </div>
@@ -392,21 +398,21 @@
     </div>
 
     <!-- VIEW REKOMENDASI KERJA BLENDING & LIST SPK -->
-    <div id="blendingRecView" style="display: none; flex-direction: column; gap: 12px;">
+    <div id="blendingRecView" style="display: none; flex-direction: column; gap: 16px;">
       
-      <div class="bg-[#0f172a] text-white p-3 rounded-xl border border-purple-800/60">
+      <div class="bg-[#0f172a] text-white p-4 rounded-2xl shadow-md border border-purple-800/60">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-md">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-purple-900/40">
               <i class="fa-solid fa-bolt"></i>
             </div>
             <div>
-              <h2 class="font-bold text-sm text-purple-300 leading-tight">Matching Blending (S & L)</h2>
-              <p class="text-[10px] text-slate-400">Klik baris barang untuk pilih model & SPK</p>
+              <h2 class="font-bold text-base md:text-lg leading-tight text-purple-300">Rekomendasi Kerja Blending (Gabungan S & L)</h2>
+              <p class="text-xs text-slate-400">Klik baris barang untuk memilih model & membuat SPK</p>
             </div>
           </div>
-          <button onclick="renderTampilanBlendingRec()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1">
-            <i class="fa-solid fa-rotate-right"></i>
+          <button onclick="renderTampilanBlendingRec()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-3.5 py-2 rounded-lg border border-slate-700 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-rotate-right"></i> Refresh
           </button>
         </div>
       </div>
@@ -414,11 +420,15 @@
       <!-- TABEL GABUNGAN S & L -->
       <div class="panel">
         <div class="panel-header">
-          <span>📦 Compound Siap Blending</span>
+          <span>📦 Compound Siap Blending (Matching S & L)</span>
           <span id="lblMatchingCount" class="badge" style="background:#a855f7; color:#fff;">0 Item</span>
         </div>
 
-        <div class="table-box">
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom: 4px;">
+          <i class="fa-solid fa-info-circle text-purple-400"></i> Klik baris untuk membuka rekomendasi model.
+        </div>
+
+        <div class="table-box" style="max-height: 320px;">
           <table>
             <thead>
               <tr>
@@ -433,22 +443,22 @@
       </div>
 
       <!-- DAFTAR SPK BLENDING & PENGAMBILAN ROLLING -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         
         <!-- SPK 1: LIST SPK BLENDING -->
         <div class="panel" style="border-color: var(--green);">
           <div class="panel-header">
-            <span style="color:var(--green);"><i class="fa-solid fa-clipboard-list mr-1"></i> SPK Blending</span>
+            <span style="color:var(--green);"><i class="fa-solid fa-clipboard-list mr-1"></i> Daftar SPK Kerja Blending</span>
             <span id="lblCountSpkBlending" class="badge" style="background:var(--green); color:#fff;">0 SPK</span>
           </div>
-          <div class="table-box" style="max-height: 200px;">
+          <div class="table-box" style="max-height: 220px;">
             <table>
               <thead>
                 <tr>
                   <th>Model / Warna</th>
                   <th>MCS</th>
-                  <th>Qty</th>
-                  <th>ER (%)</th>
+                  <th>Qty (Kg)</th>
+                  <th>ER Target (%)</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
@@ -460,17 +470,17 @@
         <!-- SPK 2: LIST SPK PENGAMBILAN KE ROLLING -->
         <div class="panel" style="border-color: #e11d48;">
           <div class="panel-header">
-            <span style="color:#fb7185;"><i class="fa-solid fa-truck-ramp-box mr-1"></i> SPK Ambil Rolling</span>
+            <span style="color:#fb7185;"><i class="fa-solid fa-truck-ramp-box mr-1"></i> SPK Pengambilan ke Area Rolling</span>
             <span id="lblCountSpkRolling" class="badge" style="background:#e11d48; color:#fff;">0 SPK</span>
           </div>
-          <div class="table-box" style="max-height: 200px;">
+          <div class="table-box" style="max-height: 220px;">
             <table>
               <thead>
                 <tr>
-                  <th>Lokasi</th>
+                  <th>Lokasi Asal</th>
                   <th>MCS / Warna</th>
                   <th>Size</th>
-                  <th>Qty</th>
+                  <th>Qty (Kg)</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
@@ -484,88 +494,115 @@
     </div>
 
     <!-- VIEW LAPORAN STOCK HOPPER IP -->
-    <div id="hopperView" style="display: none; flex-direction: column; gap: 12px;">
+    <div id="hopperView" style="display: none; flex-direction: column; gap: 16px;">
       
-      <div class="bg-[#0f172a] text-white p-3 rounded-xl border border-slate-700">
+      <div class="bg-[#0f172a] text-white p-4 rounded-2xl shadow-md border border-slate-700">
         <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 bg-[#059669] rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-md">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-[#059669] rounded-xl flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-emerald-900/40">
               <i class="fa-solid fa-industry"></i>
             </div>
             <div>
-              <h2 class="font-bold text-sm text-emerald-400 leading-tight">Stock Hopper IP</h2>
-              <p id="date-text-hopper" class="text-[10px] text-slate-400">Loading...</p>
+              <h2 class="font-bold text-base md:text-lg leading-tight text-emerald-400">Laporan Stock Hopper IP</h2>
+              <p id="date-text-hopper" class="text-xs text-slate-400">Loading tanggal...</p>
             </div>
           </div>
-          <button onclick="konfirmasiResetHopper()" class="bg-slate-800 text-slate-300 text-xs px-2.5 py-1.5 rounded-lg border border-slate-700">
-            <i class="fa-solid fa-rotate-right"></i>
+          <button onclick="konfirmasiResetHopper()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium px-3.5 py-2 rounded-lg border border-slate-700 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-rotate-right"></i> Reset
           </button>
         </div>
       </div>
 
-      <div class="bg-white rounded-xl p-3 border border-slate-300 text-slate-900">
-        <div class="grid grid-cols-2 gap-2">
+      <div class="bg-white rounded-2xl p-4 md:p-5 shadow-sm border-2 border-slate-900 text-slate-900">
+        <div class="flex items-center justify-between mb-4 border-b border-slate-200 pb-3">
+          <div class="flex items-center gap-2 text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <i class="fa-regular fa-id-card text-emerald-600"></i> INFORMASI OPERATOR & SHIFT
+          </div>
+          <span class="bg-emerald-50 text-emerald-700 text-[11px] font-semibold px-2.5 py-0.5 rounded-full flex items-center gap-1 border border-emerald-300">
+            <i class="fa-solid fa-circle-check"></i> Tersimpan
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-[11px] font-bold text-slate-800 mb-1">Shift Kerja</label>
-            <input type="text" id="inp-shift" placeholder="..." oninput="simpanDataLokalHopper()" 
-              class="w-full px-2.5 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none">
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Shift Kerja</label>
+            <div class="relative">
+              <i class="fa-regular fa-clock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600 text-sm"></i>
+              <input type="text" id="inp-shift" placeholder="..." oninput="simpanDataLokalHopper()" 
+                class="w-full pl-10 pr-3.5 py-2.5 bg-white input-dark-border rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium outline-none transition">
+            </div>
           </div>
           <div>
-            <label class="block text-[11px] font-bold text-slate-800 mb-1">Operator</label>
-            <input type="text" id="inp-nama" placeholder="..." oninput="simpanDataLokalHopper()" 
-              class="w-full px-2.5 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none">
+            <label class="block text-xs font-bold text-slate-800 mb-1.5">Nama Operator / Pengisi</label>
+            <div class="relative">
+              <i class="fa-regular fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600 text-sm"></i>
+              <input type="text" id="inp-nama" placeholder="..." oninput="simpanDataLokalHopper()" 
+                class="w-full pl-10 pr-3.5 py-2.5 bg-white input-dark-border rounded-xl text-sm text-slate-900 placeholder-slate-400 font-medium outline-none transition">
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="bg-[#059669] text-white rounded-xl p-3 flex items-center justify-between border border-emerald-800">
-        <div>
-          <p class="text-[10px] text-emerald-100 font-medium">Total Hasil Stock Hopper</p>
-          <p class="text-xl font-bold"><span id="total-qty-val">0</span> <span class="text-xs font-normal">Kg</span></p>
+      <div class="bg-[#059669] text-white rounded-2xl p-4 shadow-lg shadow-emerald-700/20 flex items-center justify-between border-2 border-emerald-800">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-white text-lg">
+            <i class="fa-solid fa-boxes-stacked"></i>
+          </div>
+          <div>
+            <p class="text-xs text-emerald-100 font-medium">Total Hasil Stock Hopper</p>
+            <p class="text-2xl font-bold tracking-tight"><span id="total-qty-val">0</span> <span class="text-xs font-normal text-emerald-200">Kg</span></p>
+          </div>
         </div>
-        <div id="count-mesin" class="bg-white/20 text-white text-[11px] px-2.5 py-1 rounded-lg border border-white/20">
-          0 Mesin
+        <div id="count-mesin" class="bg-white/20 text-white text-xs font-medium px-3 py-1.5 rounded-lg border border-white/20">
+          0 Mesin Input
         </div>
       </div>
 
       <div class="space-y-3">
-        <div id="containerMesin" class="space-y-3 text-slate-900"></div>
+        <div class="flex items-center justify-between px-1">
+          <h2 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <i class="fa-solid fa-gears text-emerald-400"></i> Rincian Data Mesin
+          </h2>
+          <span class="text-xs text-slate-400 font-medium">Isi data tiap mesin</span>
+        </div>
+
+        <div id="containerMesin" class="space-y-4 text-slate-900"></div>
       </div>
 
-      <button type="button" onclick="tambahBarisHopper()" class="w-full py-2.5 bg-white text-slate-800 font-bold text-xs rounded-xl border border-slate-900 flex items-center justify-center gap-1.5">
-        <i class="fa-solid fa-circle-plus text-emerald-600 text-sm"></i> Tambah Mesin
+      <button type="button" onclick="tambahBarisHopper()" class="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-sm rounded-xl border-2 border-slate-900 shadow-sm transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-circle-plus text-emerald-600 text-lg"></i> Tambah Mesin Lain
       </button>
 
-      <button type="button" onclick="kirimWhatsAppHopper()" class="w-full py-3 bg-[#059669] text-white font-bold text-sm rounded-xl shadow-md flex items-center justify-center gap-2 border border-emerald-800">
-        <i class="fa-brands fa-whatsapp text-lg"></i> Kirim ke WhatsApp
+      <button type="button" onclick="kirimWhatsAppHopper()" class="w-full py-4 bg-[#059669] hover:bg-[#047857] active:bg-[#065f46] text-white font-bold text-base rounded-2xl shadow-lg shadow-emerald-700/30 transition flex items-center justify-center gap-2.5 border-2 border-emerald-800">
+        <i class="fa-brands fa-whatsapp text-2xl"></i> Kirim Semua Data ke WhatsApp
       </button>
 
     </div>
 
     <!-- AREA DETAIL DENAH GUDANG -->
-    <div id="detailView" style="display: none; flex-direction: column; gap: 10px;">
+    <div id="detailView" style="display: none; flex-direction: column; gap: 12px;">
       
       <div class="mode-tabs">
         <button class="tab-btn" id="tabSmall" onclick="switchMode('SMALL')">Small / Large</button>
-        <button class="tab-btn" id="tabMedium" onclick="switchMode('MEDIUM')">Medium</button>
+        <button class="tab-btn" id="tabMedium" onclick="switchMode('MEDIUM')">Medium (Pass)</button>
         <button class="tab-btn" id="tabUntested" onclick="switchMode('UNTESTED')">Belum Test</button>
-        <button class="tab-btn" id="tabRolling" onclick="switchMode('ROLLING')">Rolling</button>
+        <button class="tab-btn" id="tabRolling" onclick="switchMode('ROLLING')">Area Rolling</button>
       </div>
 
       <div class="panel">
         <div class="panel-header">
-          <span id="lblSearchTitle">🔍 Cari Data Stok</span>
-          <span id="lblSummaryTotal" style="color:var(--accent); font-size:0.75rem;">Total: 0 Kg</span>
+          <span id="lblSearchTitle">🔍 Cari Data Stok Area Ini</span>
+          <span id="lblSummaryTotal" style="color:var(--accent); font-size:0.8rem;">Total: 0 Kg</span>
         </div>
 
-        <div style="display: flex; gap: 6px;">
+        <div style="display: flex; gap: 8px;">
           <input type="text" id="inpFilterText" style="flex: 1;" placeholder="Ketik mcs, model, warna, lokasi..." oninput="handleSearchInput()" />
-          <select id="selFilterBlock" style="width: 120px;" onchange="handleSearchInput()"><option value="ALL">Semua Blok</option></select>
+          <select id="selFilterBlock" style="width: 180px;" onchange="handleSearchInput()"><option value="ALL">Semua Blok</option></select>
         </div>
 
         <div class="alert-box" id="alertDuplicate">
           <button class="alert-header-btn" onclick="toggleAlertDuplicate()">
-            <span>⚠️ Duplikat (<span id="dupCount">0</span>)</span>
+            <span>⚠️ Terdapat barang persis sama di beberapa lokasi (<span id="dupCount">0</span> barang)</span>
             <i class="fa-solid fa-chevron-down" id="dupIcon"></i>
           </button>
           <div class="alert-content-body" id="alertDuplicateList"></div>
@@ -573,13 +610,13 @@
 
         <div class="alert-box-red" id="alertProblemMedium">
           <button class="alert-header-btn-red" onclick="toggleAlertProblem()">
-            <span>🚨 Fail (<span id="probCount">0</span>)</span>
+            <span>🚨 Perhatian: Terdapat <span id="probCount">0</span> barang bermasalah / Fail (Klik untuk lihat)</span>
             <i class="fa-solid fa-chevron-down" id="probIcon"></i>
           </button>
           <div class="alert-content-body" id="alertProblemList"></div>
         </div>
 
-        <div id="summaryContentBox" class="table-box" style="display: none; margin-top: 4px;">
+        <div id="summaryContentBox" class="table-box" style="display: none; margin-top: 6px;">
           <table>
             <thead id="tblHead"></thead>
             <tbody id="tblBody"></tbody>
@@ -589,8 +626,8 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span>Denah Visual Area</span>
-          <span style="font-size:0.7rem; color:var(--text-muted);">🟢 Isi | 🔴 Fail</span>
+          <span>Denah Visual Area (Nomor Kotak)</span>
+          <span style="font-size:0.75rem; color:var(--text-muted);">🟢 Terisi | 🔴 Bermasalah | 🟡 Berkedip</span>
         </div>
 
         <div class="map-box" id="mapBoxContainer">
@@ -606,21 +643,21 @@
 
   <!-- MODAL POP-UP REKOMENDASI MODEL -->
   <div class="modal-overlay" id="modalRecModel">
-    <div class="modal-card">
+    <div class="modal-card" style="max-width: 500px;">
       <div class="modal-header">
         <h3 style="color:#c084fc;">👟 Rekomendasi Model</h3>
         <button class="close-btn" onclick="closeRecModelModal()">&times;</button>
       </div>
 
-      <div id="detailAsalBarang" style="background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); padding: 8px; border-radius: 8px; font-size: 0.75rem; display: flex; flex-direction: column; gap: 3px;"></div>
+      <div id="detailAsalBarang" style="background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); padding: 10px; border-radius: 8px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px;"></div>
 
-      <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid #a855f7; padding: 6px 8px; border-radius: 8px; font-size: 0.72rem;">
-        <p><b>Klik salah satu Model untuk buat SPK:</b></p>
+      <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid #a855f7; padding: 8px 10px; border-radius: 8px; font-size: 0.78rem;">
+        <p><b>Klik salah satu Model untuk membuat SPK:</b></p>
       </div>
 
-      <div id="modelCardsContainer" style="display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto;"></div>
+      <div id="modelCardsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;"></div>
 
-      <button class="btn btn-danger" onclick="closeRecModelModal()">Tutup</button>
+      <button class="btn btn-danger" onclick="closeRecModelModal()" style="margin-top: 4px;">Tutup</button>
     </div>
   </div>
 
@@ -628,12 +665,12 @@
   <div class="modal-overlay" id="modalSpkQty">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>Input Qty & ER Target SPK</h3>
+        <h3>Input Qty & ER Target SPK Blending</h3>
         <button class="close-btn" onclick="closeSpkModal()">&times;</button>
       </div>
-      <div id="spkModalInfo" style="font-size:0.75rem; color:var(--text-muted);"></div>
+      <div id="spkModalInfo" style="font-size:0.8rem; color:var(--text-muted);"></div>
       
-      <div class="form-row" style="margin-top:6px; grid-template-columns: 1fr 1fr;">
+      <div class="form-row" style="margin-top:8px; grid-template-columns: 1fr 1fr;">
         <div class="input-group">
           <label>Qty (Kg)</label>
           <input type="number" id="inpSpkQtyVal" placeholder="0" min="1" />
@@ -644,7 +681,7 @@
         </div>
       </div>
 
-      <div style="display:flex; gap:6px; margin-top:8px;">
+      <div style="display:flex; gap:8px; margin-top:12px;">
         <button class="btn" style="flex:1;" onclick="konfirmasiSimpanSpk()">OK (Buat SPK)</button>
         <button class="btn btn-danger" onclick="closeSpkModal()">Batal</button>
       </div>
@@ -685,11 +722,11 @@
             <option value="CMP-014">CMP-014</option>
           </select>
         </div>
-        <div class="input-group" style="margin-top:4px;">
+        <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
           <input type="text" id="inpColorS" list="colorOptions" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
-        <div class="form-row" style="margin-top:4px; grid-template-columns: 1fr 1fr;">
+        <div class="form-row" style="margin-top:6px; grid-template-columns: 1fr 1fr;">
           <div class="input-group">
             <label>QTY S (Kg)</label>
             <input type="number" id="inpQtyS" placeholder="0" min="0" />
@@ -716,15 +753,15 @@
             <option value="CMP-014">CMP-014</option>
           </select>
         </div>
-        <div class="input-group" style="margin-top:4px;">
+        <div class="input-group" style="margin-top:6px;">
           <label>Model Barang</label>
           <input type="text" id="inpModelM" list="modelOptions" placeholder="Ketik model..." oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
-        <div class="input-group" style="margin-top:4px;">
+        <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
           <input type="text" id="inpColorM" list="colorOptions" placeholder="Warna" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
-        <div class="input-group" style="margin-top:4px;">
+        <div class="input-group" style="margin-top:6px;">
           <label>QTY M (Kg)</label>
           <input type="number" id="inpQtyM" placeholder="0" min="0" />
         </div>
@@ -745,15 +782,15 @@
             <option value="CMP-014">CMP-014</option>
           </select>
         </div>
-        <div class="input-group" style="margin-top:4px;">
+        <div class="input-group" style="margin-top:6px;">
           <label>Model Barang</label>
           <input type="text" id="inpModelU" list="modelOptions" placeholder="Ketik model..." oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
-        <div class="input-group" style="margin-top:4px;">
+        <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
           <input type="text" id="inpColorU" list="colorOptions" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
-        <div class="input-group" style="margin-top:4px;">
+        <div class="input-group" style="margin-top:6px;">
           <label>QTY (Kg)</label>
           <input type="number" id="inpQtyU" placeholder="0" min="0" />
         </div>
@@ -774,11 +811,11 @@
             <option value="CMP-014">CMP-014</option>
           </select>
         </div>
-        <div class="input-group" style="margin-top:4px;">
+        <div class="input-group" style="margin-top:6px;">
           <label>Warna</label>
           <input type="text" id="inpColorR" list="colorOptions" placeholder="Warna barang" oninput="autoCapitalize(this); checkDuplicateInModal();" />
         </div>
-        <div class="form-row" style="margin-top:4px;">
+        <div class="form-row" style="margin-top:6px;">
           <div class="input-group">
             <label>QTY S (Kg)</label>
             <input type="number" id="inpQtySR" placeholder="0" min="0" />
@@ -797,14 +834,14 @@
       <datalist id="modelOptions"></datalist>
       <datalist id="colorOptions"></datalist>
 
-      <div class="alert-box" id="alertModalDuplicate" style="margin-top:6px;"></div>
+      <div class="alert-box" id="alertModalDuplicate" style="margin-top:8px;"></div>
 
       <div class="input-group">
         <label>Catatan</label>
         <textarea id="inpNotes" rows="2" placeholder="Catatan tambahan..."></textarea>
       </div>
 
-      <div style="display:flex; gap:6px; margin-top:6px;">
+      <div style="display:flex; gap:8px; margin-top:8px;">
         <button class="btn" style="flex:1;" onclick="saveData()">Simpan Data</button>
         <button class="btn btn-danger" onclick="deleteData()">Kosongkan</button>
       </div>
@@ -813,20 +850,20 @@
 
   <!-- LAPORAN SUMMARY STOCK -->
   <div class="report-overlay" id="reportView">
-    <div class="no-print" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
-      <div style="display: flex; gap: 6px;">
-        <button class="btn btn-success" onclick="downloadReportImage()" id="btnDownloadImg" style="padding: 6px 10px; font-size: 0.75rem;">📸 Gambar (PNG)</button>
-        <button class="btn btn-warning" onclick="window.print()" style="padding: 6px 10px; font-size: 0.75rem;">🖨️ Cetak</button>
+    <div class="no-print" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 12px auto; gap: 8px; flex-wrap: wrap;">
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-success" onclick="downloadReportImage()" id="btnDownloadImg">📸 Download Gambar Utuh (PNG)</button>
+        <button class="btn btn-warning" onclick="window.print()">🖨️ Cetak / PDF</button>
       </div>
-      <button class="btn btn-danger" onclick="closeReportModal()" style="padding: 6px 10px; font-size: 0.75rem;">✕ Tutup</button>
+      <button class="btn btn-danger" onclick="closeReportModal()">✕ Tutup Laporan</button>
     </div>
 
     <div class="report-paper" id="reportPaperContent">
       <table class="report-header-table">
         <tr>
-          <td style="width: 25%;" id="rptDateStr">Sunday, August 23, 2026</td>
-          <td style="width: 50%; font-size: 13px;">STOCK COMPOUND</td>
-          <td style="width: 25%;" id="rptTimeStr">06.30</td>
+          <td style="width: 25%; font-size: 11px;" id="rptDateStr">Sunday, August 23, 2026</td>
+          <td style="width: 50%; font-size: 14px;">STOCK COMPOUND</td>
+          <td style="width: 25%; font-size: 11px;" id="rptTimeStr">06.30</td>
         </tr>
       </table>
 
@@ -866,8 +903,8 @@
         </div>
       </div>
 
-      <div style="margin-top: 12px;">
-        <div style="font-weight: bold; font-size: 11px; margin-bottom: 4px; text-transform: uppercase;">SUMMARY STOCK - AREA ROLLING</div>
+      <div style="margin-top: 16px;">
+        <div style="font-weight: bold; font-size: 12px; margin-bottom: 6px; text-transform: uppercase;">SUMMARY STOCK - AREA ROLLING</div>
         <table class="report-table">
           <thead>
             <tr>
@@ -986,25 +1023,25 @@
       lblCount.textContent = `${matchingList.length} Item Matching`;
 
       if (matchingList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:12px;">Tidak ada kombinasi S & L yang lengkap saat ini.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:16px;">Tidak ada kombinasi S & L yang lengkap saat ini.</td></tr>`;
         return;
       }
 
       matchingList.forEach(data => {
         let sHtml = data.sItems.map(x => {
           let bg = x.area === 'Rolling' ? '#e11d48' : '#0284c7';
-          return `<span class="badge" style="background:${bg}; color:#fff; margin:1px;">${x.code} (${x.qty}Kg)</span>`;
+          return `<span class="badge" style="background:${bg}; color:#fff; margin:2px;">${x.code} (${x.qty}Kg)</span>`;
         }).join('<br>');
 
         let lHtml = data.lItems.map(x => {
           let bg = x.area === 'Rolling' ? '#e11d48' : '#0284c7';
-          return `<span class="badge" style="background:${bg}; color:#fff; margin:1px;">${x.code} (${x.qty}Kg)</span>`;
+          return `<span class="badge" style="background:${bg}; color:#fff; margin:2px;">${x.code} (${x.qty}Kg)</span>`;
         }).join('<br>');
 
         const tr = document.createElement('tr');
         tr.onclick = () => selectCombinedItemForRecommendation(data);
         tr.innerHTML = `
-          <td><strong>${data.mcs}</strong><br><span style="font-size:0.7rem; color:var(--text-muted);">${data.color}</span></td>
+          <td><strong>${data.mcs}</strong><br><span style="font-size:0.75rem; color:var(--text-muted);">${data.color}</span></td>
           <td>${sHtml}</td>
           <td>${lHtml}</td>
         `;
@@ -1056,8 +1093,8 @@
 
       if (modelsFound.length === 0) {
         container.innerHTML = `
-          <div style="background:#1e293b; padding:8px; border-radius:8px; border:1px solid var(--card-border); text-align:center;">
-            <p style="color:var(--yellow); font-weight:bold; font-size:0.75rem;">⚠️ Belum ada riwayat Model terdaftar untuk MCS ${data.mcs}</p>
+          <div style="background:#1e293b; padding:10px; border-radius:8px; border:1px solid var(--card-border); text-align:center;">
+            <p style="color:var(--yellow); font-weight:bold; font-size:0.8rem;">⚠️ Belum ada riwayat Model terdaftar untuk MCS ${data.mcs}</p>
           </div>
         `;
       } else {
@@ -1067,10 +1104,10 @@
           card.style.background = '#0f172a';
           card.style.border = '1px solid #334155';
           card.style.borderRadius = '8px';
-          card.style.padding = '8px';
+          card.style.padding = '10px';
           card.style.display = 'flex';
           card.style.flexDirection = 'column';
-          card.style.gap = '3px';
+          card.style.gap = '4px';
           card.style.cursor = 'pointer';
           card.onclick = () => {
             closeRecModelModal();
@@ -1079,18 +1116,18 @@
 
           let badgeStatus = '<span class="badge" style="background:var(--green); color:#fff;">Aman</span>';
           if (mInfo.colorMatchQty === 0) {
-            badgeStatus = '<span class="badge" style="background:var(--red); color:#fff;">Kosong</span>';
+            badgeStatus = '<span class="badge" style="background:var(--red); color:#fff;">Kosong (0 Kg)</span>';
           } else if (mInfo.colorMatchQty < 100) {
             badgeStatus = '<span class="badge" style="background:var(--yellow); color:#000;">Menipis</span>';
           }
 
           card.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <h4 style="font-weight:bold; color:var(--accent); font-size:0.8rem;">👟 ${mInfo.model} <i class="fa-solid fa-circle-plus text-green-400 ml-1"></i></h4>
+              <h4 style="font-weight:bold; color:var(--accent); font-size:0.85rem;">👟 ${mInfo.model} <i class="fa-solid fa-circle-plus text-green-400 ml-1"></i></h4>
               ${badgeStatus}
             </div>
-            <div style="font-size:0.7rem; color:var(--text-muted);">
-              • Stok Medium: <strong style="color:#fff;">${mInfo.colorMatchQty} Kg</strong> | Lokasi: ${mInfo.locations.length > 0 ? mInfo.locations.join(', ') : '-'}
+            <div style="font-size:0.75rem; color:var(--text-muted);">
+              • Stok Medium Warna ${data.color}: <strong style="color:#fff;">${mInfo.colorMatchQty} Kg</strong> | Lokasi: ${mInfo.locations.length > 0 ? mInfo.locations.join(', ') : '-'}
             </div>
           `;
           container.appendChild(card);
@@ -1163,11 +1200,12 @@
 
       closeSpkModal();
       
+      // DISIMPAN KE FIREBASE SUPAYA BISA DILIHAT SEMUA PENGGUNA
       set(ref(database, 'spkBlending'), listSpkBlending);
       set(ref(database, 'spkRolling'), listSpkRolling);
 
       renderSpkTables();
-      alert('SPK Blending & SPK Rolling disimpan!');
+      alert('SPK Blending & SPK Pengambilan Rolling berhasil dibuat dan disimpan!');
     };
 
     function renderSpkTables() {
@@ -1183,32 +1221,32 @@
       countRolling.textContent = `${listSpkRolling.length} SPK`;
 
       if (listSpkBlending.length === 0) {
-        tbodyBlending.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:8px;">Belum ada SPK Blending.</td></tr>`;
+        tbodyBlending.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:10px;">Belum ada SPK Blending.</td></tr>`;
       } else {
         listSpkBlending.forEach((spk, idx) => {
           tbodyBlending.innerHTML += `
             <tr>
-              <td><strong>${spk.model}</strong><br><span style="font-size:0.68rem; color:var(--text-muted);">${spk.color}</span></td>
+              <td><strong>${spk.model}</strong><br><span style="font-size:0.7rem; color:var(--text-muted);">${spk.color}</span></td>
               <td>${spk.mcs}</td>
               <td><strong>${spk.qty} Kg</strong></td>
               <td><strong>${spk.erTarget}%</strong></td>
-              <td><button class="btn btn-danger" style="padding:2px 5px; font-size:0.68rem;" onclick="hapusSpkBlending(${idx})">Hapus</button></td>
+              <td><button class="btn btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="hapusSpkBlending(${idx})">Hapus</button></td>
             </tr>
           `;
         });
       }
 
       if (listSpkRolling.length === 0) {
-        tbodyRolling.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:8px;">Tidak ada dari Rolling.</td></tr>`;
+        tbodyRolling.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted); padding:10px;">Tidak ada pengambilan dari Rolling.</td></tr>`;
       } else {
         listSpkRolling.forEach((spkR, idx) => {
           tbodyRolling.innerHTML += `
             <tr>
               <td><span class="badge" style="background:#e11d48; color:#fff;">${spkR.code}</span></td>
-              <td>${spkR.mcs}<br><span style="font-size:0.68rem; color:var(--text-muted);">${spkR.color}</span></td>
+              <td>${spkR.mcs}<br><span style="font-size:0.7rem; color:var(--text-muted);">${spkR.color}</span></td>
               <td><span class="badge" style="background:#0284c7; color:#fff;">${spkR.size}</span></td>
               <td><strong>${spkR.qty} Kg</strong></td>
-              <td><button class="btn btn-danger" style="padding:2px 5px; font-size:0.68rem;" onclick="hapusSpkRolling(${idx})">Hapus</button></td>
+              <td><button class="btn btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="hapusSpkRolling(${idx})">Hapus</button></td>
             </tr>
           `;
         });
@@ -1235,7 +1273,7 @@
     window.downloadReportImage = function() {
       const btn = document.getElementById('btnDownloadImg');
       const originalText = btn.innerText;
-      btn.innerText = "⏳ Memproses...";
+      btn.innerText = "⏳ Memproses Gambar...";
       btn.disabled = true;
 
       const element = document.getElementById('reportPaperContent');
@@ -1372,76 +1410,76 @@
       dataMesin.forEach((item, index) => {
         const isSame = item.isSameInjector !== false;
         const card = document.createElement('div');
-        card.className = "bg-white p-3 rounded-xl border border-slate-300 shadow-sm space-y-2.5";
+        card.className = "bg-white p-4 md:p-5 rounded-2xl border-2 border-slate-900 shadow-sm space-y-4";
         
         let inj2HTML = '';
         if (!isSame) {
           inj2HTML = `
-          <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1.5">
-            <span class="text-[11px] font-bold text-slate-800 flex items-center gap-1">
-              <i class="fa-solid fa-circle text-[6px] text-emerald-600"></i> Injector 2 (B)
+          <div class="bg-slate-50 p-3 rounded-xl border-2 border-slate-300 space-y-2">
+            <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle text-[8px] text-emerald-600"></i> Injector 2 (B)
             </span>
-            <div class="grid grid-cols-3 gap-1.5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
               <div>
-                <label class="text-[10px] font-bold text-slate-700 block mb-0.5">Model</label>
-                <input type="text" value="${item.inj2.model || ''}" list="modelOptions" placeholder="..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj2', 'model', this.value)" 
-                  class="w-full px-2 py-1 bg-white input-dark-border rounded text-[11px] font-medium outline-none">
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Model / MCS</label>
+                <input type="text" value="${item.inj2.model || ''}" list="modelOptions" placeholder="Ketik model..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj2', 'model', this.value)" 
+                  class="w-full px-3 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none transition">
               </div>
               <div>
-                <label class="text-[10px] font-bold text-slate-700 block mb-0.5">Warna</label>
-                <input type="text" value="${item.inj2.warna || ''}" list="colorOptions" placeholder="..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj2', 'warna', this.value)" 
-                  class="w-full px-2 py-1 bg-white input-dark-border rounded text-[11px] font-medium outline-none">
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Warna</label>
+                <input type="text" value="${item.inj2.warna || ''}" list="colorOptions" placeholder="Ketik warna..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj2', 'warna', this.value)" 
+                  class="w-full px-3 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none transition">
               </div>
               <div>
-                <label class="text-[10px] font-bold text-slate-700 block mb-0.5">Qty(Kg)</label>
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Qty (Kg)</label>
                 <input type="number" value="${item.inj2.qty || ''}" placeholder="..." oninput="updateInjectorHopper(${index}, 'inj2', 'qty', this.value)" 
-                  class="w-full px-2 py-1 bg-emerald-50/80 input-dark-border text-emerald-950 font-bold rounded text-[11px] outline-none">
+                  class="w-full px-3 py-1.5 bg-emerald-50/80 input-dark-border text-emerald-950 font-bold rounded-lg text-xs outline-none transition">
               </div>
             </div>
           </div>`;
         }
 
         card.innerHTML = `
-          <div class="flex items-center justify-between pb-2 border-b border-slate-200">
-            <div class="flex items-center gap-1.5 w-full max-w-[180px]">
-              <span class="w-5 h-5 bg-slate-900 text-white rounded-full text-[10px] font-bold flex items-center justify-center shrink-0">${index + 1}</span>
-              <span class="text-[11px] font-bold text-slate-900 shrink-0">No:</span>
+          <div class="flex items-center justify-between pb-3 border-b-2 border-slate-200">
+            <div class="flex items-center gap-2 w-full max-w-xs">
+              <span class="w-6 h-6 bg-slate-900 text-white rounded-full text-xs font-bold flex items-center justify-center shrink-0">${index + 1}</span>
+              <span class="text-xs font-bold text-slate-900 shrink-0">No. Mesin:</span>
               <input type="text" value="${item.noMesin || ''}" placeholder="..." oninput="updateMesinHopper(${index}, 'noMesin', this.value)" 
-                class="w-full px-2 py-0.5 bg-white input-dark-border rounded text-[11px] font-bold text-slate-900 outline-none">
+                class="w-full px-2.5 py-1 bg-white input-dark-border rounded-lg text-xs font-bold text-slate-900 outline-none transition">
             </div>
             ${dataMesin.length > 1 ? `
-              <button type="button" onclick="hapusBarisHopper(${index})" class="text-rose-600 text-[11px] font-bold bg-rose-50 px-2 py-0.5 rounded border border-rose-200 shrink-0">
-                <i class="fa-solid fa-trash-can"></i>
+              <button type="button" onclick="hapusBarisHopper(${index})" class="text-rose-600 hover:text-rose-800 text-xs font-bold bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-300 transition shrink-0">
+                <i class="fa-solid fa-trash-can"></i> Hapus
               </button>
             ` : ''}
           </div>
 
-          <div class="bg-emerald-50 border border-emerald-200 p-2 rounded-lg flex items-center justify-between">
-            <label class="text-[11px] font-bold text-emerald-950 flex items-center gap-1.5 cursor-pointer">
-              <input type="checkbox" ${isSame ? 'checked' : ''} onchange="toggleSameInjectorHopper(${index}, this.checked)" class="w-3.5 h-3.5 accent-emerald-600 rounded">
-              <span>Inj A & B Sama (1 Model/Warna)</span>
+          <div class="bg-emerald-50 border-2 border-emerald-300 p-2.5 rounded-xl flex items-center justify-between">
+            <label class="text-xs font-bold text-emerald-950 flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" ${isSame ? 'checked' : ''} onchange="toggleSameInjectorHopper(${index}, this.checked)" class="w-4 h-4 accent-emerald-600 rounded">
+              <span>Injector A & B Sama (1 Model & Warna)</span>
             </label>
           </div>
 
-          <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 space-y-1.5">
-            <span class="text-[11px] font-bold text-slate-800 flex items-center gap-1">
-              <i class="fa-solid fa-circle text-[6px] text-emerald-600"></i> ${isSame ? 'Inj A & B' : 'Injector 1 (A)'}
+          <div class="bg-slate-50 p-3 rounded-xl border-2 border-slate-300 space-y-2">
+            <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-circle text-[8px] text-emerald-600"></i> ${isSame ? 'Injector A & B (Stock Gabungan)' : 'Injector 1 (A)'}
             </span>
-            <div class="grid grid-cols-3 gap-1.5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5">
               <div>
-                <label class="text-[10px] font-bold text-slate-700 block mb-0.5">Model</label>
-                <input type="text" value="${item.inj1.model || ''}" list="modelOptions" placeholder="..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj1', 'model', this.value)" 
-                  class="w-full px-2 py-1 bg-white input-dark-border rounded text-[11px] font-medium outline-none">
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Model / MCS</label>
+                <input type="text" value="${item.inj1.model || ''}" list="modelOptions" placeholder="Ketik model..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj1', 'model', this.value)" 
+                  class="w-full px-3 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none transition">
               </div>
               <div>
-                <label class="text-[10px] font-bold text-slate-700 block mb-0.5">Warna</label>
-                <input type="text" value="${item.inj1.warna || ''}" list="colorOptions" placeholder="..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj1', 'warna', this.value)" 
-                  class="w-full px-2 py-1 bg-white input-dark-border rounded text-[11px] font-medium outline-none">
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Warna</label>
+                <input type="text" value="${item.inj1.warna || ''}" list="colorOptions" placeholder="Ketik warna..." oninput="autoCapitalize(this); updateInjectorHopper(${index}, 'inj1', 'warna', this.value)" 
+                  class="w-full px-3 py-1.5 bg-white input-dark-border rounded-lg text-xs font-medium outline-none transition">
               </div>
               <div>
-                <label class="text-[10px] font-bold text-slate-700 block mb-0.5">Qty(Kg)</label>
+                <label class="text-[11px] font-bold text-slate-700 block mb-1">Total Qty Stock (Kg)</label>
                 <input type="number" value="${item.inj1.qty || ''}" placeholder="..." oninput="updateInjectorHopper(${index}, 'inj1', 'qty', this.value)" 
-                  class="w-full px-2 py-1 bg-emerald-50/80 input-dark-border text-emerald-950 font-bold rounded text-[11px] outline-none">
+                  class="w-full px-3 py-1.5 bg-emerald-50/80 input-dark-border text-emerald-950 font-bold rounded-lg text-xs outline-none transition">
               </div>
             </div>
           </div>
@@ -1450,7 +1488,7 @@
         container.appendChild(card);
       });
 
-      document.getElementById('count-mesin').innerText = `${dataMesin.length} Mesin`;
+      document.getElementById('count-mesin').innerText = `${dataMesin.length} Mesin Input`;
       hitungTotalQtyHopper();
     }
 
@@ -1731,7 +1769,7 @@
       } else {
         probBox.style.display = 'none';
       }
-    }
+    };
 
     window.toggleAlertDuplicate = function() {
       const listBody = document.getElementById('alertDuplicateList');
@@ -1805,7 +1843,7 @@
 
       if (matches.length > 0) {
         alertBox.style.display = 'block';
-        alertBox.innerHTML = `⚠️ Barang yang sama ada di: ${matches.join(', ')}`;
+        alertBox.innerHTML = `⚠️ Barang yang sama sudah ada di lokasi: ${matches.join(', ')}`;
       } else {
         alertBox.style.display = 'none';
       }
@@ -1992,7 +2030,7 @@
       azBlocks.forEach(blk => {
         const blkDiv = document.createElement('div');
         blkDiv.className = 'block-column';
-        blkDiv.style.background = '#1e293b'; blkDiv.style.padding = '4px'; blkDiv.style.borderRadius = '6px';
+        blkDiv.style.background = '#1e293b'; blkDiv.style.padding = '6px'; blkDiv.style.borderRadius = '6px';
         blkDiv.innerHTML = `<div class="block-title">${blk}</div>`;
         const maxRows = (blk >= 'A' && blk <= 'J') ? 4 : 7;
         const rackGroup = document.createElement('div');
@@ -2200,7 +2238,7 @@
         });
         resultBox.style.display = results.length > 0 ? 'block' : 'none';
       } else {
-        zoneCards.style.display = 'flex';
+        zoneCards.style.display = 'block';
         btnReport.style.display = 'block';
         resultBox.style.display = 'none';
       }
@@ -2216,26 +2254,26 @@
         const color = document.getElementById('inpColorS').value.trim();
         const qtyS = Number(document.getElementById('inpQtyS').value) || 0;
         const qtyL = Number(document.getElementById('inpQtyL').value) || 0;
-        set(ref(database, `warehouseStock/${code}`), { mcs, color, qtyS, qtyL, notes, status }).then(() => { closeModal(); });
+        set(ref(database, `warehouseStock/${code}`), { mcs, color, qtyS, qtyL, notes, status }).then(() => { alert('Disimpan!'); closeModal(); });
       } else if (activeMode === 'MEDIUM') {
         const mcs = document.getElementById('inpMcsM').value;
         const model = document.getElementById('inpModelM').value.trim();
         const color = document.getElementById('inpColorM').value.trim();
         const qty = Number(document.getElementById('inpQtyM').value) || 0;
-        set(ref(database, `warehouseStockMedium/${code}`), { mcs, model, color, qty, notes, status }).then(() => { closeModal(); });
+        set(ref(database, `warehouseStockMedium/${code}`), { mcs, model, color, qty, notes, status }).then(() => { alert('Disimpan!'); closeModal(); });
       } else if (activeMode === 'UNTESTED') {
         const mcs = document.getElementById('inpMcsU').value;
         const model = document.getElementById('inpModelU').value.trim();
         const color = document.getElementById('inpColorU').value.trim();
         const qty = Number(document.getElementById('inpQtyU').value) || 0;
-        set(ref(database, `warehouseStockUntested/${code}`), { mcs, model, color, qty, notes, status }).then(() => { closeModal(); });
+        set(ref(database, `warehouseStockUntested/${code}`), { mcs, model, color, qty, notes, status }).then(() => { alert('Disimpan!'); closeModal(); });
       } else if (activeMode === 'ROLLING') {
         const mcs = document.getElementById('inpMcsR').value;
         const color = document.getElementById('inpColorR').value.trim();
         const qtyS = Number(document.getElementById('inpQtySR').value) || 0;
         const qtyL = Number(document.getElementById('inpQtyLR').value) || 0;
         const qtyM = Number(document.getElementById('inpQtyMR').value) || 0;
-        set(ref(database, `warehouseRolling/${code}`), { mcs, color, qtyS, qtyL, qtyM, notes, status }).then(() => { closeModal(); });
+        set(ref(database, `warehouseRolling/${code}`), { mcs, color, qtyS, qtyL, qtyM, notes, status }).then(() => { alert('Disimpan!'); closeModal(); });
       }
     };
 
@@ -2261,11 +2299,13 @@
       });
     }
 
+    // FIREBASE LISTENERS UNTUK STOK & SPK
     onValue(ref(database, 'warehouseStock'), snap => { dataSmall = snap.val() || {}; updateCells('SMALL', dataSmall); updateDatalistOptions(); if(activeMode==='SMALL'){renderTable();checkDuplicateGlobal();} });
     onValue(ref(database, 'warehouseStockMedium'), snap => { dataMedium = snap.val() || {}; updateCells('MEDIUM', dataMedium); updateDatalistOptions(); if(activeMode==='MEDIUM'){renderTable();checkDuplicateGlobal();} });
     onValue(ref(database, 'warehouseStockUntested'), snap => { dataUntested = snap.val() || {}; updateCells('UNTESTED', dataUntested); updateDatalistOptions(); if(activeMode==='UNTESTED'){renderTable();checkDuplicateGlobal();} });
     onValue(ref(database, 'warehouseRolling'), snap => { dataRolling = snap.val() || {}; updateCells('ROLLING', dataRolling); updateDatalistOptions(); if(activeMode==='ROLLING'){renderTable();checkDuplicateGlobal();} });
     
+    // Sinkronisasi Real-time SPK Blending & SPK Rolling ke Firebase untuk semua pengguna
     onValue(ref(database, 'spkBlending'), snap => {
       listSpkBlending = snap.val() || [];
       renderSpkTables();
@@ -2300,14 +2340,14 @@
       });
 
       if (activeMode === 'SMALL') {
-        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>S</th><th>L</th><th>Notes</th></tr>`;
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Warna</th><th>S (Kg)</th><th>L (Kg)</th><th>Notes</th></tr>`;
         itemList.forEach(({ code, item }) => {
           const qS = Number(item.qtyS) || 0, qL = Number(item.qtyL) || 0;
           totalKg += (qS + qL);
           tbody.innerHTML += `<tr onclick="selectLocationFromSummary('${code}')"><td><span class="badge">${code}</span></td><td style="color:${item.status==='PASS'?'var(--green)':'var(--red)'}">${item.status||'PASS'}</td><td>${item.mcs||'-'}</td><td>${item.color||'-'}</td><td><strong>${qS}</strong></td><td><strong>${qL}</strong></td><td>${item.notes||'-'}</td></tr>`;
         });
       } else if (activeMode === 'MEDIUM' || activeMode === 'UNTESTED') {
-        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Model</th><th>Warna</th><th>QTY</th><th>Notes</th></tr>`;
+        thead.innerHTML = `<tr><th>Lokasi</th><th>Status</th><th>MCS</th><th>Model</th><th>Warna</th><th>QTY (Kg)</th><th>Notes</th></tr>`;
         itemList.forEach(({ code, item }) => {
           const qty = Number(item.qty) || 0;
           totalKg += qty;
